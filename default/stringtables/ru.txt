@@ -2639,8 +2639,14 @@ ENC_COMBAT_UNKNOWN_OBJECT
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
+CATEGORY_GUIDES
+**Руководства**
+
 CATEGORY_GAME_CONCEPTS
-Принципы игры
+*Принципы игры*
+
+CATEGORY_USER_INTERFACE
+*Интерфейс*
 
 GROWTH_ARTICLE_SHORT_DESC
 Рост населения
@@ -2723,6 +2729,10 @@ DETECTION_TITLE
 
 DETECTION_RANGE_TITLE
 Радиус обнаружения
+DETECTION_RANGE_TEXT
+'''Радиус обнаружения определяет расстояние в uu, на котором датчики могут действовать. Империя может видеть только объекты, значение [[encyclopedia STEALTH_TITLE]] которых не выше его [[encyclopedia STEALTH_TITLE]] и находятся в пределах радиуса обнаружения контролируемого космического корабля или планеты.
+
+Космические корабли и планеты имеют измеритель Радиуса обнаружения. В меню настроек в разделе Галактическая карта есть опция для отображения в виде окружности Радиуса обнаружения. Для облегчения прогнозирования того, что будет в Радиусе обнаружения, существуют варианты отображения стандарта 'Шкалы масштабирования карты' так же, как 'Окружности масштабирования карты' с центром в выбранной системе и с указанием на то же самое расстояние, что и на шкале. Они обе реагирует на масштабирование карты и могут переключаться с помощью горячих главиш.'''
 
 TROOP_TITLE
 Войска
@@ -3083,7 +3093,7 @@ SITREP_PLANET_COLONIZED_LABEL
 Колонизирована Планета
 
 SITREP_NEW_COLONY_ESTABLISHED
-Новая %species% колония заселена на планете %planet%.
+Новая колония расы %species% заселена на планете %planet%.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 Новая колония заселена
 
@@ -5284,6 +5294,9 @@ Of all the bizarre feats of applied physics, the ability to to fold space onto i
 SHP_GAL_EXPLO
 Исследование галактики
 
+SHP_GAL_EXPLO_DESC
+Открытие межзвездных путешествий через звездные тоннели объявляют новую эру развития общества. Старые политические дрязги между небольшими фракциями становятся незначительными, когда вся цивилизация сталкивается с безграничным потенциалом звезд ... для роста и процветания, или полного уничтожения.
+
 SHP_SPACE_TACTICS
 Космическая тактика
 
@@ -5292,6 +5305,15 @@ SHP_SPACE_TACTICS_DESC
 
 SHP_INTSTEL_LOG
 Межзвёздная логистика
+
+SHP_INTSTEL_LOG_DESC
+'''Разблокирует возможность фокусировки планеты на Логистику, что повышает [[encyclopedia SUPPLY_TITLE]] планет на 3.
+
+Увеличивает [[encyclopedia STARLANE_SPEED_TITLE]] Ваших кораблей на 20, когда они находятся в радиусе 50 uu от контролируемой планеты.
+
+[[COLONY_BUILDING_TIME_DECREASE]]
+
+Эффективное снабжение кораблей, планирование общего движения флота и даже организация движения конкретных кораблей в бою требует комплексного понимания навигации и обнаружения, и методов сбора информации.'''
 
 SHP_MIL_ROBO_CONT
 Военная робототехника
@@ -6000,7 +6022,7 @@ BLD_LIGHTHOUSE
 Межзвездный Маяк
 
 BLD_LIGHTHOUSE_DESC
-Увеличивает скорость отправляющихся судов из этой системы, и уменьшает [[encyclopedia STEALTH_TITLE]] для всех объектов в этой же системе на 30. Это здание можно построить в Аванпосту.
+Уменьшает [[encyclopedia STEALTH_TITLE]] всех объектов в той же системе на 30 и увеличивает [[encyclopedia STARLANE_SPEED_TITLE]] дружеских кораблей на 20, которые начинают ход в пределах 50uu от системы, на этот ход. Это здание можно построить в [[encyclopedia OUTPOSTS_TITLE]] и оно способствует использованию [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Сканирующий комплекс
@@ -6434,23 +6456,350 @@ SP_NOVA_BOMB
 SH_ROBOTIC
 Роботизированный Корпус
 
+SH_ROBOTIC_DESC
+'''Этот корпус полностью автоматизирован и работает по принципам [[tech SHP_MIL_ROBO_CONT]]. В нем 4 внешних слота и 1 внутренний слот и он восстанавливает [[encyclopedia STRUCTURE_TITLE]] в размере 2 за ход.
+
+[[encyclopedia STEALTH_TITLE]] низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и  [[encyclopedia STARLANE_SPEED_TITLE]] средняя. 
+
+В дополнение к [[buildingtype BLD_SHIPYARD_BASE]], на планете требуется построить [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].'''
+
+SH_SPATIAL_FLUX
+Пространственно-потоковый корпус
+
+SH_SPATIAL_FLUX_DESC
+'''Этот крохотный корпус способен развивать приличную скорость на больших расстояниях багодаря [[tech SHP_SPACE_FLUX_DRIVE]]. В нем только 2 внешних слота, и его Макс [[encyclopedia STRUCTURE_TITLE]] низкая. 
+
+[[encyclopedia STEALTH_TITLE]] небольшая, но он получает большой штраф [[encyclopedia STEALTH_TITLE]] за передвижение и в бою, и на галактической карте. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] средняя.
+
+В дополнение к [[buildingtype BLD_SHIPYARD_BASE]], на планете требуется построить [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].'''
+
+SH_SELF_GRAVITATING
+Самогравитирующий корпус
+
+SH_SELF_GRAVITATING_DESC
+'''Этот корпус оргомен и мощен, в нём 6 внешних слотов, 2 внутренних слота и 1 слот для ядра - один из немногих корпусов, способных установить такие расширенные функции. Он также достаточно крепок, имея высокую Макс [[encyclopedia STRUCTURE_TITLE]].
+
+[[encyclopedia STEALTH_TITLE]] очень низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] средняя.
+
+В дополнение к [[buildingtype BLD_SHIPYARD_BASE]], на планете требуется построить [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] и [[buildingtype BLD_SHIPYARD_CON_GEOINT]].'''
+
+SH_NANOROBOTIC
+Нано-роботизированный корпус
+
+SH_NANOROBOTIC_DESC
+'''Этот большой автоматизированный корпус ремонтирует повреждения самостоятельно, используя миллионы нанороботов. В нем 6 внешних слотов и 1 внутренний и он восстанавливает [[encyclopedia STRUCTURE_TITLE]] полностью между атаками. 
+
+[[encyclopedia STEALTH_TITLE]] очень низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] средняя.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] и [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] на создающей его планете.'''
+
 SH_TITANIC
 Титанический Корпус
+
+SH_TITANIC_DESC
+'''Этот невероятно большой корпус требует внушительного вклада в инженерию даже для передвижения. В нем 16 внешних слотов, 3 внутренних слота и 1 слот для ядра и его Макс [[encyclopedia STRUCTURE_TITLE]] очень высокая. Такой огромный размер невозможно скрыть, даже с передовыми стелс-технологиями.
+
+[[encyclopedia STEALTH_TITLE]] очень низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] среднее.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] и [[buildingtype BLD_SHIPYARD_CON_GEOINT]] на создающей его планете.'''
+
+SH_TRANSSPATIAL
+Транс-пространственный корпус
+
+SH_TRANSSPATIAL_DESC
+'''Этот экспериментальный корпус создавался в первую очередь для тестирования новых технологий; в нем 1 внешний слот и 1 слот для ядра, и его Макс [[encyclopedia STRUCTURE_TITLE]] крайне низкая. Он был разработан наряду с [[shippart FU_TRANSPATIAL_DRIVE]] и если их совместить, то получится очень эффективный внедряющийся разведчик.
+
+[[encyclopedia STEALTH_TITLE]] небольшая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] средняя.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] и [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] на создающей его планете.'''
+
+SH_LOGISTICS_FACILITATOR
+Координатор логистики
+
+SH_LOGISTICS_FACILITATOR_DESC
+'''Этот организационный флагман предназначен для организации и переправки экипажа и других объектов во время боя. В нем 7 внешних слотов, 2 внутренних слота и слот для ядра. Дополнение к флоту в виде незаметных грузовых судов позволяет транспортировать персонал и материал во время боя, что позволяет всем дружеским кораблям полностью восстанавливать [[encyclopedia STRUCTURE_TITLE]] между атаками.
+
+[[encyclopedia STEALTH_TITLE]] небольшая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] средняя.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], [[buildingtype BLD_SHIPYARD_CON_GEOINT]], и [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] на создающей его планете.'''
 
 SH_ASTEROID
 Корпус Астероида
 
+SH_ASTEROID_DESC
+'''Этот корпус изготовлен из астероида среднего размера, его постройка недорога. Он немного просторнее, чем [[shiphull SH_STANDARD]], в нем 4 внешних слота и 2 внутренних. 
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая.  
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+
 SH_SMALL_ASTEROID
 Маленький Корпус Астероида
+
+SH_SMALL_ASTEROID_DESC
+'''Этот корпус изготовлен из очень маленького астероида. В нем всего лишь 1 внешний слот и 1 внутренний. 
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''
 
 SH_HEAVY_ASTEROID
 Большой Корпус Астероида
 
+SH_HEAVY_ASTEROID_DESC
+'''Этот корпус изготовлен из гигантского астероида, в нем 6 внешних слотов и 3 внутренних.
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+
+SH_CAMOUFLAGE_ASTEROID
+Камуфляжный Корпус Астероида
+
+SH_CAMOUFLAGE_ASTEROID_DESC
+'''Этот корпус призван выглядеть как настоящй астероид. В нем 4 внутренних слота, однако внешние слоты отсутствуют. 
+
+[[encyclopedia STEALTH_TITLE]] небольшая, и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+
+SH_SMALL_CAMOUFLAGE_ASTEROID
+Маленький Камуфляжный Корпус Астероида
+
+SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
+'''Этот Камуфляжный Корпус Астероида способен использовать маскировочные астероидные обломки  на своей обшивке, при этом он должен быть значительно меньше, чтобы не потерять бонуса [[encyclopedia STEALTH_TITLE]]. В нем 1 внешний слот и 1 внутренний. 
+
+[[encyclopedia STEALTH_TITLE]] высокая, и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+
+SH_AGREGATE_ASTEROID
+Совокупный Корпус Астероида
+
+SH_AGREGATE_ASTEROID_DESC
+'''Этот массивный корпус формируется путем объединения нескольких крупных астероидов. В нем 15 внешних слотов и 4 внутренних.
+
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенными на поясе [[buildingtype BLD_SHIPYARD_AST]] и [[buildingtype BLD_SHIPYARD_AST_REF]].'''
+
+SH_MINIASTEROID_SWARM
+Рой мини-астероидов
+
+SH_MINIASTEROID_SWARM_DESC
+'''Этот корпус изготовлен из маленького астероида, который расформирован на множество крошечных астероидов, которые контролируются главным корпусом. Эти астероиды защищают корабль, давая бонус к [[encyclopedia SHIELDS_TITLE]]. В нем 2 внешних слота, но отсутствуют внутренние слоты. [[encyclopedia STRUCTURE_TITLE]] очень низкая. 
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенными на поясе [[buildingtype BLD_SHIPYARD_AST]] и [[buildingtype BLD_SHIPYARD_AST_REF]].'''
+
+SH_SCATTERED_ASTEROID
+Рассеянный Корпус Астероида
+
+SH_SCATTERED_ASTEROID_DESC
+'''Этот флагман изготовлен из нескольких крупных астероидов, некоторые из которых были объединены, чтобы сформировать основание корпуса, а остальные были разбиты на части, чтобы сформировать многочисленные маленькие астероиды, которые управляются с помощью главного корпуса. Эти астероиды защищают не только основной корабль, но и каждый сопровождающий дружественный корабль, давая бонус к [[encyclopedia SHIELDS_TITLE]] для всех дружественных кораблей и кораблей союзников в непосредственной близости. В этом корпусе 15 внешних слотов и 4 внутренних. [[encyclopedia STRUCTURE_TITLE]] высокая. 
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенными на поясе [[buildingtype BLD_SHIPYARD_AST]] и [[buildingtype BLD_SHIPYARD_AST_REF]].'''
+
+SH_CRYSTALLIZED_ASTEROID
+Кристаллизированный Корпус Астероида
+
+SH_CRYSTALLIZED_ASTEROID_DESC
+'''Этот прочный корпус изготовлен из астероида среднего размера, закаленного передовыми методами кристаллизации. Как очередной [[shiphull SH_ASTEROID]], в нем 4 внешних слота и 2 внутренних. [[encyclopedia STRUCTURE_TITLE]] чрезвычайно высокая. 
+
+[[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенными на поясе [[buildingtype BLD_SHIPYARD_AST]] и [[buildingtype BLD_SHIPYARD_AST_REF]].'''
+
+SH_ORGANIC
+Органический Корпус
+
+SH_ORGANIC_DESC
+'''Живой корпус с 3 внешними слотами и 1 внутренним. 
+Органический рост: создается с 5 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 5 Структуры через 25 ходов.
+
+[[encyclopedia STEALTH_TITLE]] небольшая, [[encyclopedia DETECTION_RANGE_TITLE]] плохой и [[encyclopedia STARLANE_SPEED_TITLE]] хорошая. 
+
+Дешевый и универсальный корпус в состоянии выполнять множество функций флота, но вероятно он уже устаревает по мере развития технологий. Из-за низкого обнаружения он плохо подходит для разведки, но его можно превратить в способный военный корабль. Живой корпус восстанавливает [[encyclopedia STRUCTURE_TITLE]] и [[encyclopedia FUEL_TITLE]] между боями.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] на создающей его планете.'''
+
+SH_STATIC_MULTICELLULAR
+Статический Многоклеточный Корпус
+
+SH_STATIC_MULTICELLULAR_DESC
+'''Несмотря на органику, этот корпус неживой и производится с помощью многоклеточного литья. Универсальность интерьера и отсутствие потребности во внутренних органах повышает его потенциал, но без живых систем он не может восполнить здоровье или энергию. Он имеет 3 внешних слота и 2 внутренних.
+
+[[encyclopedia STEALTH_TITLE]] низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] высокая.  
+
+Дешевый и универсальный корпус в состоянии выполнять множество функций флота, без превосходства над другими. Этот корпус не восстанавливает ни [[encyclopedia STRUCTURE_TITLE]], ни [[encyclopedia FUEL_TITLE]] между боями.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] на создающей его планете.'''
+
+SH_ENDOMORPHIC
+Эндоморфный Корпус
+
+SH_ENDOMORPHIC_DESC
+'''Полуживой корпус с 4 внешними и 2 внутренними слотами. 
+Органический рост: создается с 5 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 15 Структуры через 30 ходов.
+
+[[encyclopedia STEALTH_TITLE]] маленькая, [[encyclopedia DETECTION_RANGE_TITLE]] хороший и [[encyclopedia STARLANE_SPEED_TITLE]] высокая.
+
+Потенциально способный военный корабль.
+
+Этот корпус не восстанавливает ни [[encyclopedia STRUCTURE_TITLE]], ни [[encyclopedia FUEL_TITLE]] между боями.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] на создающей его планете.'''
+
+SH_SYMBIOTIC
+Симбиотический Корпус
+
+SH_SYMBIOTIC_DESC
+'''Живой корпус с 2 внешними и 2 внутренними слотами. Находится в симбиозе со своим экипажем, увеличивая значения [[encyclopedia STEALTH_TITLE]] и скорости.
+Органический рост: создается с 10 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 10 Структуры через 50 ходов.
+
+[[encyclopedia STEALTH_TITLE]] небольшая, [[encyclopedia DETECTION_RANGE_TITLE]] хороший и [[encyclopedia STARLANE_SPEED_TITLE]] высокая. 
+
+Малое количество внешних слотов делает этот корпус неподходящим для фронтовых боев, но внутренние слоты, [[encyclopedia DETECTION_RANGE_TITLE]] и [[encyclopedia STEALTH_TITLE]] дают ему потенциал разведчика или рейдера.
+
+Живой корпус восстанавливает [[encyclopedia STRUCTURE_TITLE]] и [[encyclopedia FUEL_TITLE]] между боями.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] на создающей его планете.'''
+
+SH_PROTOPLASMIC
+Протоплазматический Корпус
+
+SH_PROTOPLASMIC_DESC
+'''Живой корпус с 3 внутренними и 2 внешними слотами. 
+Органический рост: создается с 5 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 25 Структуры через 50 ходов.
+
+[[encyclopedia STEALTH_TITLE]] высокая, [[encyclopedia DETECTION_RANGE_TITLE]] хороший и [[encyclopedia STARLANE_SPEED_TITLE]] высокая.
+
+Малое количество внешних слотов делает этот корпус неподходящим для фронтовых боев, но внутренние слоты, [[encyclopedia DETECTION_RANGE_TITLE]] и [[encyclopedia STEALTH_TITLE]] дают ему потенциал разведчика или рейдера.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] на создающей его планете.'''
+
+SH_ENDOSYMBIOTIC
+Эндосимбиотический Корпус
+
+SH_ENDOSYMBIOTIC_DESC
+'''Этот живой одноклеточный корпус находится в симбиозе со своим экипажем, подвешивая их в цитоплазме и используя их в качестве органелл.
+В нем 4 внешних и 3 внутренних слота.
+
+Базовый корпус создается с 5 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 15 Структуры через 30 ходов.
+
+[[encyclopedia STEALTH_TITLE]] хорошая, [[encyclopedia DETECTION_RANGE_TITLE]] высокий и [[encyclopedia STARLANE_SPEED_TITLE]] высокая.
+
+Живой корпус восстанавливает [[encyclopedia STRUCTURE_TITLE]] и [[encyclopedia FUEL_TITLE]] между боями. С потенциалом мощного военного корабля, коммерческого рейдера или вооруженного разведчика.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] на создающей его планете.
+'''
+
+SH_RAVENOUS
+Ненасытный Корпус
+
+SH_RAVENOUS_DESC
+'''Этот неживой органический корпус - или корпус-'зомби' - создан из крови и частей своих собратьев. В нем 5 внешних и 2 внутренних слота.
+
+Органический рост: создается с 5 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 20 Структуры через 40 ходов.
+
+encyclopedia STEALTH_TITLE]] низкая, [[encyclopedia DETECTION_RANGE_TITLE]] превосходный и [[encyclopedia STARLANE_SPEED_TITLE]] высокая. 
+
+С потенциалом мощного и быстрого военного корабля.
+
+Этот корпус не имеет бонуса к восстановлению [[encyclopedia STRUCTURE_TITLE]] или [[encyclopedia FUEL_TITLE]].
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] на создающей его планете.
+'''
+
+SH_BIOADAPTIVE
+Био-Адаптивный Корпус
+
+SH_BIOADAPTIVE_DESC
+'''Живой корпус в согласии с телом и разумом, мастер исцеления и выносливости. В нем 3 внешних и 3 внутренних слота. 
+Органический рост: создается с 15 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 25 Структуры через 50 ходов.
+
+[[encyclopedia STEALTH_TITLE]] высокая, [[encyclopedia DETECTION_RANGE_TITLE]] превосходный и [[encyclopedia STARLANE_SPEED_TITLE]] высокая. 
+
+С потенциалом мощного и быстрого коммерческого рейдера или разведчика.
+
+Этот живой корпус восстанавливает [[encyclopedia STRUCTURE_TITLE]] и [[encyclopedia FUEL_TITLE]] полностью между боями.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] на создающей его планете.
+'''
+
+SH_SENTIENT
+Разумный Корпус
+
+SH_SENTIENT_DESC
+'''Этот органический флагман, обладающий самосознанием, с мощными аналитическими способностями и огромным объемом памяти, что позволяет ему управлять дружественными кораблями и предоставлять им полезную информацию и искусные тактические наказы в бою, обеспечивая бонус к [[encyclopedia STEALTH_TITLE]] и [[encyclopedia DETECTION_RANGE_TITLE]] всем сопровождающим дружественным кораблям. В нем 6 внешних, 3 внутренних слота и слот под ядро.
+Органический рост: создается с 12 [[encyclopedia STRUCTURE_TITLE]],но наращивает дополнительно 45 Структуры через 45 ходов.
+
+[[encyclopedia STEALTH_TITLE]] хорошая, [[encyclopedia DETECTION_RANGE_TITLE]] хороший и [[encyclopedia STARLANE_SPEED_TITLE]] высокая. 
+
+Этот корпус восстанавливает [[encyclopedia STRUCTURE_TITLE]] и [[encyclopedia FUEL_TITLE]] между боями.
+
+Нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] и [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] на создающей его планете.'''
+
+SH_COMPRESSED_ENERGY
+Корпус Сжатой Энергии
+
+SH_COMPRESSED_ENERGY_DESC
+'''Этот быстрый корпус полностью состоит из сжатой энергии и имеет 1 внешний слот. 
+
+Структура корпуса низкая, [[encyclopedia STEALTH_TITLE]] хорошая, [[encyclopedia DETECTION_RANGE_TITLE]] обычный и [[encyclopedia STARLANE_SPEED_TITLE]] очень выская. 
+
+Этот корпус требует большой затраты энергии для своей постройки и может быть построен только в системе со звездой типа Белый, Синий или Черной Дырой и нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]] на создающей его планете.'''
+
+SH_FRACTAL_ENERGY
+Корпус Фрактальной Энергии
+
+SH_FRACTAL_ENERGY_DESC
+'''Это корпус, несмотря на то, что маленький, имеет фрактальную поверхности, которая позволяет смонтировать гораздо больше деталей, чем на гладком корпусе. Он содержит 14 внешних слотов, но внутренние слоты отсутствуют.
+
+[[encyclopedia STRUCTURE_TITLE]] невысокая, [[encyclopedia STEALTH_TITLE]] очень низкая, [[encyclopedia DETECTION_RANGE_TITLE]] обычный и [[encyclopedia STARLANE_SPEED_TITLE]] очень высокая. 
+
+Этот корпус требует большой затраты энергии для своей постройки и может быть построен только в системе со звездой типа Синий или Черной Дырой и нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]] на создающей его планете.'''
+
+SH_QUANTUM_ENERGY
+Корпус Квантовой Энергии
+
+SH_QUANTUM_ENERGY_DESC
+'''Этот корпус преувеличивает квантовые флуктуации энергии, чтобы увеличить свою собственную мощь. Он содержит 7 внешних и 3 внутренних слота. 
+
+[[encyclopedia STRUCTURE_TITLE]] невысокая, [[encyclopedia STEALTH_TITLE]] очень низкая, [[encyclopedia DETECTION_RANGE_TITLE]] обычный и [[encyclopedia STARLANE_SPEED_TITLE]] очень высокая.  
+
+Этот корпус требует большой затраты энергии для своей постройки и может быть построен только в системе со звездой типа Синий или Черной Дырой и нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ENRG_COMP]] на создающей его планете.'''
+
+SH_SOLAR
+Корпус Солнечной Энергии
+
+SH_SOLAR_DESC
+'''Этот могучий флагман по существу миниатюрное солнце как таковой является отличным источником для [[encyclopedia FUEL_TITLE]] и видимости. Все сопровождающие дружеские корабли полностью восстанавливают топливо между боями, а все вражеские корабли в непосредственной близости получают штраф на [[encyclopedia STEALTH_TITLE]]. В этом корпусе 18 внешних, 8 внутренних слотов и слот под ядро — наиболее вместительней, чем любой другой корпус.
+
+[[encyclopedia STRUCTURE_TITLE]] невероятно высокая, [[encyclopedia STEALTH_TITLE]] очень низкая, [[encyclopedia DETECTION_RANGE_TITLE]] обычный и [[encyclopedia STARLANE_SPEED_TITLE]] очень высокая. 
+
+Тем не менее, такой корабль имеет возможность регистрировать звезду и прятаться, получая безупречный бонус к [[encyclopedia STEALTH_TITLE]] галактической карте, когда он находится в системе со звездой другого типа, нежели Черная дыра или Нейтрон, и в бою, когда он скрывается внутри таких звезд. 
+
+Этот корпус требует большой затраты энергии для своей постройки и должен использовать энергию столкновения частиц и атичастиц на горизонте событий формирования Черной Дыры. Он нуждается в построенных [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ENRG_COMP]] и [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] на создающей его планете.'''
+
+SH_BASIC_SMALL
+Базовый Малый Корпус
+SH_BASIC_SMALL_DESC
+'''Маленький базовый межзвездный корпус. В нем только 1 внешний слот, но он способен совершить мега-прыжок по сравнению с другими базовыми корпусами.
+
+[[encyclopedia STEALTH_TITLE]] низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] средняя. 
+
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] на создающей его планете.'''
+
 SH_BASIC_MEDIUM
-Основной Средний Корпус
+Базовый Средний Корпус
 
 SH_STANDARD
-Основной Большой Корпус
+Базовый Большой Корпус
 
 SH_SNOWFLAKE_1_BODY
 Тело маленькой снежинки
@@ -6505,6 +6854,8 @@ SH_COSMIC_DRAGON_BODY
 SH_COSMIC_DRAGON_BODY_DESC
 Устрашающий космический дракон размером с планету.
 
+SH_DAMPENING_CLOUD_BODY
+Угасающее облачное тело	
 SH_DAMPENING_CLOUD_BODY_DESC
 Космическое облако высокоэнергетических частиц.
 
@@ -6841,3 +7192,30 @@ AI_CAPITOL_NAMES_TURTLE
 '''Цитадель
 Тюремный Мир'''
 
+### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name Lists
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
+### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+
+### End of AI Shipdesign Name Lists
+
+### AI Diplomacy Strings and Lists 
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+### End of AI Diplomacy Message Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"
