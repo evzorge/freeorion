@@ -2606,6 +2606,26 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 
 # will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
+ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
+'''%1%
+
+Корпус: %2%
+Части: %3%
+
+'''
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
+'''
+Для расы: %18%
+Общий урон: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+[[encyclopedia STARLANE_SPEED_TITLE]]: %13%    [[encyclopedia FUEL_TITLE]]: %14%
+[[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
+Численность колонии: %15%    [[encyclopedia TROOP_TITLE]]: %16%
+Расчетная боевая мощь (игнорируя щиты):  %19$.f   (%20$.2f за PP)
+Против вражеской атаки %21$.1f и щитов %22$.1f:       %23$.f   (%24$.2f за PP)
+'''
+
 ENC_UNLOCKED_BY
 '''<u>Открыто технологией:</u>
 
@@ -2616,20 +2636,36 @@ ENC_UNLOCKS
 
 '''
 
+ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
+Можно установить в:
+
 ENC_LOOKUP
 Справка o %1%
 
 ENC_COMBAT_LOG
-'''Протокол боев '''
+Протокол боев
 
 ENC_COMBAT_LOG_DESCRIPTION_STR
-Бой в %1% в ходу %2%:
+Бой в системе %1% на %2% ходу:
 
 ENC_COMBAT_ATTACK_STR
-Раунд %4%: %1% Атака %2% наносит %3% урона
+%1% атаковал %2%, нанеся %3% урона
 
 ENC_COMBAT_UNKNOWN_OBJECT
-'''Неизвестно '''
+Неизвестно
+
+ENC_ROUND_BEGIN
+'''
+Раунд %1%:'''
+
+ENC_COMBAT_UNKNOWN_DESTROYED_STR
+Что-то, так или иначе, вывело из строя %2%
+
+ENC_COMBAT_PLANET_INCAPACITATED_STR
+Планета %1% %2% выведена из строя
+
+ENC_COMBAT_DESTROYED_STR
+Корабль %1% %2% уничтожен
 
 ###########################################
 # Combat Report #
