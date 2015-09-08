@@ -207,6 +207,10 @@ private:
     void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
     void            SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
 
+    void            Pan(const GG::Pt& delta);                   //!< pans map
+    bool            PanX(GG::X x = GG::X(50));
+    bool            PanY(GG::Y y = GG::Y(50));
+
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);
@@ -230,6 +234,8 @@ private:
     void            ClearFieldRenderingBuffers();
     void            InitVisibilityRadiiRenderingBuffers();
     void            ClearVisibilityRadiiRenderingBuffers();
+    void            InitScaleCircleRenderingBuffer();
+    void            ClearScaleCircleRenderingBuffer();
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
@@ -253,18 +259,25 @@ private:
     /* renders the dashed lines indicating where each fleet is going */
     void            RenderFleetMovementLines();
 
-    /* renders a single fleet movement line.  if \a clr is GG::CLR_ZERO, the lane
-     * is rendered with the .colour attribute of \a move_line */
-    void            RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
+    /* renders a single fleet movement line. if \a clr is GG::CLR_ZERO, the lane
+     * is rendered with the .colour attribute of \a move_line. assumes that the
+     * move dot texture has already been bound. */
+    void            RenderMovementLine(const MapWnd::MovementLineData& move_line, float dot_size, float dot_spacing, float dot_shift,
+                                       GG::Clr clr = GG::CLR_ZERO);
 
     /* renders ETA indicators at end-of-turn positions for a single fleet movement
      * line.  if \a clr is GG::CLR_ZERO, the indicators are filled with the .colour
      * attribute of \a move_line */
     void            RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
 
-    void            RenderVisibilityRadii();                    //!< renders circles around objects' locations indicating distance they have visibility
+    /* renders circles around objects' locations indicating distance they have
+     * visibility */
+    void            RenderVisibilityRadii();
 
-    void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
+    /* renders scale circle around selected system. */
+    void            RenderScaleCircle();
+
+    void            CorrectMapPosition(GG::Pt& move_to_pt);     //!< constrains \a move_to_pt so that if the map is repositioned to that location, it will not be problematically positioned, so that galaxy contents remain visible
 
     void            FieldRightClicked(int field_id);
 
@@ -405,6 +418,7 @@ private:
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_halo_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_galaxy_gas_quad_vertices;
     GG::GLTexCoordBuffer                m_star_texture_coords;
+    GG::GL2DVertexBuffer                m_star_circle_vertices;
 
     GG::GL2DVertexBuffer                m_starlane_vertices;
     GG::GLRGBAColorBuffer               m_starlane_colors;
@@ -417,8 +431,12 @@ private:
 
     GG::GL2DVertexBuffer                m_visibility_radii_vertices;
     GG::GLRGBAColorBuffer               m_visibility_radii_colors;
+    GG::GL2DVertexBuffer                m_visibility_radii_border_vertices;
+    GG::GLRGBAColorBuffer               m_visibility_radii_border_colors;
+    std::vector<std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > >
+                                        m_radii_radii_vertices_indices_runs;
 
-    std::set<int>                       m_resource_centers;
+    GG::GL2DVertexBuffer                m_scale_circle_vertices;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 
@@ -456,18 +474,12 @@ private:
 };
 
 
-/** Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
-   when the end turn button is hit. */
+/** Derive any window from this class to have it managed by MapWnd. */
 class MapWndPopup : public CUIWnd {
 public:
-    MapWndPopup(const std::string& t,
-                GG::X default_x, GG::Y default_y,
-                GG::X default_w, GG::Y default_h,
-                GG::Flags<GG::WndFlag> flags,
-                const std::string& config_name = "");
-    MapWndPopup(const std::string& t,
-                GG::Flags<GG::WndFlag> flags,
-                const std::string& config_name = "");
+    MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
+                GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+    MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
     virtual ~MapWndPopup();
     void    CloseClicked();
     void    Close();

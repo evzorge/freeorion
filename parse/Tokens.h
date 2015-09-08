@@ -185,6 +185,8 @@
     (LowestCostResearchableTech)                \
     (LowestCostTransferrableTech)               \
     (Max)                                       \
+    (MaxCapacity)                               \
+    (MaxDamage)                                 \
     (MaxDefense)                                \
     (MaxFuel)                                   \
     (MaximumNumberOf)                           \
@@ -234,6 +236,7 @@
     (Number)                                    \
     (NumberOf)                                  \
     (NumShips)                                  \
+    (NumStarlanes)                              \
 
 #define TOKEN_SEQ_8                             \
     (Object)                                    \
@@ -332,6 +335,8 @@
     (SetFuel)                                   \
     (SetHappiness)                              \
     (SetIndustry)                               \
+    (SetMaxCapacity)                            \
+    (SetMaxDamage)                              \
     (SetMaxDefense)                             \
     (SetMaxFuel)                                \
     (SetMaxShield)                              \
@@ -473,7 +478,6 @@
     (Unresearchable)                            \
     (UserString)                                \
     (Value)                                     \
-    (ValueTest)                                 \
     (Victory)                                   \
     (VisibleToEmpire)                           \
     (White)                                     \

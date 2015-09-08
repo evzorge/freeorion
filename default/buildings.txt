@@ -47,9 +47,7 @@ BuildingType
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                ValueTest
-                    high = 5
-                    value = LocalCandidate.Population
+                (LocalCandidate.Population <= 5)
             ]
             effects = SetTargetPopulation value = Value + 100
 
@@ -1112,7 +1110,7 @@ BuildingType
         Not Contains Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         OwnedBy empire = Source.Owner
         Star type = Neutron
-        ]
+    ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/neutronium-forge.png"
 
@@ -1125,6 +1123,10 @@ BuildingType
     location = And [
         Planet
         Not Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
@@ -1439,6 +1441,7 @@ BuildingType
         Not Contains Building name = "BLD_ART_MOON"
         OwnedBy empire = Source.Owner
         Not Planet type = [Asteroids GasGiant]
+        Not HasSpecial name = "RESONANT_MOON_SPECIAL"
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups =
@@ -1544,13 +1547,34 @@ BuildingType
 BuildingType
     name = "BLD_SPATIAL_DISTORT_GEN"
     description = "BLD_SPATIAL_DISTORT_GEN_DESC"
-    buildcost = 30
+    buildcost = 500
     buildtime = 10
     location = AND [
         Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    icon = ""
+
+BuildingType
+    name = "BLD_BLACK_HOLE_COLLAPSER"
+    description = "BLD_BLACK_HOLE_COLLAPSER_DESC"
+    buildcost = 5000
+    buildtime = 10
+    location = AND [
+        Planet
+        OwnedBy empire = Source.Owner
+        ContainedBy Contains And [ Planet Star type = BlackHole ]
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = [
+                Destroy
+                CreateField type = "FLD_SUBSPACE_RIFT" size = 100
+            ]
+    ]
     icon = ""
 
 BuildingType
@@ -1627,6 +1651,56 @@ BuildingType
     ]
     icon = "icons/ship_hulls/colony_base_hull_small.png"
 
+BuildingType
+    name = "BLD_STARLANE_BORE"
+    description = "BLD_STARLANE_BORE_DESC"
+    buildcost = 200 + 50 * Target.System.NumStarlanes
+    buildtime = 1 + Target.System.NumStarlanes
+    location = Planet
+    effectsgroups = [
+        EffectsGroup
+            scope = Object id = Source.SystemID
+            effects = [
+                AddStarlanes endpoint = MinimumNumberOf
+                number = 1
+                sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
+                condition = And [
+                    System
+                    CanAddStarlanesTo condition = Source
+                ]
+                GenerateSitRepMessage
+                    message = "EFFECT_STARLANE_BORE"
+                    icon = "icons/tech/n-dimensional_structures.png"
+                    parameters = tag = "system" data = Target.ID
+                    empire = Source.Owner
+                ]
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/tech/n-dimensional_structures.png"
+
+BuildingType
+    name = "BLD_STARLANE_NEXUS"
+    description = "BLD_STARLANE_NEXUS_DESC"
+    buildcost = 1000
+    buildtime = 8
+    location = Planet
+    effectsgroups = [
+        EffectsGroup
+            scope = Object id = Source.SystemID
+            effects = AddStarlanes endpoint = And [
+                System
+                WithinDistance distance = 250 condition = Source
+                CanAddStarlanesTo condition = Source
+            ]
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/tech/n-dimensional_structures.png"
+
+
 
 /* Experimentor related variables / macros */
 
@@ -1638,7 +1712,7 @@ EXPERIMENTOR_SPAWN_BASE_TURN
 '''200'''
 
 EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK
-'''(If condition = ValueTest high = 2 testvalue = GalaxyMaxAIAggression)'''
+'''(If condition = (GalaxyMaxAIAggression <= 2))'''
 
 // the following intermediate value is turn 200 for Manaical Max AI Aggression, and 50 turns later for each aggression tier less,
 // for AI aggressions above Typical, otherwise adding 1000 turns
@@ -1648,7 +1722,7 @@ EXPERIMENTOR_SPAWN_CALC_A
 // the following modifies Experimentor spawn start by a factor of 0.1 up for low planet density, and 0.1 down for high planet density
 // for galaxy sizes above 200 increases it somewhat as the galaxy size grows
 EXPERIMENTOR_SPAWN_START_TURN
-''' ( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((1.2 - ( GalaxyPlanetDensity / 10 ))) * ((Max(1, GalaxySize / 200))^0.4))'''
+'''( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((1.2 - ( GalaxyPlanetDensity / 10 ))) * ((Max(1, GalaxySize / 200))^0.4))'''
 
 EXPERIMENTOR_ADD_STARLANE
 '''AddStarlanes endpoint = NumberOf number = 1 
@@ -1710,7 +1784,7 @@ BuildingType
                     Planet
             ]
             activation = Or [
-                Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
+               // Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
                 Not ContainedBy Contains And [ Ship OwnedBy affiliation = AnyEmpire ]
             ]
             effects = [
@@ -1763,7 +1837,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
@@ -1784,7 +1858,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
@@ -1806,7 +1880,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
@@ -1827,7 +1901,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
@@ -1849,7 +1923,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
@@ -1870,7 +1944,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
@@ -1890,7 +1964,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_COSMIC_DRAGON"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "1"

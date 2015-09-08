@@ -42,6 +42,7 @@
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <sstream>
 
@@ -125,6 +126,9 @@ namespace {
             GetOptionsDB().Set("multiplayersetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
     }
 
+    std::string GetGLVersionString()
+    { return boost::lexical_cast<std::string>(glGetString(GL_VERSION)); }
+
     static float stored_gl_version = -1.0f;  // to be replaced when gl version first checked
 
     float GetGLVersion() {
@@ -132,8 +136,7 @@ namespace {
             return stored_gl_version;
 
         // get OpenGL version string and parse to get version number
-        const GLubyte* gl_version = glGetString(GL_VERSION);
-        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
+        std::string gl_version_string = GetGLVersionString();
 
         float version_number = 0.0f;
         std::istringstream iss(gl_version_string);
@@ -149,8 +152,8 @@ namespace {
         // get OpenGL version string and parse to get version number
         float version_number = GetGLVersion();
         DebugLogger() << "OpenGL Version Number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
-        if (version_number < 1.5) {
-            ErrorLogger() << "OpenGL Version is less than 2.0 (official required) or 1.5 (usually works).  FreeOrion may crash when trying to start a game.";
+        if (version_number < 2.0) {
+            ErrorLogger() << "OpenGL Version is less than 2.0. FreeOrion may crash when trying to start a game.";
         }
 
         // only execute default option setting once
@@ -159,19 +162,17 @@ namespace {
         GetOptionsDB().Set<bool>("checked-gl-version", true);
 
         // if GL version is too low, set various map rendering options to
-        // disabled, so as to prevent crashes when running on systems that
-        // don't support these GL features.  these options are added to the
-        // DB in MapWnd.cpp's AddOptions and all default to true.
+        // disabled, to hopefully improve frame rate.
         if (version_number < 2.0) {
             GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
             GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
-            GetOptionsDB().Set<bool>("UI.optimized-system-rendering",   false);
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
     }
 }
 
-HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name, int x, int y, bool fullscreen, bool fake_mode_change) :
+HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
+                               int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, name, x, y, fullscreen, fake_mode_change),
     m_fsm(0),
@@ -191,6 +192,12 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
     InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
+
+    try {
+        DebugLogger() << "GL Version String: " << GetGLVersionString();
+    } catch (...) {
+        ErrorLogger() << "Unable to get GL Version String?";
+    }
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
@@ -1121,3 +1128,44 @@ HumanClientApp* HumanClientApp::GetApp()
 
 void HumanClientApp::Initialize()
 {}
+
+void HumanClientApp::OpenURL(const std::string& url) {
+    // make sure it's a legit url
+    std::string trimmed_url = url;
+    boost::algorithm::trim(trimmed_url);
+    // shouldn't be excessively long
+    if (trimmed_url.size() > 500) { // arbitrary limit
+        ErrorLogger() << "HumanClientApp::OpenURL given bad-looking url (too long): " << trimmed_url;
+        return;
+    }
+    // should start with http:// or https://
+    if (trimmed_url.size() < 8) {
+        ErrorLogger() << "HumanClientApp::OpenURL given bad-looking url (too short): " << trimmed_url;
+        return;
+    }
+    if (trimmed_url.find_first_of("http://") != 0 &&
+        trimmed_url.find_first_of("https://") != 0)
+    {
+        ErrorLogger() << "HumanClientApp::OpenURL given url that doesn't start with http:// :" << trimmed_url;
+        return;
+    }
+    // should not have newlines...
+    if (trimmed_url.find_first_of("\n") != std::string::npos) {
+        ErrorLogger() << "HumanClientApp::OpenURL given url that contains a newline. rejecting.";
+        return;
+    }
+
+    // append url to OS-specific open command
+    std::string command;
+#ifdef _WIN32
+    command += "start ";
+#elif __APPLE__
+    command += "open ";
+#else
+    command += "xdg-open ";
+#endif
+    command += url;
+
+    // execute open command
+    system(command.c_str());
+}

@@ -28,7 +28,10 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
             qi::_val_type _val;
+            qi::lit_type lit;
             using phoenix::new_;
             using phoenix::push_back;
 
@@ -62,12 +65,39 @@ namespace {
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
-            value_test
-                =   tok.ValueTest_
-                > -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
-                > -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
-                >   parse::label(TestValue_token) > double_value_ref
-                [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
+            value_test_1
+                = '('
+                >> double_value_ref [ _a = _1 ]
+                >> (    lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> double_value_ref
+                [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
+                >> ')'
+                ;
+
+            value_test_2
+                = '('
+                >> double_value_ref [ _a = _1 ]
+                >> (    lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
+                >> double_value_ref [ _b = _1 ]
+                >> (    lit('=')    [ _e = Condition::EQUAL ]
+                      | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _e = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _e = Condition::LESS_THAN ]
+                      | lit("!=")   [ _e = Condition::NOT_EQUAL ])
+                >  double_value_ref
+                [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
+                >  ')'
                 ;
 
             turn
@@ -138,7 +168,8 @@ namespace {
                 |   within_distance
                 |   within_starlane_jumps
                 |   number
-                |   value_test
+                |   value_test_2
+                |   value_test_1
                 |   turn
                 |   created_on_turn
                 |   number_of
@@ -152,7 +183,8 @@ namespace {
             within_distance.name("WithinDistance");
             within_starlane_jumps.name("WithinStarlaneJumps");
             number.name("Number");
-            value_test.name("ValueTest");
+            value_test_1.name("ValueTest Binary");
+            value_test_2.name("ValueTest Trinary");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
             number_of.name("NumberOf");
@@ -166,7 +198,8 @@ namespace {
             debug(within_distance);
             debug(within_starlane_jumps);
             debug(number);
-            debug(value_test);
+            debug(value_test_1);
+            debug(value_test_2);
             debug(turn);
             debug(created_on_turn);
             debug(number_of);
@@ -183,7 +216,9 @@ namespace {
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*
+                ValueRef::ValueRefBase<std::string>*,
+                Condition::ComparisonType,
+                Condition::ComparisonType
             >,
             parse::skipper_type
         > double_ref_double_ref_rule;
@@ -223,7 +258,8 @@ namespace {
         double_ref_double_ref_rule              within_distance;
         int_ref_int_ref_rule                    within_starlane_jumps;
         int_ref_int_ref_rule                    number;
-        double_ref_double_ref_rule              value_test;
+        double_ref_double_ref_rule              value_test_1;
+        double_ref_double_ref_rule              value_test_2;
         int_ref_int_ref_rule                    turn;
         int_ref_int_ref_rule                    created_on_turn;
         int_ref_sorting_method_double_ref_rule  number_of;

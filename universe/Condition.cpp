@@ -1706,6 +1706,7 @@ namespace {
             case OBJ_FLEET:
             case OBJ_PLANET:
             case OBJ_SYSTEM:
+            case OBJ_FIELD:
                 return candidate->ObjectType() == m_type;
                 break;
             case OBJ_POP_CENTER:
@@ -5370,7 +5371,6 @@ namespace {
         case METER_SUPPLY:              return "Supply";             break;
         case METER_STEALTH:             return "Stealth";            break;
         case METER_DETECTION:           return "Detection";          break;
-        case METER_DAMAGE:              return "Damage";             break;
         case METER_SPEED:               return "Speed";              break;
         case METER_CAPACITY:            return "Capacity";           break;
         default:                        return "?Meter?";            break;
@@ -6486,17 +6486,9 @@ namespace {
 
             // is candidate object close enough to any subcondition matches?
             for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                if (m_jump_limit == 0) {
-                    // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
-                    double delta_x = (*it)->X() - candidate->X();
-                    double delta_y = (*it)->Y() - candidate->Y();
-                    if (delta_x*delta_x + delta_y*delta_y == 0)
-                        return true;
-                } else {
-                    int jumps = GetUniverse().JumpDistanceBetweenObjects((*it)->ID(), candidate->ID());
-                    if (jumps != -1 && jumps <= m_jump_limit)
-                        return true;
-                }
+                int jumps = GetUniverse().JumpDistanceBetweenObjects((*it)->ID(), candidate->ID());
+                if (jumps != -1 && jumps <= m_jump_limit)
+                    return true;
             }
 
             return false;
@@ -7701,9 +7693,9 @@ void Condition::OrderedBombarded::SetTopLevelContent(const std::string& content_
 // ValueTest                                             //
 ///////////////////////////////////////////////////////////
 Condition::ValueTest::~ValueTest() {
-    delete m_value_ref;
-    delete m_low;
-    delete m_high;
+    delete m_value_ref1;
+    delete m_value_ref2;
+    delete m_value_ref3;
 }
 
 bool Condition::ValueTest::operator==(const Condition::ConditionBase& rhs) const {
@@ -7714,20 +7706,53 @@ bool Condition::ValueTest::operator==(const Condition::ConditionBase& rhs) const
 
     const Condition::ValueTest& rhs_ = static_cast<const Condition::ValueTest&>(rhs);
 
-    CHECK_COND_VREF_MEMBER(m_value_ref)
-    CHECK_COND_VREF_MEMBER(m_low)
-    CHECK_COND_VREF_MEMBER(m_high)
+    CHECK_COND_VREF_MEMBER(m_value_ref1)
+    CHECK_COND_VREF_MEMBER(m_value_ref2)
+    CHECK_COND_VREF_MEMBER(m_value_ref3)
+
+    if (m_compare_type1 != rhs_.m_compare_type1)
+        return false;
+    if (m_compare_type2 != rhs_.m_compare_type2)
+        return false;
 
     return true;
 }
 
+namespace {
+    bool Comparison(float val1, Condition::ComparisonType comp, float val2) {
+        switch(comp) {
+            case Condition::EQUAL:                  return val1 == val2;
+            case Condition::GREATER_THAN:           return val1 > val2;
+            case Condition::GREATER_THAN_OR_EQUAL:  return val1 >= val2;
+            case Condition::LESS_THAN:              return val1 < val2;
+            case Condition::LESS_THAN_OR_EQUAL:     return val1 <= val2;
+            case Condition::NOT_EQUAL:              return val1 != val2;
+            case Condition::INVALID_COMPARISON:
+            default:                                return false;
+        }
+    }
+
+    std::string CompareTypeString(Condition::ComparisonType comp) {
+        switch(comp) {
+        case Condition::EQUAL:                  return "=";
+        case Condition::GREATER_THAN:           return ">";
+        case Condition::GREATER_THAN_OR_EQUAL:  return ">=";
+        case Condition::LESS_THAN:              return "<";
+        case Condition::LESS_THAN_OR_EQUAL:     return "<=";
+        case Condition::NOT_EQUAL:              return "!=";
+        case Condition::INVALID_COMPARISON:
+        default:                                return "";
+        }
+    }
+}
+
 void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
-                                       ObjectSet& matches, ObjectSet& non_matches,
-                                       SearchDomain search_domain/* = NON_MATCHES*/) const
+                                ObjectSet& matches, ObjectSet& non_matches,
+                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
-                             (!m_high || m_high->LocalCandidateInvariant()) &&
-                             (!m_value_ref || m_value_ref->LocalCandidateInvariant()) &&
+    bool simple_eval_safe = ((!m_value_ref1 || m_value_ref1->LocalCandidateInvariant()) &&
+                             (!m_value_ref2 || m_value_ref2->LocalCandidateInvariant()) &&
+                             (!m_value_ref3 || m_value_ref3->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
     if (simple_eval_safe) {
@@ -7735,19 +7760,24 @@ void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
-        float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-        float value = (m_value_ref ? m_value_ref->Eval(local_context) : 0.0);
+        float val1, val2, val3;
+        bool passed = m_value_ref1 && m_value_ref2;
+        if (passed) {
+            val1 = m_value_ref1->Eval(local_context);
+            val2 = m_value_ref2->Eval(local_context);
+            passed = Comparison(val1, m_compare_type1, val2);
+        }
+        if (passed && m_value_ref3) {
+            val3 = m_value_ref3->Eval(local_context);
+            passed = Comparison(val2, m_compare_type2, val3);
+        }
 
-        bool in_range = (low <= value && value <= high);
-
-        // transfer objects to or from candidate set, according to whether number of matches was within
-        // the requested range.
-        if (search_domain == MATCHES && !in_range) {
+        // transfer objects to or from candidate set, according to whether the value comparisons were true
+        if (search_domain == MATCHES && !passed) {
             non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         }
-        if (search_domain == NON_MATCHES && in_range) {
+        if (search_domain == NON_MATCHES && passed) {
             matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         }
@@ -7759,57 +7789,65 @@ void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::ValueTest::RootCandidateInvariant() const {
-    return (!m_value_ref  || m_value_ref->RootCandidateInvariant()) &&
-           (!m_low        || m_low->RootCandidateInvariant()) &&
-           (!m_high       || m_high->RootCandidateInvariant());
+    return (!m_value_ref1   || m_value_ref1->RootCandidateInvariant()) &&
+           (!m_value_ref2   || m_value_ref2->RootCandidateInvariant()) &&
+           (!m_value_ref3   || m_value_ref3->RootCandidateInvariant());
 }
 
 bool Condition::ValueTest::TargetInvariant() const {
-    return (!m_value_ref  || m_value_ref->TargetInvariant()) &&
-           (!m_low        || m_low->TargetInvariant()) &&
-           (!m_high       || m_high->TargetInvariant());
+    return (!m_value_ref1   || m_value_ref1->TargetInvariant()) &&
+           (!m_value_ref2   || m_value_ref2->TargetInvariant()) &&
+           (!m_value_ref3   || m_value_ref3->TargetInvariant());
 }
 
 bool Condition::ValueTest::SourceInvariant() const {
-    return (!m_value_ref  || m_value_ref->SourceInvariant()) &&
-           (!m_low        || m_low->SourceInvariant()) &&
-           (!m_high       || m_high->SourceInvariant());
+    return (!m_value_ref1   || m_value_ref1->SourceInvariant()) &&
+           (!m_value_ref2   || m_value_ref2->SourceInvariant()) &&
+           (!m_value_ref3   || m_value_ref3->SourceInvariant());
 }
 
 std::string Condition::ValueTest::Description(bool negated/* = false*/) const {
-    std::string value_str;
-    if (m_value_ref)
-        value_str = m_value_ref->Description();
+    std::string value_str1, value_str2, value_str3;
+    if (m_value_ref1)
+        value_str1 = m_value_ref1->Description();
+    if (m_value_ref2)
+        value_str2 = m_value_ref1->Description();
+    if (m_value_ref3)
+        value_str3 = m_value_ref1->Description();
 
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
-                                    m_low->Description())
-                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
-                                      m_high->Description())
-                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+    std::string comp_str1 = CompareTypeString(m_compare_type1);
+    std::string comp_str2 = CompareTypeString(m_compare_type2);
+
+    std::string composed_comparison = value_str1 + " " + comp_str1 + " " + value_str2;
+    if (!comp_str2.empty())
+        composed_comparison += " " + comp_str2;
+    if (!value_str3.empty())
+        composed_comparison += +" " + value_str3;
 
     return str(FlexibleFormat((!negated)
                ? UserString("DESC_VALUE_TEST")
                : UserString("DESC_VALUE_TEST_NOT"))
-               % value_str
-               % low_str
-               % high_str);
+               % composed_comparison);
 }
 
 std::string Condition::ValueTest::Dump() const {
-    std::string retval = DumpIndent() + "ValueTest";
-    if (m_low)
-        retval += " low = " + m_low->Dump();
-    if (m_high)
-        retval += " high = " + m_high->Dump();
-    if (m_value_ref) {
-        retval += " value_ref =\n";
-        ++g_indent;
-            retval += m_value_ref->Dump();
-        --g_indent;
-    }
+    std::string retval = DumpIndent() + "(";
+    if (m_value_ref1)
+        retval += m_value_ref1->Dump();
+
+    if (m_compare_type1 != INVALID_COMPARISON)
+        retval += " " + CompareTypeString(m_compare_type1);
+
+    if (m_value_ref2)
+        retval += " " + m_value_ref2->Dump();
+
+    if (m_compare_type2 != INVALID_COMPARISON)
+        retval += " " + CompareTypeString(m_compare_type2);
+
+    if (m_value_ref3)
+        retval += " " + m_value_ref3->Dump();
+
+    retval += ")";
     return retval;
 }
 
@@ -7819,23 +7857,28 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "ValueTest::Match passed no candidate object";
         return false;
     }
-    if (!m_value_ref)
+    if (!m_value_ref1 || !m_value_ref2 || m_compare_type1 == INVALID_COMPARISON)
         return false;
 
-    float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-    float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-    float value = (m_value_ref ? m_value_ref->Eval(local_context) : 0);
+    float val1 = m_value_ref1->Eval(local_context);
+    float val2 = m_value_ref2->Eval(local_context);
+    if (!Comparison(val1, m_compare_type1, val2))
+        return false;
 
-    return low <= value && value <= high;
+    if (m_compare_type2 == INVALID_COMPARISON || !m_value_ref3)
+        return true;
+
+    float val3 = m_value_ref3->Eval(local_context);
+    return Comparison(val2, m_compare_type1, val3);
 }
 
 void Condition::ValueTest::SetTopLevelContent(const std::string& content_name) {
-    if (m_value_ref)
-        m_value_ref->SetTopLevelContent(content_name);
-    if (m_low)
-        m_low->SetTopLevelContent(content_name);
-    if (m_high)
-        m_high->SetTopLevelContent(content_name);
+    if (m_value_ref1)
+        m_value_ref1->SetTopLevelContent(content_name);
+    if (m_value_ref2)
+        m_value_ref2->SetTopLevelContent(content_name);
+    if (m_value_ref3)
+        m_value_ref3->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////

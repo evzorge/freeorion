@@ -491,42 +491,37 @@ Monstre
 SM_KRILL_1
 Petit Essaim de Krill
 SM_KRILL_1_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. D'ordinaire non agressifs, leur grand nombre les transforme en potentielle menace pour la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_2
 Essaim de Krill Moyen
 SM_KRILL_2_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. D'ordinaire non agressifs, leur grand nombre les transforme en potentielle menace pour la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_3
 Grand Essaim de Krill
 SM_KRILL_3_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. Lorsque ce dernier atteint une population importante, il commence à se montrer agressif envers tout astronef passant à proximité. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_4
 Fléau Krill
 SM_KRILL_4_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Le comportements du krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le krill spatial, d'ordinaire pacifique, devient alors agressif, attaque les astronefs et détruit les structures orbitales. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le krill spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. Le comportements du Krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le Krill Spatial, d'ordinaire pacifique, devient alors agressif, attaquant les astronefs et détruisant les structures orbitales. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_TREE
 Forêt Dyson
 SM_TREE_DESC
-Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales pour coloniser d'autres étoiles.
-
-SM_SEED
-Graine Dyson
-SM_SEED_DESC
-Les Forêts Dyson produisent par intermittence des graines, relâchées sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
+Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales afin de coloniser d'autres étoiles.
 
 SM_FLOATER
 Flotteur
 SM_FLOATER_DESC
-Les Forêts Dyson produisent par intermittence des bulbes remplis de gaz, dérivant sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
+Les Forêts Dyson produisent par intermittence des bulbes remplis de gaz, relâchés sous forme de graines dérivant sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
 
 SM_DRAGON
 Dragon du Vide
 SM_DRAGON_DESC
-Terrifiant monstre géant rôdant dans l'espace à la recherche d'une proie.
+Un terrifiant monstre géant, rôdant dans l'espace à la recherche d'une proie et semant la dévastation dans les zones habitées.
 
 SM_DRONE  # translated
 Drone
@@ -534,14 +529,14 @@ SM_DRONE_DESC
 Outils d'une guerre oubliée depuis longtemps, les Drones remplissent encore aujourd'hui l'objectif qui leur fut initialement fixé : attaquer systématiquement tout astronef à leur portée.
 
 SM_DRONE_FACTORY
-Mère Drone
+Drone Usine
 SM_DRONE_FACTORY_DESC
-Conçue, lors d'une guerre oubliée depuis longtemps, pour défendre ses constructeurs désormais disparus, la Mère Drone, étonnamment, fonctionne encore aujourd'hui, produisant lentement mais de manière continue, de nouveaux Drones.
+Un dispositif de production conçu lors d'une guerre depuis longtemps oubliée afin de défendre ses constructeurs désormais disparus. Contre toute attente, il fonctionne encore aujourd'hui, produisant lentement mais de manière continue, de nouveaux Drones.
 
 SM_GUARD_0
 Vaisseau de Maintenance
 SM_GUARD_0_DESC
-Un astronef sans équipage conçu par les Précurseurs pour entretenir les voies spatiales d'un système. Bien que peu armé, il attaquera tout intrus à proximité.
+Un astronef sans équipage conçu par les Précurseurs pour entretenir les Voies spatiales d'un système. Bien que peu armé, il attaquera tout intrus à proximité.
 
 SM_GUARD_1
 Factionnaire
@@ -561,23 +556,23 @@ Un puissant astronef de défense sans équipage conçu par les Précurseurs pour
 SM_KRAKEN_1
 Kraken Larvaire
 SM_KRAKEN_1_DESC
-'''Dans sa forme larvaire, un Kraken est un animal spatial prudent et inoffensif. Ses proies naturelles sont les essaims de Krill, dont il contribue à contrôler les populations. Mais une larve de Kraken bien nourrie peut se transformer en adulte bien plus massif et dangereux.
+'''Dans sa forme larvaire, un Kraken est un animal spatial prudent et relativement inoffensif. Ses proies naturelles sont les essaims de Krill. Une larve de Kraken bien nourrie peut se transformer en un spécimen adulte bien plus massif et dangereux.
 
-Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Certains Krakens peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs Géantes gazeuses.'''
+Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes gazeuses.'''
 
 SM_KRAKEN_2  # translated
 Kraken
 SM_KRAKEN_2_DESC
-'''Un redoutable monstre de l'espace de taille intermédiaire.
+'''Un redoutable monstre de l'espace de taille intermédiaire. Ses proies naturelles sont les essaims de Krill. Un Kraken bien nourri peut se transformer en un spécimen encore plus massif et dangereux.
 
-Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Certains Krakens peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs Géantes gazeuses.'''
+Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes gazeuses.'''
 
 SM_KRAKEN_3
 Kraken Massif
 SM_KRAKEN_3_DESC
 '''Un redoutable monstre de l'espace de grande taille.
 
-Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Certains Krakens peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs Géantes gazeuses.'''
+Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes gazeuses.'''
 
 SM_BLACK_KRAKEN
 Kraken Noir
@@ -589,51 +584,51 @@ Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroya
 SM_SNOWFLAKE_1
 Flocon de Neige Juvénile
 SM_SNOWFLAKE_1_DESC
-'''Un petit et inoffensif monstre de l'espace, doté une exceptionnelle vision.
+'''Un petit monstre de l'espace inoffensif, doté une exceptionnelle vision.
 
-Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Les Flocons de Neige peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des petites planètes.'''
 
 SM_SNOWFLAKE_2
 Flocon de Neige
 SM_SNOWFLAKE_2_DESC
 '''Un monstre de l'espace de petite masse, doté une exceptionnelle vision.
 
-Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Les Flocons de Neige peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des petites planètes.'''
 
 SM_SNOWFLAKE_3
 Flocon de Neige Massif
 SM_SNOWFLAKE_3_DESC
 '''Un redoutable monstre de l'espace de petite masse.
 
-Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes abritant plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Les Flocons de Neige peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des petites planètes.'''
 
 SM_PSIONIC_SNOWFLAKE
 Flocon de Neige Psionique
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
-Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs avec un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, mais peuvent également attaquer les populations planétaires.'''
+Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs abritant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Chassant et attaquant les vaisseaux spatiaux ennemis, les Flocons de Neige Psioniques forcent les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, et sont également capables d'attaquer directement les populations planétaires.'''
 
 SM_JUGGERNAUT_1
 Mastodonte Juvénile
 SM_JUGGERNAUT_1_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection.
 
-Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Certains Mastodontes peuvent évoluer en des formes plus imposantes dans les systèmes contenant des ceintures d'astéroïdes.'''
+Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des ceintures d'astéroïdes.'''
 
 SM_JUGGERNAUT_2
 Mastodonte
 SM_JUGGERNAUT_2_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection assez résistant.
 
-Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Certains Mastodontes peuvent évoluer en des formes plus imposantes dans les systèmes contenant des ceintures d'astéroïdes.'''
+Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des ceintures d'astéroïdes.'''
 
 SM_JUGGERNAUT_3
 Mastodonte Massif
 SM_JUGGERNAUT_3_DESC
-'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection puissant.
+'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection très résistant.
 
-Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Certains Mastodontes peuvent évoluer en des formes plus imposantes dans les systèmes contenant des ceintures d'astéroïdes.'''
+Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des ceintures d'astéroïdes.'''
 
 SM_BLOATED_JUGGERNAUT
 Mastodonte Déformé
@@ -665,24 +660,24 @@ Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de plan�
 SM_SNAIL
 Astergot
 SM_SNAIL_DESC
-Se nourrit de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre à un banal astéroïde, il est très difficile à repérer.
+Un monstre timide se nourrissant de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre à un banal astéroïde, sa [[encyclopedia STEALTH_TITLE]] augmente grandement une fois dissimulé dans une ceinture d'astéroïdes.
 
 SM_DAMPENING_CLOUD
 Nuage Siphonnant
 SM_DAMPENING_CLOUD_DESC
-Un nuage cosmique de particules à haute énergie qui a développé une forme de sensibilité. Irrésistiblement attiré par les plus grandes réserves d'énergie potentielle dont il se nourrit, une flotte entière d'astronefs peut tomber en panne de [[encyclopedia FUEL_TITLE]] en quelques secondes.
+Un nuage cosmique de particules de haute énergie ayant développé une forme de sensibilité. Repoussé par les signatures énergétiques des colonies habitées, il est cependant irrésistiblement attiré par les réserves d'énergie potentielle, et dérobera le [[encyclopedia FUEL_TITLE]] de tous les astronefs présents dans un système.
 
 SM_ACIREMA_GUARD
 Astrogarde Acirema
 SM_ACIREMA_GUARD_DESC
-Un astronef armé, sans équipage, construit par les Acirema pour défendre un système stellaire.
+Un astronef armé, sans équipage, conçu par les Acirema afin de défendre un système stellaire.
 
 SM_EXP_OUTPOST
 Expérience Zero
 SM_EXP_OUTPOST_DESC
 '''Une ancienne création des Expérimentateurs réduisant les [[encyclopedia SHIELDS_TITLE]] et [[encyclopedia DAMAGE_TITLE]] adverses. 
 
-L'Expérience Zero fut envoyée dans cette galaxie pour protéger les avant-postes des Expérimentateurs grâce à ses capacités uniques. Bien que n'attaquant pas directement ses ennemis, elle essaime des quadrillions d'unités microscopiques colonisant l'espace entier d'un système, et neutralisant les boucliers et armements ennemis, la plupart devenant inopérants, exceptés les plus performants issus des toutes dernières technologies.'''
+L'Expérience Zero fut envoyée dans cette galaxie afin de protéger les avant-postes des Expérimentateurs grâce à ses capacités uniques. Bien que n'attaquant pas directement ses ennemis, elle essaime des quadrillions d'unités microscopiques colonisant l'espace entier d'un système, neutralisant les boucliers et armements ennemis, la plupart devenant inopérants, exceptés les équipements les plus performants issus des toutes dernières technologies.'''
 
 SM_COSMIC_DRAGON
 Dragon Cosmique
@@ -699,7 +694,7 @@ FLD_ION_STORM
 Tempête Ionique
 
 FLD_ION_STORM_DESC
-Vortex magnétique de particules relativistes chargées, pouvant interférer avec les capteurs et endommager astronefs et planètes.
+Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant en son sein.
 
 FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
@@ -718,6 +713,12 @@ FLD_NEBULA_2  # translated
 
 FLD_NEBULA_2_DESC  # translated
 [[FLD_NEBULA_1_DESC]]
+
+FLD_SUBSPACE_RIFT
+Faille Dimensionnelle
+
+FLD_SUBSPACE_RIFT_DESC
+Une violente et dévastatrice déchirure de l'espace-temps se refermant aussi rapidement qu'elle est apparue. Attire et dévore les astronefs, planètes, et systèmes se situant dans son champ gravitationnel. Toutefois, les astronefs disposant d'une vitesse suffisante sont éventuellement capables d'y échapper.
 
 ##############################
 # Predefined Starting Fleets #
@@ -897,9 +898,6 @@ Active/Désactive le clic droit affichant un menu contextuel sur la carte galact
 
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Définit si les panneaux Rapport de Situation, Encyclopédie, etc. sont temporairement cachés lors de l'ouverture de la Fenêtre Production et réaffichés lors de la fermeture de la Fenêtre Production.
-
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Utilisation d'OpenGL 1.5 optimisé pour le rendu de la carte galactique. Peut ne pas fonctionner sur les cartes graphiques les plus anciennes.
 
 OPTIONS_DB_STARLANE_THICKNESS
 Épaisseur en pixels des Voies spatiales.
@@ -1502,6 +1500,9 @@ Options
 INTRO_BTN_ABOUT
 À propos
 
+INTRO_BTN_WEBSITE
+Visiter freeorion.org
+
 INTRO_BTN_CREDITS
 Crédits
 
@@ -1734,6 +1735,12 @@ Abandonner
 
 GAME_MENU_SAVE_FILES
 Fichiers de sauvegarde
+
+BUTTON_DISABLED
+Bouton désactivé
+
+SAVE_DISABLED_BROWSE_TEXT
+Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont vous n'êtes ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
 
 ###########################
 # Save Game Dialog        #
@@ -1977,9 +1984,6 @@ Description du contenu
 
 OPTIONS_SYSTEM_ICONS
 Icônes de système stellaire
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Rendu optimisé des systèmes stellaires
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Taille d'icône de Système
@@ -2541,10 +2545,10 @@ Annuler la destruction
 ## General Tooltips#########
 
 TT_THIS_TURN
-Ce tour
+Tour Actuel
 
 TT_NEXT_TURN
-Tour suivant
+Prévision Tour Suivant
 
 TT_CHANGE
 Évolution
@@ -3884,7 +3888,7 @@ Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[encyclopedia SUPPLY_TITLE]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
+Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[encyclopedia SUPPLY_TITLE]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). La quantité initiale de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'astronef</encyclopedia> dépend de son type de <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia>, et peut être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia>.
 
 SUPPLY_TITLE
 Approvisionnement
@@ -4668,12 +4672,17 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 Terraformation Gaia
 
 EFFECT_GAIA
-Sur %planet%: les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
+Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
 
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
 EFFECT_TERRAFORM_LABEL
 Terraformation
+
+EFFECT_STARLANE_BORE
+Sur %planet% : une nouvelle Voie spatiale a été ouverte vers un système proche.
+EFFECT_TERRAFORM_LABEL
+Générateur de Voies Spatiales
 
 EFFECT_BLACKHOLE
 Effondrement du système %system% afin de créer un Trou Noir.
@@ -4755,6 +4764,16 @@ La flotte %fleet% a atteint le système %system% via Stargate.
 EFFECT_STARGATE_LABEL
 Utilisation Stargate
 
+EFFECT_PLANET_DRIVE
+Dans %system% : la planète %planet% est arrivée à destination grâce à son [[encyclopedia BLD_PLANET_DRIVE]].
+EFFECT_PLANET_DRIVE_LABEL
+Réussite Navigation Planétaire
+
+SITREP_PLANET_DRIVE_FAILURE
+Dans %system% : en raison de l'absence d'un [[encyclopedia SPY_LIGHTHOUSE]] à proximité, le [[encyclopedia BLD_PLANET_DRIVE]] de la planète %planet% a été l'objet d'un disfonctionnement fatal lors de la phase d'arrivée, causant la destruction de la planète entière!
+SITREP_PLANET_DRIVE_FAILURE_LABEL
+Échec Navigation Planétaire
+
 EFFECT_PSY_DOM
 L'astronef '%ship%' de %empire% est passé sous contrôle psychique!
 EFFECT_PSY_DOM_LABEL
@@ -4769,6 +4788,16 @@ EFFECT_MINES_SHIP_DESTROYED
 Dans %system% : des mines ont détruit l'astronef '%ship%' de %empire%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
+
+EFFECT_FLEET_MOVED_TOWARDS
+La flotte %fleet% a été repoussée vers le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+EFFECT_FLEET_MOVED_TOWARDS_LABEL
+Flotte repoussée vers
+
+EFFECT_FLEET_MOVED_TO
+La flotte %fleet% a éte renvoyée dans le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+EFFECT_FLEET_MOVED_TO_LABEL
+Flotte renvoyée dans
 
 HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
@@ -4862,7 +4891,7 @@ Les humains modernes ont formé géographiquement des états-nations, chacun ét
 SP_SCYLIOR  # translated
 Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Possèdent trois tentacules, nautiloïdes aquatiques.
+'''Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -5144,7 +5173,7 @@ Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2
 Structure sociale:
 La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. En compensation, leur société est très peu individualiste, et bien plus centrée sur le groupe.
 
-Planète Natale: 
+Planète Natale:
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
 '''
 
@@ -5328,7 +5357,7 @@ SP_UGMORS_DESC
 '''Les Ugmors sont une forme d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
 
 Structure sociale:
-Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège. 
+Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège.
 
 Les Ugmors ont une forme de gouvernement très centralisé, ressemblant à une ruche, mais sans aucune reine. Cela s'explique par le fait que tous les Ugmors naissent avec les mêmes données mémorielles et partagent les mêmes buts. Lorsqu'un Ugmor découvre quelque chose de nouveau, il retourne aux Trappes de Larar les plus proches afin de partager sa découverte avec le reste de l'espèce.
 
@@ -5382,7 +5411,7 @@ Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent 
 À l'extrémité de chacune de leurs 6 pattes ressemblant à celles de crustacés, se trouve une sorte de sac gonflable qui leur permet de s'accrocher par effet de ventouse à n'importe quelle surface, quelle que soit son inclinaison. Comme les Abaddoni se développent en milieu souterrain, ils ne possèdent pas d'organe de vision, se référant ainsi principalement à leur odorat, et dans une moindre proportion, à l'ouïe et au toucher pour se déplacer.
 
 Structure sociale:
-L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves. 
+L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
 '''
 
 #SP_ACIREMA
@@ -5984,6 +6013,8 @@ METER_MAX_REBEL_TROOPS
 Max Rebelles
 METER_MAX_SUPPLY
 Max Approvisionnement
+METER_MAX_CAPACITY
+Max Capacité
 METER_POPULATION  # translated
 Population
 METER_HEALTH
@@ -6020,8 +6051,6 @@ METER_STEALTH
 Furtivité
 METER_DETECTION
 Rayon de Détection
-METER_DAMAGE
-Dommages
 METER_SPEED
 Vitesse
 METER_CAPACITY
@@ -6296,6 +6325,8 @@ une variable libre
 #[[METER_MAX_DEFENSE]]
 #DESC_VAR_MAXTROOPS
 #[[METER_MAX_TROOPS]]
+#DESC_VAR_MAXCAPACITY
+#[[METER_MAX_CAPACITY]]
 #DESC_VAR_POPULATION
 #[[METER_POPULATION]]
 #DESC_VAR_HEALTH
@@ -6326,8 +6357,6 @@ une variable libre
 #[[METER_STEALTH]]
 #DESC_VAR_DETECTION
 #[[METER_DETECTION]]
-#DESC_VAR_DAMAGE
-#[[METER_DAMAGE]]
 #DESC_VAR_SPEED
 #[[METER_SPEED]]
 #DESC_VAR_CAPACITY
@@ -6383,6 +6412,9 @@ id système précédent
 
 DESC_VAR_NUMSHIPS
 nombre d'astronefs
+
+DESC_VAR_NUMSTARLANES
+nombre de voies spatiales connectées
 
 DESC_VAR_CURRENTTURN
 tour actuel
@@ -6973,10 +7005,10 @@ DESC_MODE_NUMBER_OF_NOT
 ''' qui n'est pas un des objets %1% ayant la valeur la plus répandue de%2% et de%3%'''
 
 DESC_VALUE_TEST
-''' quand la %1% est comprise entre %2% et %3%'''
+''' quand %1%'''
 
 DESC_VALUE_TEST_NOT
-''' quand la %1% n'est pas comprise entre %2% et %3%'''
+''' sauf %1%'''
 
 DESC_CONTAINED_BY
 ''' situé dans un objet%1%'''
@@ -7168,6 +7200,12 @@ LRN_QUANT_NET_DESC
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
 Chaque particule est inextricablement liée au niveau quantique à toute particule avec laquelle elle a déjà interagi. Les vieilles idées mécanistes concernant la cause et la conséquence ne sont plus applicables à ce niveau, les particules pouvant "communiquer" instantanément sur de vastes distances. Lorsque la compréhension approfondie de ce phénomène est acquise, certaines actions de petite échelle entre deux lieux distants peuvent être réalisées instantanément, tandis que les limites obsolètes de la vitesse relativiste ne s'appliquent plus au transfert de l'information.'''
+
+LRN_COLLAPSER
+Inversion de Trou Noir
+
+LRN_COLLAPSER_DESC
+Le point culminant de la distortion spatiale et de la manipulation stellaire permet d'inverser la singularité d'un trou noir, provoquant une perturbation de l'espace-temps à l'échelle interstellaire. Cette perturbation est cependant très instable, et s'effondre rapidement sur elle-même, attirant toutes les flottes, planètes, et systèmes entiers se trouvant à proximité, et détruisant tout ce qui tombe en son centre.
 
 LRN_TRANSCEND
 Singularité Transcendantale
@@ -7574,7 +7612,7 @@ SHP_ASTEROID_REFORM_DESC
 Grâce à des procédés avancés de transformation des corps astéroïdaux, un blindage carbone aussi peu coûteux mais plus résistant qu'un blindage standard en plomb peut être produit.
 
 SHP_MONOMOLEC_LATTICE
-Réseau Monomoléculaire
+Maillage Monomoléculaire
 
 SHP_MONOMOLEC_LATTICE_DESC
 Les Coques Astéroïdales peuvent être renforcées et blindées, mais il demeure que les constituants de base de la majorité des astéroïdes sont généralement moins résistants que la plupart des alliages modernes. Cependant, si la structure moléculaire des roches elles-mêmes est modifiée afin d'obtenir un réseau cristallin, leur résistance pourrait être prodigieusement accrue, permettant l'élaboration de coques astéroïdales à la robustesse auparavant inconcevable.
@@ -7897,9 +7935,7 @@ LRN_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière de manière à ce qu'un astronef l'empruntant à une vitesse suffisamment faible, aboutisse par inavertance à un point antérieur à son lieu de départ, lui faisant ainsi gaspiller un temps et un carburant précieux.
-
-Par ailleurs, le même astronef pourrait être envoyé aléatoirement sur une toute autre Voie spatiale, adjacente au Générateur de Distortion.'''
+En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière. Les astronefs l'empruntant à une faible vitesse seraient alors renvoyés instantanément dans leur système stellaire de départ, tandis que les astronefs les plus rapides seraient considérablement retardés.
 
 LRN_GATEWAY_VOID
 Portail du Vide
@@ -7960,7 +7996,7 @@ SPY_LIGHTHOUSE_DESC
 En ayant recours à un système complexe d'impulsions électromagnétiques et de jets de particules permettant de déceler l'emplacement d'objets dans un système, il devient alors possible de détecter des objets extrêmement furtifs, et ce même à l'aide d'un équipement classique de détection.
 
 DEF_DEFENSE_NET_1
-Réseau Défense Planétaire 1
+Dispositif Défense Planétaire 1
 
 DEF_DEFENSE_NET_1_DESC
 '''Augmente la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes.
@@ -7968,16 +8004,16 @@ DEF_DEFENSE_NET_1_DESC
 Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - mais aussi de nouveaux ennemis. En disposant plusieurs bases de défense armées en orbite autour d'une planète, il est possible de conférer à cette planète une capacité défensive importante sans qu'il soit nécessaire de de recourir à des astronefs.'''
 
 DEF_DEFENSE_NET_2
-Réseau Défense Planétaire 2
+Dispositif Défense Planétaire 2
 
 DEF_DEFENSE_NET_2_DESC
 Augmente la [[encyclopedia DEFENSE_TITLE]] max de 15 sur toutes les planètes, et s'ajoute au bonus du [[tech DEF_DEFENSE_NET_1]].
 
 DEF_DEFENSE_NET_3
-Réseau Défense Planétaire 3
+Dispositif Défense Planétaire 3
 
 DEF_DEFENSE_NET_3_DESC
-Augmente la [[encyclopedia DEFENSE_TITLE]] max de 25 sur toutes les planètes, et s'ajoute aux bonus des précédentes technologies de réseau de défense planétaire.
+Augmente la [[encyclopedia DEFENSE_TITLE]] max de 25 sur toutes les planètes, et s'ajoute aux bonus des précédentes technologies de dispositif de défense planétaire.
 
 DEF_DEFENSE_NET_REGEN_1
 Régénération Défense Planétaire 1
@@ -8054,28 +8090,28 @@ DEF_ROOT_DEFENSE_DESC
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
 DEF_GARRISON_1
-Garnison 1 (Bataillon Planétaire)
+Réseau Bunker Planétaire
 
 DEF_GARRISON_1_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire, indépendamment des caractéristiques de l'espèce.
 
 DEF_GARRISON_2
-Garnison 2 (Régiment Planétaire)
+Milice Planétaire Défensive
 
 DEF_GARRISON_2_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 1 par tour.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 1 par tour.
 
 DEF_GARRISON_3
-Garnison 3 (Brigade Planétaire)
+Réseau Fortication Planétaire
 
 DEF_GARRISON_3_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 16 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 16 sur toutes les planètes de l'empire (indépendamment des caractéristiques de l'espèce), et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
-Garnison 4 (Armée Planétaire)
+Armée Planétaire Défensive
 
 DEF_GARRISON_4_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus de la [[DEF_GARRISON_3]] et [[DEF_GARRISON_2]].
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -8592,7 +8628,7 @@ Archives Culturelles
 BLD_CULTURE_ARCHIVES_DESC
 '''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 5, ainsi que l'indicateur [[encyclopedia INDUSTRY_TITLE]] de la moitié de la Population planétaire.
 
-Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus dans différents domaines de la productivité planétaire.'''
+Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
 BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
@@ -8812,6 +8848,12 @@ Trou Noir Artificiel
 BLD_ART_BLACK_HOLE_DESC
 En augmentant artificiellement la gravité à l'intérieur d'une étoile, mais sans accroître son énergie, il est possible de faire s'effondrer l'étoile sur elle-même et ainsi former un Trou Noir. Cette technique est cependant limitée aux étoiles rouges, car dépasser la pression interne d'une étoile plus chaude nécessiterait un générateur de gravité d'une puissance inimaginable. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
+BLD_BLACK_HOLE_COLLAPSER
+Inverseur de Trou Noir
+
+BLD_BLACK_HOLE_COLLAPSER_DESC
+Génère une [[fieldtype FLD_SUBSPACE_RIFT]] d'un rayon de 100 uu dont l'origine se situe à l'emplacement de la structure.
+
 BLD_HYPER_DAM
 Barrage Hyperspatial
 
@@ -8924,7 +8966,7 @@ BLD_PLANET_DRIVE
 Navigateur Planétaire
 
 BLD_PLANET_DRIVE_DESC
-'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais pas sur une ceinture d'astéroïdes.
+'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais pas dans une ceinture d'astéroïdes.
 
 En raison d'un manque de précision du dispostif de navigation, une seconde structure est requise et doit se trouver à l'arrivée de la Voie spatiale empruntée. Cette structure s'auto-détruira une fois utilisée, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
@@ -9008,6 +9050,18 @@ BLD_GAS_GIANT_GEN_DESC
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
+
+BLD_STARLANE_BORE
+Générateur de Voies Spatiales
+
+BLD_STARLANE_BORE_DESC
+Génère une nouvelle Voie spatiale vers le système le plus proche en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+
+BLD_STARLANE_NEXUS
+Générateur Avancé de Voies Spatiales
+
+BLD_STARLANE_NEXUS_DESC
+Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
@@ -9095,7 +9149,7 @@ BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_GYSACHE]]. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-Colonie Happybirthday 
+Colonie Happybirthday
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HAPPY]]. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
@@ -10172,9 +10226,9 @@ SH_DRONE_BODY_DESC
 Coque de Drone
 
 SH_IMMOBILE_FACTORY
-Coque Fabrique de Drones
+Coque Drone Usine
 SH_IMMOBILE_FACTORY_DESC
-Fabrique de Drones
+Drone Usine
 
 SH_KRAKEN_1_BODY
 Corps Kraken Larvaire
@@ -10332,23 +10386,41 @@ GREAT_RESEARCH
 ULTIMATE_RESEARCH
 +++	Parfait en [[encyclopedia RESEARCH_TITLE]] : 400%
 
-NO_GROUND_TROOPS
-−−−	Pas d'[[encyclopedia TROOP_TITLE]]
+NO_DEFENSE_TROOPS
+−−−	Pas d'[[encyclopedia TROOP_TITLE]] défensive
 
-BAD_GROUND_TROOPS
-−	Mauvais en [[encyclopedia TROOP_TITLE]] : -50%
+BAD_DEFENSE_TROOPS
+−	Mauvais en [[encyclopedia TROOP_TITLE]] défensive : -50%
 
-AVERAGE_GROUND_TROOPS
-'''	Normal en [[encyclopedia TROOP_TITLE]] : 100%'''
+AVERAGE_DEFENSE_TROOPS
+'''	Normal en [[encyclopedia TROOP_TITLE]] défensive : 100%'''
 
-GOOD_GROUND_TROOPS
-+	Bon en [[encyclopedia TROOP_TITLE]] : 150%
+GOOD_DEFENSE_TROOPS
++	Bon en [[encyclopedia TROOP_TITLE]] défensive : 150%
 
-GREAT_GROUND_TROOPS
-++	Excellent en [[encyclopedia TROOP_TITLE]] : 200%
+GREAT_DEFENSE_TROOPS
+++	Excellent en [[encyclopedia TROOP_TITLE]] défensive : 200%
 
-ULTIMATE_GROUND_TROOPS
-+++	Parfait en [[encyclopedia TROOP_TITLE]] : 300%
+ULTIMATE_DEFENSE_TROOPS
++++	Parfait en [[encyclopedia TROOP_TITLE]] défensive : 300%
+
+NO_OFFENSE_TROOPS
+−−−	Pas d'[[encyclopedia TROOP_TITLE]] offensive
+
+BAD_OFFENSE_TROOPS
+−	Mauvais en [[encyclopedia TROOP_TITLE]] offensive : -50%
+
+AVERAGE_OFFENSE_TROOPS
+'''	Normal en [[encyclopedia TROOP_TITLE]] offensive : 100%'''
+
+GOOD_OFFENSE_TROOPS
++	Bon en [[encyclopedia TROOP_TITLE]] offensive : 150%
+
+GREAT_OFFENSE_TROOPS
+++	Excellent en [[encyclopedia TROOP_TITLE]] offensive : 200%
+
+ULTIMATE_OFFENSE_TROOPS
++++	Parfait en [[encyclopedia TROOP_TITLE]] offensive : 300%
 
 BAD_DETECTION
 −	Faible [[encyclopedia DETECTION_RANGE_TITLE]] : −20 malus
@@ -10927,6 +10999,18 @@ Flotte stationnaire précédente
 
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
 Flotte stationnaire suivante
+
+HOTKEY_MAP_PAN_RIGHT
+Défilement carte vers droite
+
+HOTKEY_MAP_PAN_LEFT
+Défilement carte vers gauche
+
+HOTKEY_MAP_PAN_UP
+Défilement carte vers haut
+
+HOTKEY_MAP_PAN_DOWN
+Défilement carte vers bas
 
 HOTKEY_MAP_TOGGLE_SCALE_LINE
 Barre d'échelle [on/off]

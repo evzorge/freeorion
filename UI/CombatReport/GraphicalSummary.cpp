@@ -464,16 +464,21 @@ public:
         right_head.y -= delta_y;
 
         GG::glColor(GG::CLR_WHITE);
-        glDisable(GL_TEXTURE_2D);
         glLineWidth(2);
-        glBegin(GL_LINES);
-        GG::glVertex(begin);
-        GG::glVertex(end);
-        GG::glVertex(end);
-        GG::glVertex(left_head);
-        GG::glVertex(end);
-        GG::glVertex(right_head);
-        glEnd();
+        glDisable(GL_TEXTURE_2D);
+
+        GG::GL2DVertexBuffer verts;
+        verts.reserve(6);
+        verts.store(Value(begin.x),     Value(begin.y));
+        verts.store(Value(end.x),       Value(end.y));
+        verts.store(Value(end.x),       Value(end.y));
+        verts.store(Value(left_head.x), Value(left_head.y));
+        verts.store(Value(end.x),       Value(end.y));
+        verts.store(Value(right_head.x),Value(right_head.y));
+        verts.activate();
+
+        glDrawArrays(GL_LINES, 0, verts.size());
+
         glEnable(GL_TEXTURE_2D);
     }
 
@@ -508,20 +513,18 @@ public:
     }
 
 private:
-    const CombatSummary& m_side_summary;
-    std::vector<ParticipantBar*> m_participant_bars;
-    GG::Label* m_x_axis_label;
-    GG::Label* m_y_axis_label;
-    GG::Label* m_dead_label;
-    const BarSizer& m_sizer;
+    const CombatSummary&            m_side_summary;
+    std::vector<ParticipantBar*>    m_participant_bars;
+    GG::Label*                      m_x_axis_label;
+    GG::Label*                      m_y_axis_label;
+    GG::Label*                      m_dead_label;
+    const BarSizer&                 m_sizer;
 
     float MaxMaxHealth() {
-        float max_health = -1;
+        float max_health = -1.0f;
         for (CombatSummary::UnitSummaries::const_iterator it = m_side_summary.unit_summaries.begin();
-                it != m_side_summary.unit_summaries.end();
-                ++it) {
-            max_health = std::max(max_health, (*it)->max_health);
-        }
+             it != m_side_summary.unit_summaries.end(); ++it)
+        { max_health = std::max(max_health, (*it)->max_health); }
         return max_health;
     }
 };
@@ -532,7 +535,7 @@ class OptionsBar : public GG::Wnd {
 public:
     boost::signals2::signal<void ()> ChangedSignal;
 
-    OptionsBar(boost::scoped_ptr<BarSizer>& sizer):
+    OptionsBar(boost::scoped_ptr<BarSizer>& sizer) :
         GG::Wnd(),
         m_sizer(sizer)
     {
@@ -540,41 +543,28 @@ public:
                                            UserString("COMBAT_SUMMARY_PARTICIPANT_EQUAL"),
                                            UserString("COMBAT_SUMMARY_PARTICIPANT_RELATIVE_TIP"),
                                            UserString("COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP"),
-                                           TOGGLE_BAR_WIDTH_PROPORTIONAL,
-                                           &m_sizer,
-                                           this
-                                          ) );
+                                           TOGGLE_BAR_WIDTH_PROPORTIONAL, &m_sizer, this));
         m_toggles.push_back(new ToggleData(UserString("COMBAT_SUMMARY_HEALTH_SMOOTH"),
                                            UserString("COMBAT_SUMMARY_HEALTH_BAR"),
                                            UserString("COMBAT_SUMMARY_HEALTH_SMOOTH_TIP"),
                                            UserString("COMBAT_SUMMARY_HEALTH_BAR_TIP"),
-                                           TOGGLE_BAR_HEALTH_SMOOTH,
-                                           &m_sizer,
-                                           this
-                                          ) );
+                                           TOGGLE_BAR_HEALTH_SMOOTH, &m_sizer, this));
         m_toggles.push_back(new ToggleData(UserString("COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL"),
                                            UserString("COMBAT_SUMMARY_BAR_HEIGHT_EQUAL"),
                                            UserString("COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL_TIP"),
                                            UserString("COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP"),
-                                           TOGGLE_BAR_HEIGHT_PROPORTIONAL,
-                                           &m_sizer,
-                                           this
-                                          ) );
+                                           TOGGLE_BAR_HEIGHT_PROPORTIONAL, &m_sizer, this));
         m_toggles.push_back(new ToggleData(UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL"),
                                            UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL"),
                                            UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL_TIP"),
                                            UserString("COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP"),
-                                           TOGGLE_GRAPH_HEIGHT_PROPORTIONAL,
-                                           &m_sizer,
-                                           this
-        ) );
+                                           TOGGLE_GRAPH_HEIGHT_PROPORTIONAL, &m_sizer, this));
         DoLayout();
     }
 
     virtual ~OptionsBar() {
-        for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it) {
-            delete *it;
-        }
+        for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it)
+        { delete *it; }
         m_toggles.clear();
     }
 
@@ -582,10 +572,8 @@ public:
         GG::Pt min_size(GG::X0, GG::Y0);
 
         for (std::vector<ToggleData*>::const_iterator it = m_toggles.begin();
-             it != m_toggles.end();
-             ++it) {
-            min_size.x += (*it)->button->Width() + OPTION_BUTTON_PADDING;
-        }
+             it != m_toggles.end(); ++it)
+        { min_size.x += (*it)->button->Width() + OPTION_BUTTON_PADDING; }
 
         min_size.y = OPTION_BAR_HEIGHT;
 
@@ -598,7 +586,8 @@ public:
         GG::Pt pos(GG::X(0), GG::Y(0));
         for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it) {
             ToggleData& toggle = **it;
-            toggle.button->Resize( GG::Pt( cui_font->TextExtent(toggle.button->Text(), GG::FORMAT_LEFT).x + OPTION_BUTTON_PADDING, OPTION_BUTTON_HEIGHT ) );
+            toggle.button->Resize(GG::Pt(cui_font->TextExtent(toggle.button->Text(), GG::FORMAT_LEFT).x + OPTION_BUTTON_PADDING,
+                                         OPTION_BUTTON_HEIGHT));
             toggle.button->MoveTo(pos);
             pos.x += toggle.button->Width() + OPTION_BUTTON_PADDING;
         }
@@ -638,11 +627,15 @@ private:
         ToggleData(const std::string& label_true, const std::string& label_false,
                    const std::string& tip_true, const std::string& tip_false,
                    std::string option_key,
-                   boost::scoped_ptr<BarSizer>* sizer, OptionsBar* parent):
-            label_true(label_true), label_false(label_false),
-            tip_true(tip_true), tip_false(tip_false),
+                   boost::scoped_ptr<BarSizer>* sizer, OptionsBar* parent) :
+            label_true(label_true),
+            label_false(label_false),
+            tip_true(tip_true),
+            tip_false(tip_false),
             option_key(option_key),
-            sizer(sizer), parent(parent), button(0)
+            sizer(sizer),
+            parent(parent),
+            button(0)
         {
             button = new CUIButton("-");
             parent->AttachChild(button);
@@ -666,9 +659,8 @@ GG::Pt GraphicalSummaryWnd::MinUsableSize() const {
     // it contains all of the useful sizing information in the first place,
     // even though it does not derive from GG::Wnd and have a virtual
     // MinUsableSize function.
-    if (m_sizer) {
+    if (m_sizer)
         min_size += m_sizer->GetMinSize();
-    }
 
     if (m_options_bar) {
         GG::Pt options_bar_min_size(m_options_bar->MinUsableSize());
@@ -706,13 +698,9 @@ void GraphicalSummaryWnd::DoLayout() {
     m_options_bar->MoveTo(GG::Pt(GG::X(4), ClientSize().y - m_options_bar->Height()));
 }
 
-void GraphicalSummaryWnd::Render()
-{
-    GG::FlatRectangle(UpperLeft() + GG::Pt(GG::X1, GG::Y0),
-                      LowerRight(),
-                      ClientUI::CtrlColor(),
-                      ClientUI::CtrlBorderColor(),
-                      1);
+void GraphicalSummaryWnd::Render() {
+    GG::FlatRectangle(UpperLeft() + GG::Pt(GG::X1, GG::Y0), LowerRight(), ClientUI::CtrlColor(),
+                      ClientUI::CtrlBorderColor(), 1);
 }
 
 void GraphicalSummaryWnd::HandleButtonChanged() {
@@ -726,16 +714,16 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
         ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
         const CombatLog& log = GetCombatLog(log_id);
-        for ( std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
+        for (std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
             TemporaryPtr<UniverseObject> object = Objects().Object(*it);
             if (object) {
                 int owner_id = object->Owner();
                 int object_id = object->ID();
-                if ( m_summaries.find(owner_id) == m_summaries.end() ) {
-                    m_summaries.insert( std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)) );
+                if (m_summaries.find(owner_id) == m_summaries.end()) {
+                    m_summaries.insert(std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)));
                 }
                 std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
-                if ( map_it != log.participant_states.end() ) {
+                if (map_it != log.participant_states.end()) {
                     m_summaries[owner_id].AddUnit(object_id, map_it->second);
                 } else {
                     ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
@@ -743,7 +731,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             }
         }
 
-        for ( std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it ) {
+        for (std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it) {
             DebugLogger() << "MakeSummaries: empire " << it->first
                           << " total health: " << it->second.total_current_health
                           << " max health: " << it->second.total_max_health
@@ -756,10 +744,8 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
 
 void GraphicalSummaryWnd::DeleteSideBars() {
     for (std::vector<SideBar*>::iterator it = m_side_boxes.begin();
-            it != m_side_boxes.end();
-            ++it) {
-        DeleteChild(*it);
-    }
+         it != m_side_boxes.end(); ++it)
+    { DeleteChild(*it); }
     m_side_boxes.clear();
 }
 
@@ -768,8 +754,8 @@ void GraphicalSummaryWnd::GenerateGraph() {
 
     m_sizer.reset(new BarSizer(m_summaries, ClientSize()));
 
-    for ( std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it ) {
-        if ( it->second.total_max_health > EPSILON ) {
+    for (std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it) {
+        if (it->second.total_max_health > EPSILON) {
             it->second.Sort();
             SideBar* box = new SideBar(it->second, *m_sizer);
             m_side_boxes.push_back(box);

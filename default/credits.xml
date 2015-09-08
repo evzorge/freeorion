@@ -98,6 +98,7 @@
       <PERSON name="Shane McLafferty"         nick="Dart_Tech"        task="Graphics"/>
       <PERSON name="Kevin RJ Berry"           nick="BraveSirKevin"    task="Graphics"/>
       <PERSON name=""                         nick="Ta'Lon"           task="Graphics"/>
+      <PERSON name=""                         nick="Unnamed"          task="Graphics"/>
     </GROUP>
     <GROUP name="AUDIO">
       <PERSON name="Scott R. Looney"          nick="metaphysician"    task="Audio"/>
@@ -121,6 +122,7 @@
       <PERSON name=""                         nick="andrewsa"         task="Russian Translation"/>
       <PERSON name=""                         nick="Nilstilar"        task="French Translation"/>
       <PERSON name="Jean-Charles Schmidt"     nick="Ouaz"             task="French Translation"/>
-      </GROUP>
+      <PERSON name=""                         nick="evzorge"          task="Russian Translation"/>
+    </GROUP>
   </CREDITS>
 </XMLDoc>

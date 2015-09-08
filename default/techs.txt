@@ -320,6 +320,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        Not HasSpecial name = "FORTRESS_SPECIAL"
                     ]
                 ]
                 Or [
@@ -337,6 +338,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        Not HasSpecial name = "FORTRESS_SPECIAL"
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -362,6 +364,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        Not HasSpecial name = "FORTRESS_SPECIAL"
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -619,12 +622,13 @@ Tech
 Tech
     name = "LRN_GRAVITONICS"
     description = "LRN_GRAVITONICS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "LRN_FORCE_FIELD"
+    unlock = Item type = Building name = "BLD_STARLANE_BORE"
     graphic = "icons/tech/gravitonics.png"
 
 Tech
@@ -675,12 +679,13 @@ Tech
 Tech
     name = "LRN_TIME_MECH"
     description = "LRN_TIME_MECH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "LRN_EVERYTHING"
+    unlock = Item type = Building name = "BLD_STARLANE_NEXUS"
     graphic = "icons/tech/temporal_mechanics.png"
 
 Tech
@@ -922,6 +927,17 @@ Tech
     researchturns = 8
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
+
+Tech
+    name = "LRN_COLLAPSER"
+    description = "LRN_COLLAPSER"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1500 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
+    prerequisites = ["LRN_ART_BLACK_HOLE" "LRN_STELLAR_TOMOGRAPHY" "LRN_SPATIAL_DISTORT_GEN"]
+    unlock = Item type = Building name = "BLD_BLACK_HOLE_COLLAPSER"
 
 Tech
     name = "LRN_UNIF_CONC"
@@ -1914,12 +1930,16 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
                 CanColonize
-                ValueTest low = ([[MIN_RECOLONIZING_SIZE]] - LocalCandidate.Population)  testvalue = LocalCandidate.NextTurnPopGrowth
-                ValueTest low = ([[MIN_RECOLONIZING_HAPPINESS]])  testvalue = LocalCandidate.TargetHappiness
-                ValueTest low = ([[MIN_RECOLONIZING_HAPPINESS]] - 1)  testvalue = LocalCandidate.Happiness
+                //(6 > 4) // test
+                //(5 = 5)
+                //(3 != 83)
+                //(6 >= 0)
+                (LocalCandidate.NextTurnPopGrowth       >= [[MIN_RECOLONIZING_SIZE]] - LocalCandidate.Population)
+                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]                       )
+                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1                   )
                 Or [
-                    ValueTest low = 0.1 high = ([[MIN_RECOLONIZING_SIZE]] - 0.001) testvalue = LocalCandidate.Population
-                    ValueTest low = 0.1 high = ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001) testvalue = LocalCandidate.Happiness
+                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)                  )
+                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001)             )
                 ]
             ]
             activation = Source

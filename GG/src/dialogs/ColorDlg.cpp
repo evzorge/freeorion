@@ -31,6 +31,7 @@
 #include <GG/Slider.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 using namespace GG;
@@ -178,28 +179,65 @@ void HueSaturationPicker::Render()
     Pt ul = UpperLeft(), lr = LowerRight();
     Pt size = Size();
     glDisable(GL_TEXTURE_2D);
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    // grid of quads of varying hue and saturation
     glPushMatrix();
     glTranslated(Value(ul.x), Value(ul.y), 0.0);
     glScaled(Value(size.x), Value(size.y), 1.0);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
     for (std::size_t i = 0; i < m_vertices.size(); ++i) {
         glVertexPointer(2, GL_DOUBLE, 0, &m_vertices[i][0]);
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, &m_colors[i][0]);
         glDrawArrays(GL_QUAD_STRIP, 0, m_vertices[i].size());
     }
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
     glPopMatrix();
+
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    // lines to indicate currently selected colour
+    glLineWidth(1.5f);
     Pt color_position(static_cast<X>(ul.x + size.x * m_hue),
                       static_cast<Y>(ul.y + size.y * (1.0 - m_saturation)));
     glColor(CLR_SHADOW);
-    glBegin(GL_LINES);
-    glVertex(color_position.x, ul.y);
-    glVertex(color_position.x, lr.y);
-    glVertex(ul.x, color_position.y);
-    glVertex(lr.x, color_position.y);
-    glEnd();
+
+    const float GAP(3.0f);
+
+    GL2DVertexBuffer lines_verts;
+    lines_verts.reserve(16);
+    lines_verts.store(Value(color_position.x),      Value(ul.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) - GAP);
+
+    lines_verts.store(Value(color_position.x),      Value(lr.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) + GAP);
+
+    lines_verts.store(Value(ul.x),                  Value(color_position.y));
+    lines_verts.store(Value(color_position.x) - GAP,Value(color_position.y));
+
+    lines_verts.store(Value(lr.x),                  Value(color_position.y));
+    lines_verts.store(Value(color_position.x) + GAP,Value(color_position.y));
+
+
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) - GAP);
+    lines_verts.store(Value(color_position.x) - GAP,Value(color_position.y));
+
+    lines_verts.store(Value(color_position.x) - GAP,Value(color_position.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) + GAP);
+
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) + GAP);
+    lines_verts.store(Value(color_position.x) + GAP,Value(color_position.y));
+
+    lines_verts.store(Value(color_position.x) + GAP,Value(color_position.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) - GAP);
+
+    lines_verts.activate();
+
+    glDrawArrays(GL_LINES, 0, lines_verts.size());
+    glLineWidth(1.0f);
+
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -347,8 +385,11 @@ void ColorDlg::ColorDisplay::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight();
     const int SQUARE_SIZE = 7;
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
+
+    GL2DVertexBuffer    vert_buf;
+    GLRGBAColorBuffer   colour_buf;
+
+    // background checkerboard for curent colour display (to see through transparent areas)
     int i = 0, j = 0;
     for (Y y = lr.y; y > ul.y; y -= SQUARE_SIZE, ++j) {
         Y y0 = y - SQUARE_SIZE;
@@ -359,26 +400,52 @@ void ColorDlg::ColorDisplay::Render()
             X x0 = x - SQUARE_SIZE;
             if (x0 < ul.x)
                 x0 = ul.x;
-            glColor(((i + j) % 2) ? CLR_WHITE : CLR_BLACK);
-            glVertex(x, y0);
-            glVertex(x0, y0);
-            glVertex(x0, y);
-            glVertex(x, y);
+            Clr vert_clr = ((i + j) % 2) ? CLR_WHITE : CLR_BLACK;
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x), Value(y0));
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x0), Value(y0));
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x0), Value(y));
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x), Value(y));
         }
     }
-    glEnd();
+
+
     Clr full_alpha_color = Color();
     full_alpha_color.a = 255;
-    glBegin(GL_TRIANGLES);
+
+
+    GLfloat verts[12];
+    // upper left: full alpha colour
+    verts[0] = Value(lr.x); verts[1] = Value(ul.y);
+    verts[2] = Value(ul.x); verts[3] = Value(ul.y);
+    verts[4] = Value(ul.x); verts[5] = Value(lr.y);
+    // bottom right: actual alpha colour
+    verts[6] = Value(ul.x); verts[7] = Value(lr.y);
+    verts[8] = Value(lr.x); verts[9] = Value(lr.y);
+    verts[10]= Value(lr.x); verts[11]= Value(ul.y);
+
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    vert_buf.activate();
+    colour_buf.activate();
+    glDrawArrays(GL_QUADS, 0, vert_buf.size());
+
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    glVertexPointer(2, GL_FLOAT, 0, verts);
     glColor(full_alpha_color);
-    glVertex(lr.x, ul.y);
-    glVertex(ul.x, ul.y);
-    glVertex(ul.x, lr.y);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glColor(Color());
-    glVertex(ul.x, lr.y);
-    glVertex(lr.x, lr.y);
-    glVertex(lr.x, ul.y);
-    glEnd();
+    glDrawArrays(GL_TRIANGLES, 3, 3);
+
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -455,11 +522,31 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
-    const int COLOR_BUTTON_ROWS = 3;
+    const int COLOR_BUTTON_ROWS = 4;
     const int COLOR_BUTTON_COLS = 5;
     if (s_custom_colors.empty()) {
-        for (int i = 0; i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i) {
-            s_custom_colors.push_back(CLR_BLACK);
+        s_custom_colors.push_back(GG::CLR_WHITE);
+        s_custom_colors.push_back(GG::CLR_LIGHT_GRAY);
+        s_custom_colors.push_back(GG::CLR_GRAY);
+        s_custom_colors.push_back(GG::CLR_DARK_GRAY);
+        s_custom_colors.push_back(GG::CLR_BLACK);
+        s_custom_colors.push_back(GG::CLR_PINK);
+        s_custom_colors.push_back(GG::CLR_RED);
+        s_custom_colors.push_back(GG::CLR_DARK_RED);
+        s_custom_colors.push_back(GG::CLR_MAGENTA);
+        s_custom_colors.push_back(GG::CLR_PURPLE);
+        s_custom_colors.push_back(GG::CLR_BLUE);
+        s_custom_colors.push_back(GG::CLR_DARK_BLUE);
+        s_custom_colors.push_back(GG::CLR_TEAL);
+        s_custom_colors.push_back(GG::CLR_CYAN);
+        s_custom_colors.push_back(GG::CLR_GREEN);
+        s_custom_colors.push_back(GG::CLR_DARK_GREEN);
+        s_custom_colors.push_back(GG::CLR_OLIVE);
+        s_custom_colors.push_back(GG::CLR_YELLOW);
+        s_custom_colors.push_back(GG::CLR_ORANGE);
+
+        for (unsigned int i = s_custom_colors.size(); i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i) {
+            s_custom_colors.push_back(CLR_GRAY);
         }
     }
 

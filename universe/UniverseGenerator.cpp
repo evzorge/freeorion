@@ -29,19 +29,18 @@ namespace {
     const double        PI                          = 3.141592653589793;
     const int           MAX_ATTEMPTS_PLACE_SYSTEM   = 100;
 
-    double CalcNewPosNearestNeighbour(double x, double y, const std::vector<SystemPosition>& positions)
-    {
+    double CalcNewPosNearestNeighbour(double x, double y, const std::vector<SystemPosition>& positions) {
         if (positions.size() == 0) // means that we are placing the first star, return a max val to not reject placement
             return 1e6;
 
         unsigned int j;
-        double lowest_dist=  (positions[0].x  - x ) * (positions[0].x  - x ) 
+        double lowest_dist=  (positions[0].x - x ) * (positions[0].x - x)
             + (positions[0].y - y) * (positions[0].y - y),distance=0.0;
 
         for (j = 1; j < positions.size(); ++j) {
-            distance =  (positions[j].x  - x ) * (positions[j].x  - x ) 
+            distance =  (positions[j].x - x ) * (positions[j].x - x)
                 + (positions[j].y - y) * (positions[j].y - y);
-            if(lowest_dist>distance)
+            if (lowest_dist > distance)
                 lowest_dist = distance;
         }
         return lowest_dist;
@@ -60,17 +59,17 @@ void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
     double arm_length     = 1.5 * PI;
     double center         = 0.25;
     double x,y;
-    
+
     int i, attempts;
-    
-    GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
-    SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
-    DoubleDistType    random_angle    = DoubleDist  (0.0,2.0*PI);
-    DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
-    
+
+    GaussianDistType  random_gaussian = GaussianDist(0.0, arm_spread);
+    SmallIntDistType  random_arm      = SmallIntDist(0  , arms);
+    DoubleDistType    random_angle    = DoubleDist  (0.0, 2.0*PI);
+    DoubleDistType    random_radius   = DoubleDist  (0.0, 1.0);
+
     for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
         double radius = random_radius();
-        
+
         if (radius < center) {
             double angle = random_angle();
             x = radius * cos( arm_offset + angle );
@@ -78,20 +77,20 @@ void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
         } else {
             double arm    = static_cast<double>(random_arm()) * arm_angle;
             double angle  = random_gaussian();
-            
+
             x = radius * cos( arm_offset + arm + angle + radius * arm_length );
             y = radius * sin( arm_offset + arm + angle + radius * arm_length );
         }
-        
+
         x = (x + 1) * width / 2.0;
         y = (y + 1) * height / 2.0;
-        
+
         if (x < 0 || width <= x || y < 0 || height <= y)
             continue;
-        
+
         // See if new star is too close to any existing star.
         double lowest_dist = CalcNewPosNearestNeighbour(x, y, positions);
-        
+
         // If so, we try again or give up.
         if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
             if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -102,10 +101,10 @@ void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
             }
             continue;
         }
-        
+
         // Add the new star location.
         positions.push_back(SystemPosition(x, y));
-        
+
         // Note that attempts is reset for every star.
         attempts = 0;
     }
@@ -118,42 +117,42 @@ void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
     const double rotation = RandDouble(0.0, PI),
     rotation_sin = std::sin(rotation),
     rotation_cos = std::cos(rotation);
-    const double gap_constant = .95;
+    const double gap_constant = 0.95;
     const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
-    
+
     // Random number generators.
     DoubleDistType radius_dist = DoubleDist(0.0, gap_constant);
     DoubleDistType random_angle  = DoubleDist(0.0, 2.0 * PI);
-    
+
     // Used to give up when failing to place a star too often.
     int attempts = 0;
-    
+
     // For each attempt to place a star...
     for (unsigned int i = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts){
         double radius = radius_dist();
         // Adjust for bigger density near center and create gap.
         radius = radius * radius * radius + gap_size;
         double angle  = random_angle();
-        
+
         // Rotate for individual angle and apply elliptical shape.
         double x1 = radius * std::cos(angle);
         double y1 = radius * std::sin(angle) * ellipse_width_vs_height;
-        
+
         // Rotate for ellipse angle.
         double x = x1 * rotation_cos - y1 * rotation_sin;
         double y = x1 * rotation_sin + y1 * rotation_cos;
-        
+
         // Move from [-1.0, 1.0] universe coordinates.
         x = (x + 1.0) * width / 2.0;
         y = (y + 1.0) * height / 2.0;
-        
+
         // Discard stars that are outside boundaries (due to possible rounding errors).
         if (x < 0 || x >= width || y < 0 || y >= height)
             continue;
-        
+
         // See if new star is too close to any existing star.
         double lowest_dist = CalcNewPosNearestNeighbour(x, y, positions);
-        
+
         // If so, we try again or give up.
         if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
             if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -164,10 +163,10 @@ void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
             }
             continue;
         }
-        
+
         // Add the new star location.
         positions.push_back(SystemPosition(x, y));
-        
+
         // Note that attempts is reset for every star.
         attempts = 0;
     }
@@ -184,18 +183,18 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
         ErrorLogger() << "ClusterGalaxyCalcPositions requested for 0 clusters. defaulting to 1";
         clusters = 1;
     }
-    
-    
+
+
     // probability of systems which don't belong to a cluster
     const double system_noise = 0.15;
     double ellipse_width_vs_height = RandDouble(0.2,0.5);
     // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
     std::vector<std::pair<std::pair<double, double>, std::pair<double, double> > > clusters_position;
     unsigned int i,j,attempts;
-    
+
     DoubleDistType random_zero_to_one = DoubleDist(0.0, 1.0);
     DoubleDistType random_angle = DoubleDist(0.0, 2.0*PI);
-    
+
     for (i = 0, attempts = 0;
          i < clusters && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM;
          i++, attempts++)
@@ -203,24 +202,25 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
         // prevent cluster position near borders (and on border)
         double x = ((random_zero_to_one()*2.0 - 1.0) / (clusters + 1.0))*clusters;
         double y = ((random_zero_to_one()*2.0 - 1.0) / (clusters + 1.0))*clusters;
-        
-        
+
+
         // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
         for (j = 0; j < clusters_position.size(); j++) {
-            if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
+            if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)
+                    + (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
                 < (2.0/clusters))
-                break;
+            { break; }
         }
         if (j < clusters_position.size()) {
             i--;
             continue;
         }
-        
+
         attempts = 0;
         double rotation = RandDouble(0.0,PI);
         clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
     }
-    
+
     for (i = 0, attempts = 0; i < stars && attempts<100; i++, attempts++) {
         double x,y;
         if (random_zero_to_one() < system_noise) {
@@ -230,26 +230,26 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
             short  cluster = i % clusters_position.size();
             double radius  = random_zero_to_one();
             double angle   = random_angle();
-            double x1,y1;
-            
+            double x1, y1;
+
             x1 = radius * cos(angle);
             y1 = radius * sin(angle)*ellipse_width_vs_height;
-            
+
             x = x1*clusters_position[cluster].second.second + y1*clusters_position[cluster].second.first;
             y =-x1*clusters_position[cluster].second.first  + y1*clusters_position[cluster].second.second;
-            
+
             x = x/sqrt((double)clusters) + clusters_position[cluster].first.first;
             y = y/sqrt((double)clusters) + clusters_position[cluster].first.second;
         }
         x = (x+1)*width /2.0;
         y = (y+1)*height/2.0;
-        
+
         if (x<0 || width<=x || y<0 || height<=y)
             continue;
-        
+
         // See if new star is too close to any existing star.
         double lowest_dist = CalcNewPosNearestNeighbour(x, y, positions);
-        
+
         // If so, we try again or give up.
         if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
             if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -260,10 +260,10 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
             }
             continue;
         }
-        
+
         // Add the new star location.
         positions.push_back(SystemPosition(x, y));
-        
+
         // Note that attempts is reset for every star.
         attempts = 0;
     }
@@ -274,23 +274,23 @@ void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned in
 {
     double RING_WIDTH = width / 4.0;
     double RING_RADIUS = (width - RING_WIDTH) / 2.0;
-    
+
     DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
     GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
-    
+
     for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
         double theta = theta_dist();
         double radius = radius_dist();
-        
+
         double x = width / 2.0 + radius * std::cos(theta);
         double y = height / 2.0 + radius * std::sin(theta);
-        
+
         if (x < 0 || width <= x || y < 0 || height <= y)
             continue;
-        
+
         // See if new star is too close to any existing star.
         double lowest_dist=CalcNewPosNearestNeighbour(x, y,positions);
-        
+
         // If so, we try again or give up.
         if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
             if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -301,10 +301,10 @@ void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned in
             }
             continue;
         }
-        
+
         // Add the new star location.
         positions.push_back(SystemPosition(x, y));
-        
+
         // Note that attempts is reset for every star.
         attempts = 0;
     }
@@ -702,7 +702,8 @@ namespace {
 //#ifdef OUTPUT_PLANS_LIST
         DebugLogger() << "Starting Monster Fleet Plans:";
         for (iterator it = begin(); it != end(); ++it)
-            DebugLogger() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate() << " spawn limit: " << (*it)->SpawnLimit();
+            DebugLogger() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate()
+                          << " spawn limit: " << (*it)->SpawnLimit();
 //#endif
     }
 
@@ -1180,7 +1181,7 @@ void GenerateStarlanes(GalaxySetupOption freq) {
         for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
             sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID
     }
-    
+
     DebugLogger() << "Initializing System Graph";
     GetUniverse().InitializeSystemGraph();
 }
@@ -1234,15 +1235,14 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
         return false;
     }
 
-    DebugLogger() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->ID()
-                           << " (planet " <<  home_planet->ID()
-                           << ") to be home system for empire " << empire->EmpireID();
+    DebugLogger() << "UniverseGenerator::SetEmpireHomeworld: setting system " << home_system->ID()
+                  << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();
 
     // get species, check if it exists
     Species* species = GetSpeciesManager().GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
-                               << species_name << "\" to set with homeworld id " << home_planet->ID();
+                      << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
 
@@ -1289,6 +1289,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         int         player_id =     setup_data_it->first;
         if (player_id == Networking::INVALID_PLAYER_ID)
             ErrorLogger() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
+
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
         int         empire_id =     player_id;
@@ -1318,7 +1319,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
-                               << " for player: " << player_name << " (with player id: " << player_id << ")";
+                      << " for player: " << player_name << " (with player id: " << player_id << ")";
 
         // create new Empire object through empire manager
         Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour);
