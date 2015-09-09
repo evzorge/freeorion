@@ -27,9 +27,6 @@ LOAD
 
 SAVE
 Сохранить
- 
-DELETE
-Удалить
 
 DELETE
 Удалить
@@ -164,7 +161,7 @@ DUMP
 Дамп данных для отладки
 
 UNOWNED
-Бесхозный 
+'''Бесхозный '''
 
 ###########################
 # Predefined Ship Designs #
@@ -252,11 +249,6 @@ SM_TREE
 Космический лес
 SM_TREE_DESC
 Космический лес состоит из нескольких "деревьев" с волокнистыми кронами, которые, разрастаясь, образуют кокон вокруг звезды системы. Космический лес является препятствием для навигации и разрастаясь может перекинуться на соседние звезды.
-
-SM_SEED
-Семечко космического леса
-SM_SEED_DESC
-Космический лес иногда разбрасывает семена к соседним звездным системам.
 
 SM_FLOATER
 Скиталец
@@ -418,7 +410,7 @@ FLD_NEBULA_1
 Туманность
 
 FLD_NEBULA_1_DESC
-Облако водорода, которое может сжаться, сформировав новую звезду. 
+'''Облако водорода, которое может сжаться, сформировав новую звезду. '''
 
 ##############################
 # Predefined Starting Fleets #
@@ -563,9 +555,6 @@ OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Показывать контекстное меню по щелчку право кнопки мыши на звездной карте.
-
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Использовать оптимизацию OpenGL 1.5 рендеринга для звездных систем на галактической карте.  Может вызвать аварийное закрытие приложения на старых компьютерах.
 
 OPTIONS_DB_STARLANE_THICKNESS
 Установить размер звездных путей в пикселях.
@@ -1375,9 +1364,6 @@ OPTIONS_DESCRIPTIONS
 
 OPTIONS_SYSTEM_ICONS
 Значки солнечных систем
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Оптимизированная прорисовка
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Размер значков
@@ -2562,8 +2548,6 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 # Battle Speed: %12%
 ##
 
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
-
 ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
 '''%1%
 
@@ -2796,9 +2780,9 @@ GROWTH_FOCUS_TEXT
 
 MINING_FOCUS_TITLE
 Цель: добыча
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 MINING_FOCUS_TEXT
 Цель:добыча сейчас ОТКЛ.
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Цель: торговля
@@ -2864,9 +2848,8 @@ ARMOR_TEXT
 SLOT_TITLE
 Слот
 SLOT_TEXT
-Слот - отсек крепления [[encyclopedia ENC_SHIP_HULL]], который может быть занят определенными [[encyclopedia ENC_SHIP_PART]] (оружие, щиты, броня, двигатель и другие различные устройства).
-Существует 2 типа слотов: внешний, внутренний и слот под ядро. Описание любой [[encyclopedia ENC_SHIP_PART]] содержит информацию, с каким слотом она совместима; некоторые совместимы с несколькими типами слотов.  Эта информация также отображается графически в окне конструктора, где каждый тип слота в корпусе отрисован по-своему. [[encyclopedia ENC_SHIP_PART]] в Окне Проектов также отображены в виде формы, указывающей, с какими слотами они совместимы. В большинстве случаев, эскиз  части четко соответствует определенной форме слота. Часть, которая совместима с несколькими типами слотов, имеет похожий на все эти слота эскиз.  Большие (и дорогие) корпуса часто имеют больше слотов для установки частей.
-
+'''Слот - отсек крепления [[encyclopedia ENC_SHIP_HULL]], который может быть занят определенными [[encyclopedia ENC_SHIP_PART]] (оружие, щиты, броня, двигатель и другие различные устройства).
+Существует 2 типа слотов: внешний, внутренний и слот под ядро. Описание любой [[encyclopedia ENC_SHIP_PART]] содержит информацию, с каким слотом она совместима; некоторые совместимы с несколькими типами слотов.  Эта информация также отображается графически в окне конструктора, где каждый тип слота в корпусе отрисован по-своему. [[encyclopedia ENC_SHIP_PART]] в Окне Проектов также отображены в виде формы, указывающей, с какими слотами они совместимы. В большинстве случаев, эскиз  части четко соответствует определенной форме слота. Часть, которая совместима с несколькими типами слотов, имеет похожий на все эти слота эскиз.  Большие (и дорогие) корпуса часто имеют больше слотов для установки частей.'''
 
 STEALTH_TITLE
 Скрытность
@@ -3149,9 +3132,6 @@ SITREP_WELCOME_LABEL
 SITREP_GAS_GIANT_GENERATION_REMINDER
 %planet% - идеальное месторасположение для %buildingtype%, но никто ее там не строил
 
-SITREP_WELCOME_LABEL
-Добро пожаловать
-
 SITREP_SHIP_BUILT
 Новый корабль %ship% был построен в систем %system%.
 SITREP_SHIP_BUILT_LABEL
@@ -3298,16 +3278,6 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 Флот %fleet% прибыл в систему %system% и ожидает дальнейших распоряжений.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Флот Прибыл
- 
-SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-Корабль Монстров %shipdesign% прибыл в систему %system%.
-SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
-Монстры прибыли
-
-SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-Корабль Монстров %shipdesign% прибыл в систему %system%.
-SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL
-Монстры прибыли
 
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 %fleet% прибыл в %system%.
@@ -3340,11 +3310,6 @@ SITREP_VICTORY_CAPTURE
 
 SITREP_VICTORY_BIO
 Тайна устрашающей угрозы, нависшей над галактикой, была раскрыта и преступники, могущественные Экспериментаторы, встретили свою судьбу в сражении с вашим непобедимым флотом.
- 
-SITREP_POP_THRESHOLD
-Колония на планете %planet% достигла достаточных размеров и [[encyclopedia HAPPINESS_TITLE]] направляет своих колонистов на другие планеты.
-SITREP_POP_THRESHOLD_LABEL
-Порог Колонизации
 
 SITREP_POP_THRESHOLD
 Колония на планете %planet% достигла достаточных размеров и [[encyclopedia HAPPINESS_TITLE]] направляет своих колонистов на другие планеты.
@@ -3500,7 +3465,7 @@ SP_SCYLIOR_GAMEPLAY_DESC
 Предпочитают водную среду.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
- 
+
 SP_SCYLIOR_DESC
 '''Описание:
 Скилиоры - чешуйчатые головоногие, похожие на Nautilus. Они обладают передовым зрением, обеспеченным четырьмя глазами, и имеют четыре антенны, содержащие миллионы neuromasts, позволяя Скилиорам обнаружить изменения в гидравлическом давлении и электрических волнах. У Скилиора есть три больших, сильных питательных щупальца, которые они используют, чтобы схватить и держать инструменты или еду, в то время как она разбивается клювом и усваивается.
@@ -4297,8 +4262,6 @@ METER_STEALTH
 Скрытность
 METER_DETECTION
 Обнаружение
-METER_DAMAGE
-Урон
 METER_SPEED
 Скорость
 METER_CAPACITY
@@ -6740,7 +6703,7 @@ SH_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая.  
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
 
 SH_SMALL_ASTEROID
 Маленький Корпус Астероида
@@ -6760,7 +6723,7 @@ SH_HEAVY_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
 
 SH_CAMOUFLAGE_ASTEROID
 Камуфляжный Корпус Астероида
@@ -6770,7 +6733,7 @@ SH_CAMOUFLAGE_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] небольшая, и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
 
 SH_SMALL_CAMOUFLAGE_ASTEROID
 Маленький Камуфляжный Корпус Астероида
@@ -6780,7 +6743,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] высокая, и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''	
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
 
 SH_AGREGATE_ASTEROID
 Совокупный Корпус Астероида
@@ -7006,17 +6969,16 @@ SH_BASIC_SMALL_DESC
 
 SH_BASIC_MEDIUM
 Базовый Средний Корпус
-
 SH_BASIC_MEDIUM_DESC
 '''Базовый межзвездный корпус среднего размера, с 2 внешними и 1 внутренним слотом.
 
 [[encyclopedia STEALTH_TITLE]] низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] на создающей его планете.'''	
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] на создающей его планете.''''
 
 SH_STANDARD
 Базовый Большой Корпус
-	
+
 SH_STANDARD_DESC
 '''Большой базовый межзвездный корпус, с 3 внешними и 1 внутренним слотом.
 
@@ -7166,7 +7128,7 @@ SH_COSMIC_DRAGON_BODY_DESC
 Устрашающий космический дракон размером с планету.
 
 SH_DAMPENING_CLOUD_BODY
-Угасающее облачное тело	
+'''Угасающее облачное тело	'''
 SH_DAMPENING_CLOUD_BODY_DESC
 Космическое облако высокоэнергетических частиц.
 
@@ -7221,24 +7183,6 @@ GREAT_RESEARCH
 
 ULTIMATE_RESEARCH
 +++	Беспрецедентная [[encyclopedia RESEARCH_TITLE]]: 400%
-
-NO_GROUND_TROOPS
----	Нет наземных [[encyclopedia TROOP_TITLE]]
-
-BAD_GROUND_TROOPS
--	Плохие наземные [[encyclopedia TROOP_TITLE]]: -50%.
-
-AVERAGE_GROUND_TROOPS
-'''	Средние наземные [[encyclopedia TROOP_TITLE]]:-100%.'''
-
-GOOD_GROUND_TROOPS
-+	Хорошие наземные [[encyclopedia TROOP_TITLE]]: 150%.
-
-GREAT_GROUND_TROOPS
-++	Превосходные наземные [[encyclopedia TROOP_TITLE]]: 200%.
-
-ULTIMATE_GROUND_TROOPS
-+++	Беспрецедентные наземные [[encyclopedia TROOP_TITLE]]: 300%.
 
 BAD_DETECTION
 -	Плохое [[encyclopedia DETECTION_RANGE_TITLE]]: -20 малус.
@@ -7510,8 +7454,8 @@ AI_CAPITOL_NAMES_TURTLE
 ### End of Capital Names Lists
 
 ### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
-### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 
 ### End of AI Shipdesign Name Lists
 
