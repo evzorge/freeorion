@@ -6703,7 +6703,7 @@ SH_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая.  
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''
 
 SH_SMALL_ASTEROID
 Маленький Корпус Астероида
@@ -6723,7 +6723,7 @@ SH_HEAVY_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] низкая, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''
 
 SH_CAMOUFLAGE_ASTEROID
 Камуфляжный Корпус Астероида
@@ -6733,7 +6733,7 @@ SH_CAMOUFLAGE_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] небольшая, и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''
 
 SH_SMALL_CAMOUFLAGE_ASTEROID
 Маленький Камуфляжный Корпус Астероида
@@ -6743,7 +6743,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 
 [[encyclopedia STEALTH_TITLE]] высокая, и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов, и в бою, когда он скрывается в поясе астероидов. [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].''''
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] и в поясе астероидов в создающей его системе с построенным на поясе [[buildingtype BLD_SHIPYARD_AST]].'''
 
 SH_AGREGATE_ASTEROID
 Совокупный Корпус Астероида
@@ -6974,7 +6974,7 @@ SH_BASIC_MEDIUM_DESC
 
 [[encyclopedia STEALTH_TITLE]] низкая, [[encyclopedia DETECTION_RANGE_TITLE]] средний и [[encyclopedia STARLANE_SPEED_TITLE]] низкая. 
 
-Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] на создающей его планете.''''
+Нуждается в построенном [[buildingtype BLD_SHIPYARD_BASE]] на создающей его планете.'''
 
 SH_STANDARD
 Базовый Большой Корпус
