@@ -54,7 +54,10 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
 }
 
 TextControl::~TextControl()
-{ delete m_render_cache; }
+{
+    delete m_render_cache;
+    m_render_cache = 0;
+}
 
 Pt TextControl::MinUsableSize() const
 { return m_text_lr - m_text_ul; }
@@ -69,6 +72,8 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     CPSize low = std::max(CP0, std::min(from, to));
     CPSize high = std::min(Length(), std::max(from, to));
 
+    //std::cout << "low: " << low << "  high: " << high << std::endl << std::flush;
+
     std::pair<std::size_t, CPSize> low_pos = LinePositionOf(low, GetLineData());
     std::pair<std::size_t, CPSize> high_pos = LinePositionOf(high, GetLineData());
 
@@ -78,7 +83,15 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     std::string::const_iterator low_it = m_text.begin() + Value(low_string_idx);
     std::string::const_iterator high_it = m_text.begin() + Value(high_string_idx);
 
-    return std::string(low_it, high_it);
+    try {
+        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl << std::flush;
+        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl << std::flush;
+        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl << std::flush;
+
+        return std::string(low_it, high_it);
+    } catch (...) {
+        return "";
+    }
 }
 
 Flags<TextFormat> TextControl::GetTextFormat() const
@@ -135,8 +148,9 @@ void TextControl::RefreshCache() {
         m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, &m_line_data);
 }
 
-void TextControl::PurgeCache() {
-    if(m_render_cache)
+void TextControl::PurgeCache()
+{
+    if (m_render_cache)
         delete m_render_cache;
 
     m_render_cache = 0;
@@ -190,7 +204,7 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
         // right, or multi-line, or vertical alignments, need to redo for any
         // resize
         redo_determine_lines = true;
-    } else if (resized && !(m_format & FORMAT_NOWRAP) && (m_format | FORMAT_WORDBREAK || m_format | FORMAT_LINEWRAP)) {
+    } else if (resized && !(m_format & FORMAT_NOWRAP) && (m_format & FORMAT_WORDBREAK || m_format & FORMAT_LINEWRAP)) {
         // if breaking text across lines, need to redo layout when the available
         // width is less than that needed to fit the text on one line
         X text_width = m_text_lr.x - m_text_ul.x;
@@ -223,7 +237,8 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
         SetText(m_text);
 }
 
-void TextControl::SetTextColor(Clr color){
+void TextControl::SetTextColor(Clr color)
+{
     m_text_color = color;
     PurgeCache();
 }

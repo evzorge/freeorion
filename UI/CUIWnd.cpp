@@ -55,13 +55,8 @@ void CUI_MinRestoreButton::Render() {
     if (m_mode == MIN_BUTTON) {
         // draw a dash to signify the minimize command
         GG::Y middle_y = (lr.y + ul.y) / 2;
-        glDisable(GL_TEXTURE_2D);
         glColor(color_to_use);
-        glBegin(GL_LINES);
-        glVertex(ul.x, middle_y);
-        glVertex(lr.x, middle_y);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
+        GG::Line(ul.x, middle_y, lr.x, middle_y);
     } else {
         // draw a square to signify the restore command
         GG::FlatRectangle(ul, lr, GG::CLR_ZERO, ClientUI::WndInnerBorderColor(), 1);
@@ -145,7 +140,7 @@ const int CUIWnd::TITLE_OFFSET = 3;
 const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
 const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
 
-CUIWnd::CUIWnd(const std::string& t,
+CUIWnd::CUIWnd(const std::string& wnd_name,
                GG::X x, GG::Y y,
                GG::X w, GG::Y h,
                GG::Flags<GG::WndFlag> flags,
@@ -168,19 +163,15 @@ CUIWnd::CUIWnd(const std::string& t,
     m_vertex_buffer(),
     m_buffer_indices()
 {
-    Init(t);
+    Init(wnd_name);
     if (!m_config_name.empty()) {
         // Default position was already supplied
-        GetOptionsDB().Set<bool>("UI.windows."+m_config_name+".initialized", true);
+        GetOptionsDB().Set<bool>("UI.windows." + m_config_name + ".initialized", true);
     }
     ValidatePosition();
-    InitBuffers();
 }
 
-CUIWnd::CUIWnd(const std::string& t,
-               GG::Flags<GG::WndFlag> flags,
-               const std::string& config_name,
-               bool visible) :
+CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const std::string& config_name, bool visible) :
     GG::Wnd(INVALID_X, INVALID_Y, GG::X1, GG::Y1, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -197,10 +188,10 @@ CUIWnd::CUIWnd(const std::string& t,
     m_pin_button(0),
     m_vertex_buffer(),
     m_buffer_indices()
-{ Init(t); }
+{ Init(wnd_name); }
 
-void CUIWnd::Init(const std::string& t) {
-    SetName(t);
+void CUIWnd::Init(const std::string& wnd_name) {
+    SetName(wnd_name);
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
 
@@ -294,12 +285,12 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         PositionButtons();
 
     SaveOptions();
-    InitBuffers();  // after every reposition or resize, reinitialize rendering buffers accordingly
+    m_vertex_buffer.clear();    // force buffer re-init on next Render call
 }
 
 void CUIWnd::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
+    if (m_vertex_buffer.empty())
+        InitBuffers();
 
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
@@ -338,6 +329,8 @@ void CUIWnd::Render() {
     glEnable(GL_TEXTURE_2D);
     glPopClientAttrib();
 
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
     GG::BeginScissorClipping(ul, lr);
     glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
@@ -513,7 +506,7 @@ void CUIWnd::PinClicked() {
     m_pinned = !m_pinned;
     m_resizable = !m_pinned;
     m_pin_button->Toggle(m_pinned); // Change the icon on the pin button
-    InitBuffers();
+    m_vertex_buffer.clear();        // force buffer re-init on next Render call
     SaveOptions();
 }
 
@@ -845,6 +838,11 @@ void CUIWnd::InvalidateUnusedOptions() {
     }
 
     db.Commit();
+}
+
+void CUIWnd::SetParent(GG::Wnd* wnd) {
+    GG::Wnd::SetParent(wnd);
+    m_vertex_buffer.clear();    // force buffer re-init on next Render call, so background is properly positioned for new parent-relative position
 }
 
 ///////////////////////////////////////

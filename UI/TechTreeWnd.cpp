@@ -375,37 +375,23 @@ void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void TechTreeWnd::TechTreeControls::Render() {
     CUIWnd::Render();
 
-    //GG::Pt ul = UpperLeft();
-    //GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft();
     GG::Pt cl_lr = ClientLowerRight();
 
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
+    glColor(ClientUI::WndOuterBorderColor());
 
-    glBegin(GL_LINES);
-        glColor(ClientUI::WndOuterBorderColor());
+    GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
+    GG::Line(cl_ul.x, category_bottom, cl_lr.x - 1, category_bottom);
 
-        GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-
-        glVertex(cl_ul.x, category_bottom);
-        glVertex(cl_lr.x - 1, category_bottom);
-
-        if (m_buttons_per_row >= 6) {
-            // all six status and type buttons are on one row, and need a vertical separator between them
-            GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-            glVertex(middle, category_bottom);
-            glVertex(middle, cl_lr.y - 1);
-
-        } else {
-            // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
-            GG::Y status_bottom = category_bottom + m_status_button_rows*m_row_offset;
-            glVertex(cl_ul.x, status_bottom);
-            glVertex(cl_lr.x - 1, status_bottom);
-        }
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    if (m_buttons_per_row >= 6) {
+        // all six status and type buttons are on one row, and need a vertical separator between them
+        GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
+        GG::Line(middle, category_bottom, middle, cl_lr.y - 1);
+    } else {
+        // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
+        GG::Y status_bottom = category_bottom + m_status_button_rows*m_row_offset;
+        GG::Line(cl_ul.x, status_bottom, cl_lr.x - 1, status_bottom);
+    }
 }
 
 void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
@@ -665,6 +651,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     GG::Pt ul = GG::Pt(text_left, text_top);
     GG::Pt lr = ul + GG::Pt(text_width + PAD, text_height);
+    GG::Clr border_colour = GG::CLR_WHITE;
 
     m_layout_panel->DoZoom(UpperLeft());
 
@@ -672,33 +659,93 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(2.0);
 
-    // black out dependency lines under panel
-    glColor(GG::CLR_BLACK);
-    PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
-
-    // background of panel
-    glColor(m_colour);
-    PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
-
-    // tech name
+    // size of tech name text
     int font_pts = static_cast<int>(FontSize() * m_layout_panel->Scale() + 0.5);
 
+    // cancel out dependency line under tech icon
+    glColor(ClientUI::CtrlColor());
+    PartlyRoundedRect(m_icon->UpperLeft(), m_icon->LowerRight(), PAD, true, true, true, true, true);
 
-    // panel border
-    GG::Clr border_colour;
-    if (m_browse_highlight) {
-        border_colour = GG::CLR_WHITE;
-        glColor(border_colour);
-        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
-    } else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
-        border_colour = m_colour;
-        border_colour.a = 255;
-        glColor(border_colour);
-        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
-    } else {
-        border_colour = m_colour;
-        border_colour.a = 127;
-        // don't render border
+    // Render text part of tech panel, but only if zoomed in so the text is legible
+    if (font_pts > 6) {
+
+        // black out dependency lines under panel
+        glColor(GG::CLR_BLACK);
+        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
+
+        // background of panel
+        glColor(m_colour);
+        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
+
+        // panel border
+        if (m_browse_highlight) {
+            glColor(border_colour);
+            PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
+        }
+        else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
+            border_colour = m_colour;
+            border_colour.a = 255;
+            glColor(border_colour);
+            PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
+        }
+        else {
+            border_colour = m_colour;
+            border_colour.a = 127;
+            // don't render border
+        }
+
+        // render tech panel text; for small font sizes, remove shadow
+        glEnable(GL_TEXTURE_2D);
+
+        if (font_pts < 10)
+            m_name_label->SetText(m_name_text);
+        else
+            m_name_label->SetText("<s>" + m_name_text + "</s>");
+
+        GG::Pt text_ul(text_left + 4, text_top);
+        GG::Pt text_size(text_width + PAD, text_height);
+        m_name_label->SizeMove(text_ul, text_ul + text_size);
+        /// Need to render children too
+        GG::GUI::GetGUI()->RenderWindow(m_name_label);
+
+        // box around whole panel to indicate enqueue
+        if (m_enqueued) {
+            glColor(GG::CLR_WHITE);
+            GG::Pt gap = GG::Pt(GG::X(2 * PAD), GG::Y(2 * PAD));
+            GG::Pt enc_ul(-gap);
+            GG::Pt enc_lr(lr + gap);
+            PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
+        }
+
+        // ETA background and text
+        if (m_eta != -1 && font_pts > 10) {
+            GG::Pt panel_size = lr - ul;
+            GG::Pt eta_ul = ul + GG::Pt(panel_size.x * 3 / 4, panel_size.y * 3 / 4) - GG::Pt(GG::X(2), GG::Y(2));
+            GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x / 2, panel_size.y / 2) + GG::Pt(GG::X(2), GG::Y(2));
+
+            glColor(GG::CLR_BLACK);
+            CircleArc(eta_ul, eta_lr, 0, 2 * PI, true);
+            glColor(border_colour);
+            CircleArc(eta_ul, eta_lr, 0, 2 * PI, true);
+
+            glEnable(GL_TEXTURE_2D);
+
+            m_eta_label->SizeMove(eta_ul, eta_lr);
+
+            /// Need to render text too
+            GG::GUI::GetGUI()->RenderWindow(m_eta_label);
+            glDisable(GL_TEXTURE_2D);
+        }
+    }
+    else {
+        // box only around icon to indicate enqueue (when zoomed far out)
+        if (m_enqueued) {
+            glColor(GG::CLR_WHITE);
+            GG::Pt gap = GG::Pt(GG::X(2 * PAD), GG::Y(2 * PAD));
+            GG::Pt enc_ul(-gap);
+            GG::Pt enc_lr(m_icon->LowerRight() + gap);
+            PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
+        }
     }
 
     // selection indicator
@@ -706,49 +753,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         // nothing!
     }
 
-    // ETA background and text
-    if (m_eta != -1  &&  font_pts > 10) {
-        GG::Pt panel_size = lr - ul;
-        GG::Pt eta_ul = ul + GG::Pt(panel_size.x*3/4, panel_size.y*3/4) - GG::Pt(GG::X(2), GG::Y(2));
-        GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x/2, panel_size.y/2) + GG::Pt(GG::X(2), GG::Y(2));
-
-        glColor(GG::CLR_BLACK);
-        CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
-        glColor(border_colour);
-        CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
-
-        glEnable(GL_TEXTURE_2D);
-
-        m_eta_label->SizeMove(eta_ul, eta_lr);
-
-        /// Need to render text too
-        GG::GUI::GetGUI()->RenderWindow(m_eta_label);
-
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    // box around whole panel to indicate enqueue
-    if (m_enqueued) {
-        glColor(GG::CLR_WHITE);
-        GG::Pt gap = GG::Pt(GG::X(2*PAD), GG::Y(2*PAD));
-        GG::Pt enc_ul(-gap);
-        GG::Pt enc_lr(lr + gap);
-        PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
-    }
-
-    glLineWidth(1.0);
+    // render tech icon
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
-
     m_icon->Render();
-
-    if (font_pts > 10) {
-        GG::Pt text_ul(text_left + 4, text_top);
-        GG::Pt text_size(text_width + PAD, text_height);
-        m_name_label->SizeMove(text_ul, text_ul + text_size);
-        /// Need to render children too
-        GG::GUI::GetGUI()->RenderWindow(m_name_label);
-    }
 
     m_layout_panel->UndoZoom();
 }
@@ -923,30 +931,15 @@ std::set<TechStatus> TechTreeWnd::LayoutPanel::GetTechStatusesShown() const
 { return m_tech_statuses_shown; }
 
 void TechTreeWnd::LayoutPanel::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::CtrlColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), GG::CLR_ZERO);
 
     BeginClipping();
-    glEnable(GL_LINE_SMOOTH);
 
     // render dependency arcs
     DoZoom(ClientUpperLeft());
 
     m_dependency_arcs.Render(m_scale);
 
-    glEnable(GL_TEXTURE_2D);
     EndClipping();
 
     UndoZoom();
@@ -1346,9 +1339,9 @@ private:
     };
 
     void    Populate();
-    void    TechDoubleClicked(GG::ListBox::iterator it);
-    void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
@@ -1574,13 +1567,13 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
     }
 }
 
-void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     if (TechRow* tech_row = dynamic_cast<TechRow*>(*it))
         TechLeftClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
 }
 
-void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if ((*it)->Disabled())
         return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
@@ -1608,7 +1601,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: {
-            TechDoubleClicked(it);
+            TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>());
             break;
         }
         default:
@@ -1617,7 +1610,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     }
 }
 
-void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it) {
+void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     TechRow* tech_row = dynamic_cast<TechRow*>(*it);
     if (tech_row)
@@ -1630,8 +1623,8 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it) {
 //////////////////////////////////////////////////
 TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_enc_detail_panel(0),
     m_tech_tree_controls(0),
+    m_enc_detail_panel(0),
     m_layout_panel(0),
     m_tech_list(0)
 {

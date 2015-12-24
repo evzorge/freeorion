@@ -48,61 +48,6 @@ namespace {
             break;
         }
     }
-
-    void CircleArcVertices(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape)
-    {
-        int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
-        double center_x = Value(ul.x + wd / 2.0);
-        double center_y = Value(ul.y + ht / 2.0);
-        double r = std::min(wd / 2.0, ht / 2.0);
-        const double PI = 3.141594;
-
-        // correct theta* values to range [0, 2pi)
-        if (theta1 < 0)
-            theta1 += (int(-theta1 / (2 * PI)) + 1) * 2 * PI;
-        else if (theta1 >= 2 * PI)
-            theta1 -= int(theta1 / (2 * PI)) * 2 * PI;
-        if (theta2 < 0)
-            theta2 += (int(-theta2 / (2 * PI)) + 1) * 2 * PI;
-        else if (theta2 >= 2 * PI)
-            theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
-
-        const int      SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
-        const double   HORZ_THETA = (2 * PI) / SLICES;
-
-        static std::map<int, std::vector<double> > unit_circle_coords;
-        std::vector<double>& unit_vertices = unit_circle_coords[SLICES];
-        bool calc_vertices = unit_vertices.size() == 0;
-        if (calc_vertices) {
-            unit_vertices.resize(2 * (SLICES + 1), 0.0);
-            double theta = 0.0f;
-            for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
-                unit_vertices[j*2] = std::cos(-theta);
-                unit_vertices[j*2+1] = std::sin(-theta);
-            }
-        }
-        int first_slice_idx = int(theta1 / HORZ_THETA + 1);
-        int last_slice_idx = int(theta2 / HORZ_THETA - 1);
-        if (theta1 >= theta2)
-            last_slice_idx += SLICES;
-
-        if (filled_shape)
-            glVertex2f(static_cast<GLfloat>(center_x), static_cast<GLfloat>(center_y));
-
-        // point on circle at angle theta1
-        double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
-        glVertex2f(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
-
-        // angles in between theta1 and theta2, if any
-        for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
-            int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
-            glVertex2f(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
-        }
-
-        // theta2
-        double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
-        glVertex2f(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
-    }
 }
 
 void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
@@ -239,118 +184,28 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
 {
     glDisable(GL_TEXTURE_2D);
 
-    GG::X inner_x1 = ul.x + thick;
-    GG::Y inner_y1 = ul.y + thick;
-    GG::X inner_x2 = lr.x - thick;
-    GG::Y inner_y2 = lr.y - thick;
+    GG::GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(14);
+    GG::Pt thick_pt = GG::Pt(GG::X(thick), GG::Y(thick));
+    BufferStoreAngledCornerRectangleVertices(vert_buf, ul + thick_pt, lr - thick_pt, angle_offset,
+                                             upper_left_angled, lower_right_angled, draw_bottom);
 
-    // these are listed in CCW order for convenience
-    GG::X ul_corner_x1 = ul.x + angle_offset;
-    GG::Y ul_corner_y1 = ul.y;
-    GG::X ul_corner_x2 = ul.x;
-    GG::Y ul_corner_y2 = ul.y + angle_offset;
-    GG::X lr_corner_x1 = lr.x - angle_offset;
-    GG::Y lr_corner_y1 = lr.y;
-    GG::X lr_corner_x2 = lr.x;
-    GG::Y lr_corner_y2 = lr.y - angle_offset;
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-    GG::X inner_ul_corner_x1 = ul_corner_x1 + thick;
-    GG::Y inner_ul_corner_y1 = ul_corner_y1 + thick;
-    GG::X inner_ul_corner_x2 = ul_corner_x2 + thick;
-    GG::Y inner_ul_corner_y2 = ul_corner_y2 + thick;
-    GG::X inner_lr_corner_x1 = lr_corner_x1 - thick;
-    GG::Y inner_lr_corner_y1 = lr_corner_y1 - thick;
-    GG::X inner_lr_corner_x2 = lr_corner_x2 - thick;
-    GG::Y inner_lr_corner_y2 = lr_corner_y2 - thick;
+    vert_buf.activate();
 
-    // draw border
-    if (thick) {
-        glBegin(GL_QUADS);
-        glColor(border);
-
-        // the top
-        glVertex(inner_x2, inner_y1);
-        glVertex(lr.x, ul.y);
-        if (upper_left_angled) {
-            glVertex(ul_corner_x1, ul_corner_y1);
-            glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
-        } else {
-            glVertex(ul.x, ul.y);
-            glVertex(inner_x1, inner_y1);
-        }
-
-        // the upper-left angled side
-        if (upper_left_angled) {
-            glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
-            glVertex(ul_corner_x1, ul_corner_y1);
-            glVertex(ul_corner_x2, ul_corner_y2);
-            glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
-        }
-
-        // the left side
-        if (upper_left_angled) {
-            glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
-            glVertex(ul_corner_x2, ul_corner_y2);
-        } else {
-            glVertex(inner_x1, inner_y1);
-            glVertex(ul.x, ul.y);
-        }
-        glVertex(ul.x, lr.y);
-        glVertex(inner_x1, inner_y2);
-
-        // the bottom
-        if (draw_bottom) {
-            glVertex(inner_x1, inner_y2);
-            glVertex(ul.x, lr.y);
-            if (lower_right_angled) {
-                glVertex(lr_corner_x1, lr_corner_y1);
-                glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
-            } else {
-                glVertex(lr.x, lr.y);
-                glVertex(inner_x2, inner_y2);
-            }
-        }
-
-        // the lower-right angled side
-        if (lower_right_angled) {
-            glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
-            glVertex(lr_corner_x1, lr_corner_y1);
-            glVertex(lr_corner_x2, lr_corner_y2);
-            glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
-        }
-
-        // the right side
-        if (lower_right_angled) {
-            glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
-            glVertex(lr_corner_x2, lr_corner_y2);
-        } else {
-            glVertex(lr.x, lr.y);
-            glVertex(inner_x2, inner_y2);
-        }
-        glVertex(lr.x, ul.y);
-        glVertex(inner_x2, inner_y1);
-
-        glEnd();
-    }
-
-    // draw interior of rectangle
     glColor(color);
-    glBegin(GL_POLYGON);
-    if (upper_left_angled) {
-        glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
-        glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
-    } else {
-        glVertex(inner_x1, inner_y1);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, vert_buf.size());
+    if (thick > 0) {
+        glColor(border);
+        glLineWidth(thick);
+        glDrawArrays(GL_LINE_STRIP, 0, vert_buf.size());
+        glLineWidth(1.0f);
     }
-    glVertex(inner_x1, inner_y2);
-    if (lower_right_angled) {
-        glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
-        glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
-    } else {
-        glVertex(inner_x2, inner_y2);
-    }
-    glVertex(inner_x2, inner_y1);
-    glEnd();
+
+    glPopClientAttrib();
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -364,8 +219,8 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
         buffer.store(Value(ul.x),                   Value(lr.y));
 
     if (lower_right_angled) {
-        buffer.store(Value(lr.x) - angle_offset,    Value(lr.y));
-        buffer.store(Value(lr.x),                   Value(lr.y) - angle_offset);
+        buffer.store(Value(lr.x) - angle_offset - 3,Value(lr.y));   // don't know why, but - 3 here and the next line seem to make things symmetric top-left and bottom-right
+        buffer.store(Value(lr.x),                   Value(lr.y) - angle_offset - 3);
     } else {
         buffer.store(Value(lr.x),                   Value(lr.y));
     }
@@ -382,8 +237,8 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
     buffer.store(Value(ul.x),                       Value(lr.y));
 }
 
-bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset, 
-                        bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/)
+bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset,
+                        bool upper_left_angled/* = true*/, bool lower_right_angled)
 {
     bool retval = false;
     if (retval = (ul <= pt && pt < lr)) {
@@ -396,35 +251,17 @@ bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, in
     return retval;
 }
 
-void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border/*= true*/)
-{
-    glDisable(GL_TEXTURE_2D);
-    glColor(color);
-    glBegin(GL_TRIANGLES);
-    glVertex2d(x1, y1);
-    glVertex2d(x2, y2);
-    glVertex2d(x3, y3);
-    glEnd();
-    if (border) {
-        AdjustBrightness(color, 75);
-        // trace the lines both ways, to ensure that this small polygon looks symmetrical
-        glColor(color);
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(x3, y3);
-        glVertex2d(x2, y2);
-        glVertex2d(x1, y1);
-        glEnd();
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(x1, y1);
-        glVertex2d(x2, y2);
-        glVertex2d(x3, y3);
-        glEnd();
-    }
-    glEnable(GL_TEXTURE_2D);
+void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border) {
+    GG::Clr border_clr = color;
+    if (border)
+        AdjustBrightness(border_clr, 75);
+    GG::Triangle(GG::Pt(GG::X(x1), GG::Y(y1)),
+                 GG::Pt(GG::X(x2), GG::Y(y2)),
+                 GG::Pt(GG::X(x3), GG::Y(y3)),
+                 color, border ? border_clr : GG::CLR_ZERO);
 }
 
-bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, double x3, double y3)
-{
+bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, double x3, double y3) {
     double vec_A_x = x2 - x1; // side A is the vector from pt1 to pt2
     double vec_A_y = y2 - y1; // side A is the vector from pt1 to pt2
     double vec_B_x = x3 - x2; // side B is the vector from pt2 to pt3
@@ -441,8 +278,7 @@ bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, do
     return (sum == 3 || sum == 0);
 }
 
-void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border/* = true*/)
-{
+void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border) {
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     Triangle(x1_, y1_, x2_, y2_, x3_, y3_, color, border);
@@ -456,104 +292,54 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     buffer.store(x3_,   y3_);
 }
 
-bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation)
-{
+bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation) {
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
-void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape)
-{
+void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape) {
+    GG::GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(50);   // max number that BufferStoreCircleArcVertices might add
+
+    BufferStoreCircleArcVertices(vert_buf, ul, lr, theta1, theta2, filled_shape, 0, true);
+
+    //glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    vert_buf.activate();
+
     if (filled_shape)
-        glBegin(GL_TRIANGLE_FAN);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vert_buf.size());
     else
-        glBegin(GL_LINE_STRIP);
+        glDrawArrays(GL_LINE_STRIP, 0, vert_buf.size());
 
-    CircleArcVertices(ul, lr, theta1, theta2, filled_shape);
-
-    glEnd();
+    glPopClientAttrib();
+    //glEnable(GL_TEXTURE_2D);
 }
 
 void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round,
                        bool ll_round, bool lr_round, bool fill)
 {
-    const double PI = 3.141594;
-    if (fill) {
-        if (ur_round)
-            CircleArc(GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, true);
-        if (ul_round)
-            CircleArc(ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, true);
-        if (ll_round)
-            CircleArc(GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, true);
-        if (lr_round)
-            CircleArc(GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, true);
-        glBegin(GL_QUADS);
-        glVertex(lr.x, ul.y + radius);
-        glVertex(ul.x, ul.y + radius);
-        glVertex(ul.x, lr.y - radius);
-        glVertex(lr.x, lr.y - radius);
-        glVertex(lr.x - radius, ul.y);
-        glVertex(ul.x + radius, ul.y);
-        glVertex(ul.x + radius, ul.y + radius);
-        glVertex(lr.x - radius, ul.y + radius);
-        glVertex(lr.x - radius, lr.y - radius);
-        glVertex(ul.x + radius, lr.y - radius);
-        glVertex(ul.x + radius, lr.y);
-        glVertex(lr.x - radius, lr.y);
-        if (!ur_round) {
-            glVertex(lr.x, ul.y);
-            glVertex(lr.x - radius, ul.y);
-            glVertex(lr.x - radius, ul.y + radius);
-            glVertex(lr.x, ul.y + radius);
-        }
-        if (!ul_round) {
-            glVertex(ul.x + radius, ul.y);
-            glVertex(ul.x, ul.y);
-            glVertex(ul.x, ul.y + radius);
-            glVertex(ul.x + radius, ul.y + radius);
-        }
-        if (!ll_round) {
-            glVertex(ul.x + radius, lr.y - radius);
-            glVertex(ul.x, lr.y - radius);
-            glVertex(ul.x, lr.y);
-            glVertex(ul.x + radius, lr.y);
-        }
-        if (!lr_round) {
-            glVertex(lr.x, lr.y - radius);
-            glVertex(lr.x - radius, lr.y - radius);
-            glVertex(lr.x - radius, lr.y);
-            glVertex(lr.x, lr.y);
-        }
-        glEnd();
-    } else {
-        glBegin(GL_LINE_STRIP);
+    GG::GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(210);  // should be enough for 4 corners with 50 verts each, plus a bit extra to be safe
 
-        glVertex(lr.x, ul.y + radius);
+    BufferStorePartlyRoundedRectVertices(vert_buf, ul, lr, radius, ur_round, lr_round, ll_round, lr_round);
 
-        if (ur_round)
-            CircleArcVertices(GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
-        else
-            glVertex(lr.x, ul.y);
+    //glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-        if (ul_round)
-            CircleArcVertices(ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, false);
-        else
-            glVertex(ul.x, ul.y);
+    vert_buf.activate();
 
-        if (ll_round)
-            CircleArcVertices(GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, false);
-        else
-            glVertex(ul.x, lr.y);
+    if (fill)
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vert_buf.size());
+    else
+        glDrawArrays(GL_LINE_LOOP, 0, vert_buf.size());
 
-        if (lr_round)
-            CircleArcVertices(GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, false);
-        else
-            glVertex(lr.x, lr.y);
-
-        glVertex(lr.x, ul.y + radius);
-        glEnd();
-    }
+    glPopClientAttrib();
+    //glEnable(GL_TEXTURE_2D);
 }
 
 void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
@@ -561,28 +347,28 @@ void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG
 {
     const double PI = 3.141594;
 
-    buffer.store(Value(lr.x), Value(ul.y) + radius);
+    buffer.store(lr.x, ul.y + radius);
 
     if (ur_round)
         BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
     else
-        buffer.store(Value(lr.x), Value(ul.y));
+        buffer.store(lr.x, ul.y);
 
     if (ul_round)
         BufferStoreCircleArcVertices(buffer, ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, false);
     else
-        buffer.store(Value(ul.x), Value(ul.y));
+        buffer.store(ul.x, ul.y);
 
     if (ll_round)
         BufferStoreCircleArcVertices(buffer, GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, false);
     else
-        buffer.store(Value(ul.x), Value(lr.y));
+        buffer.store(ul.x, lr.y);
 
     if (lr_round)
         BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, false);
     else
-        buffer.store(Value(lr.x), Value(lr.y));
+        buffer.store(lr.x, lr.y);
 
-    buffer.store(Value(lr.x), Value(ul.y) + radius);
+    buffer.store(lr.x, ul.y + radius);
 }
 

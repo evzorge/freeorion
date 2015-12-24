@@ -510,7 +510,7 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page,   0, "UI.system-circles",                  UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
     DoubleOption(current_page, 0, "UI.system-circle-size",              UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption(current_page, 0, "UI.system-selection-indicator-size", UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption(current_page,    0, "UI.system-selection-indicator-fps",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption(current_page,    0, "UI.system-selection-indicator-rpm",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
     IntOption(current_page,    0, "UI.system-tiny-icon-size-threshold", UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
     ColorOption(current_page,  0, "UI.system-name-unowned-color",       UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
     BoolOption(current_page,   0, "UI.system-fog-of-war",               UserString("OPTIONS_UI_SYSTEM_FOG"));
@@ -1034,11 +1034,15 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     // fps
     BoolOption(page, indentation_level, "show-fps", UserString("OPTIONS_SHOW_FPS"));
 
-    GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
-    GG::Spin<double>* max_fps_spin = DoubleOption(page, indentation_level,  "max-fps",   UserString("OPTIONS_MAX_FPS"));
-    GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
-    limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
-    limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
+    //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
+    GG::Spin<double>* max_fps_spin = DoubleOption(page, indentation_level,          "max-fps",          UserString("OPTIONS_MAX_FPS"));
+    //GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
+    //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
+    //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
+
+    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "limit-fps-no-focus", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
+    GG::Spin<double>* max_fps_nofocus_spin = DoubleOption(page, indentation_level,  "max-fps-no_focus", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
+    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps-no-focus"));
 
 
     // apply button, sized to fit text

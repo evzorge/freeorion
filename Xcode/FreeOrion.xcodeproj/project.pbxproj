@@ -165,7 +165,6 @@
 		471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030470CEF569200A7DF2B /* ServerFSM.cpp */; };
 		471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA00CEF562700A7DF2B /* PythonAI.cpp */; };
 		4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F9E0CEF562700A7DF2B /* AIInterface.cpp */; };
-		47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */; };
 		47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */; };
 		47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */; };
 		47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D2C0A98A3F900DA9C21 /* Order.cpp */; };
@@ -328,7 +327,14 @@
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
-		CE5C92CB1B8201E2002346C0 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = CE5C92CA1B8201A8002346C0 /* main.nib */; };
+		CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839D1BB80D2E00952BEA /* BlockControl.cpp */; };
+		CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */; };
+		CE6183A81BB80D2E00952BEA /* RichText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839F1BB80D2E00952BEA /* RichText.cpp */; };
+		CE6183A91BB80D2E00952BEA /* TagParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A11BB80D2E00952BEA /* TagParser.cpp */; };
+		CE6183AA1BB80D2E00952BEA /* TextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A31BB80D2E00952BEA /* TextBlock.cpp */; };
+		CE6183AB1BB80D2E00952BEA /* ScrollPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */; };
+		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
+		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -793,8 +799,6 @@
 		471D5D190A98A3F900DA9C21 /* AppInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppInterface.h; sourceTree = "<group>"; };
 		471D5D1A0A98A3F900DA9C21 /* binreloc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = binreloc.c; sourceTree = "<group>"; };
 		471D5D1B0A98A3F900DA9C21 /* binreloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = binreloc.h; sourceTree = "<group>"; };
-		471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DataTable.cpp; sourceTree = "<group>"; };
-		471D5D1D0A98A3F900DA9C21 /* DataTable.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DataTable.h; sourceTree = "<group>"; };
 		471D5D1E0A98A3F900DA9C21 /* Directories.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Directories.cpp; sourceTree = "<group>"; };
 		471D5D1F0A98A3F900DA9C21 /* Directories.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Directories.h; sourceTree = "<group>"; };
 		471D5D210A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
@@ -1082,7 +1086,23 @@
 		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
 		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
-		CE5C92CA1B8201A8002346C0 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = main.nib; sourceTree = "<group>"; };
+		CE6183961BB80D1300952BEA /* GGFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGFwd.h; sourceTree = "<group>"; };
+		CE6183981BB80D1300952BEA /* BlockControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockControl.h; sourceTree = "<group>"; };
+		CE6183991BB80D1300952BEA /* ImageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBlock.h; sourceTree = "<group>"; };
+		CE61839A1BB80D1300952BEA /* RichText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichText.h; sourceTree = "<group>"; };
+		CE61839B1BB80D1300952BEA /* ScrollPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollPanel.h; sourceTree = "<group>"; };
+		CE61839D1BB80D2E00952BEA /* BlockControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockControl.cpp; sourceTree = "<group>"; };
+		CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBlock.cpp; sourceTree = "<group>"; };
+		CE61839F1BB80D2E00952BEA /* RichText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RichText.cpp; sourceTree = "<group>"; };
+		CE6183A01BB80D2E00952BEA /* RichText_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichText_p.h; sourceTree = "<group>"; };
+		CE6183A11BB80D2E00952BEA /* TagParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagParser.cpp; sourceTree = "<group>"; };
+		CE6183A21BB80D2E00952BEA /* TagParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagParser.h; sourceTree = "<group>"; };
+		CE6183A31BB80D2E00952BEA /* TextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBlock.cpp; sourceTree = "<group>"; };
+		CE6183A41BB80D2E00952BEA /* TextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBlock.h; sourceTree = "<group>"; };
+		CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPanel.cpp; sourceTree = "<group>"; };
+		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
+		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
+		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1240,7 +1260,6 @@
 				825E7258196EC28A00F8114D /* default */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				34ACA40C0FFFABE600500F40 /* main.xib */,
-				CE5C92CA1B8201A8002346C0 /* main.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1287,6 +1306,7 @@
 				471023520CEF3AAB00A7DF2B /* Font.h */,
 				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
 				471023530CEF3AAB00A7DF2B /* gen_signals.py */,
+				CE6183961BB80D1300952BEA /* GGFwd.h */,
 				8257A8D91A90BA8C0006777D /* GLClientAndServerBuffer.h */,
 				471023540CEF3AAB00A7DF2B /* glext.h */,
 				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
@@ -1297,7 +1317,9 @@
 				471023590CEF3AAB00A7DF2B /* MultiEdit.h */,
 				34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */,
 				4710235D0CEF3AAB00A7DF2B /* PtRect.h */,
+				CE6183971BB80D1300952BEA /* RichText */,
 				4710235E0CEF3AAB00A7DF2B /* Scroll.h */,
+				CE61839B1BB80D1300952BEA /* ScrollPanel.h */,
 				4710235F0CEF3AAB00A7DF2B /* SDL */,
 				471023610CEF3AAB00A7DF2B /* Signal0.h */,
 				471023620CEF3AAB00A7DF2B /* Signal1.h */,
@@ -1373,7 +1395,9 @@
 				471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */,
 				471023B30CEF3AAC00A7DF2B /* Plugin.cpp */,
 				471023B50CEF3AAC00A7DF2B /* PtRect.cpp */,
+				CE61839C1BB80D2E00952BEA /* RichText */,
 				471023B70CEF3AAC00A7DF2B /* Scroll.cpp */,
+				CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */,
 				471023B80CEF3AAC00A7DF2B /* SDL */,
 				471023BC0CEF3AAC00A7DF2B /* StaticGraphic.cpp */,
 				471023BD0CEF3AAC00A7DF2B /* StyleFactory.cpp */,
@@ -1597,6 +1621,8 @@
 				471D5CAE0A98A3F900DA9C21 /* CUIControls.h */,
 				471D5CAF0A98A3F900DA9C21 /* CUIDrawUtil.cpp */,
 				471D5CB00A98A3F900DA9C21 /* CUIDrawUtil.h */,
+				CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */,
+				CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */,
 				82592EEB147E365700B840A5 /* CUISlider.h */,
 				471D5CB10A98A3F900DA9C21 /* CUISpin.h */,
 				471D5CB20A98A3F900DA9C21 /* CUIStyle.cpp */,
@@ -1774,8 +1800,7 @@
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
 				471D5D1B0A98A3F900DA9C21 /* binreloc.h */,
 				471D5CF60A98A3F900DA9C21 /* blocking_combiner.h */,
-				471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */,
-				471D5D1D0A98A3F900DA9C21 /* DataTable.h */,
+				CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */,
 				471D5D1E0A98A3F900DA9C21 /* Directories.cpp */,
 				471D5D1F0A98A3F900DA9C21 /* Directories.h */,
 				471D5D200A98A3F900DA9C21 /* doc */,
@@ -2096,6 +2121,31 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
+		CE6183971BB80D1300952BEA /* RichText */ = {
+			isa = PBXGroup;
+			children = (
+				CE6183981BB80D1300952BEA /* BlockControl.h */,
+				CE6183991BB80D1300952BEA /* ImageBlock.h */,
+				CE61839A1BB80D1300952BEA /* RichText.h */,
+			);
+			path = RichText;
+			sourceTree = "<group>";
+		};
+		CE61839C1BB80D2E00952BEA /* RichText */ = {
+			isa = PBXGroup;
+			children = (
+				CE61839D1BB80D2E00952BEA /* BlockControl.cpp */,
+				CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */,
+				CE61839F1BB80D2E00952BEA /* RichText.cpp */,
+				CE6183A01BB80D2E00952BEA /* RichText_p.h */,
+				CE6183A11BB80D2E00952BEA /* TagParser.cpp */,
+				CE6183A21BB80D2E00952BEA /* TagParser.h */,
+				CE6183A31BB80D2E00952BEA /* TextBlock.cpp */,
+				CE6183A41BB80D2E00952BEA /* TextBlock.h */,
+			);
+			path = RichText;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2290,7 +2340,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE5C92CB1B8201E2002346C0 /* main.nib in Resources */,
 				825E7259196EC28A00F8114D /* default in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
 				8273F49515DD774C000F6A09 /* changelog.txt in Resources */,
@@ -2312,7 +2361,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Deleting ${BUILT_PRODUCTS_DIR}/FreeOrion.app\"\nrm -rf ${BUILT_PRODUCTS_DIR}/FreeOrion.app";
+			shellScript = "echo \"Deleting ${BUILT_PRODUCTS_DIR}/FreeOrion.app\"\nrm -rf ${BUILT_PRODUCTS_DIR}/FreeOrion.app\ntouch ${SRCROOT}/main.xib";
 		};
 		829C76341689EFD4005881B4 /* Version.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2357,7 +2406,6 @@
 				34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */,
 				34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */,
 				34C449631182716E0071E09A /* SerializeUniverse.cpp in Sources */,
-				47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */,
 				47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */,
 				47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */,
 				47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */,
@@ -2386,6 +2434,7 @@
 				47103C100CF04E5900A7DF2B /* UniverseObject.cpp in Sources */,
 				47103C110CF04E5900A7DF2B /* ValueRef.cpp in Sources */,
 				47103C150CF04E5900A7DF2B /* Message.cpp in Sources */,
+				CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */,
 				47103C160CF04E5900A7DF2B /* Empire.cpp in Sources */,
 				47103C170CF04E5900A7DF2B /* EmpireManager.cpp in Sources */,
 				47103C180CF04E5900A7DF2B /* ResourcePool.cpp in Sources */,
@@ -2428,6 +2477,8 @@
 				471024140CEF3AAC00A7DF2B /* DrawUtil.cpp in Sources */,
 				471024150CEF3AAC00A7DF2B /* DropDownList.cpp in Sources */,
 				471024160CEF3AAC00A7DF2B /* DynamicGraphic.cpp in Sources */,
+				CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */,
+				CE6183AA1BB80D2E00952BEA /* TextBlock.cpp in Sources */,
 				471024170CEF3AAC00A7DF2B /* Edit.cpp in Sources */,
 				471024180CEF3AAC00A7DF2B /* EventPump.cpp in Sources */,
 				471024190CEF3AAC00A7DF2B /* Font.cpp in Sources */,
@@ -2436,18 +2487,22 @@
 				4710241C0CEF3AAC00A7DF2B /* ListBox.cpp in Sources */,
 				4710241D0CEF3AAC00A7DF2B /* Menu.cpp in Sources */,
 				4710241E0CEF3AAC00A7DF2B /* MultiEdit.cpp in Sources */,
+				CE6183A81BB80D2E00952BEA /* RichText.cpp in Sources */,
 				471024260CEF3AAC00A7DF2B /* PtRect.cpp in Sources */,
 				471024270CEF3AAC00A7DF2B /* Scroll.cpp in Sources */,
 				4710242A0CEF3AAC00A7DF2B /* StaticGraphic.cpp in Sources */,
 				4710242B0CEF3AAC00A7DF2B /* StyleFactory.cpp in Sources */,
 				4710242C0CEF3AAC00A7DF2B /* TabWnd.cpp in Sources */,
+				CE6183AB1BB80D2E00952BEA /* ScrollPanel.cpp in Sources */,
 				8257A8D71A90BA610006777D /* GLClientAndServerBuffer.cpp in Sources */,
 				4710242D0CEF3AAC00A7DF2B /* TextControl.cpp in Sources */,
 				8289A72919BDB307001256C1 /* SDLGUI.cpp in Sources */,
+				CE6183A91BB80D2E00952BEA /* TagParser.cpp in Sources */,
 				4710242E0CEF3AAC00A7DF2B /* Texture.cpp in Sources */,
 				4710242F0CEF3AAC00A7DF2B /* Timer.cpp in Sources */,
 				471024300CEF3AAC00A7DF2B /* Wnd.cpp in Sources */,
 				471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */,
+				CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */,
 				471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */,
 				343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */,
 			);
@@ -2606,6 +2661,7 @@
 				8275F4011AD31381003568FF /* PopulationPanel.cpp in Sources */,
 				471D5E230A98A9C700DA9C21 /* MultiplayerLobbyWnd.cpp in Sources */,
 				82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */,
+				CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */,
 				471D5E240A98A9C900DA9C21 /* OptionsWnd.cpp in Sources */,
 				2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */,
 				471D5E260A98A9CD00DA9C21 /* ProductionWnd.cpp in Sources */,

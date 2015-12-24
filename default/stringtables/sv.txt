@@ -76,12 +76,6 @@ Servern har meddelat att spelet är slut. Hejsvejs.
 PLAYER_DISCONNECTED
 Spelare %1% har inte längre förbindelse med servern.
 
-PLAYER_DEFEATED
-Du har blivit besegrad.
-
-EMPIRE_DEFEATED
-%1%-imperiet har gått under.
-
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
@@ -1018,7 +1012,7 @@ SITREP_BUILDING_BUILT
 SITREP_TECH_RESEARCHED
 %tech% har forskats fram.
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 Hela populationen på %planet% har svultit ihjäl. Planeten har gått förlorad!
 
 SITREP_PLANET_COLONIZED

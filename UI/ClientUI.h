@@ -58,7 +58,7 @@ public:
 
     bool    ZoomToObject(const std::string& name);
     bool    ZoomToObject(int id);
-    bool    ZoomToPlanet(int id);                                       //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it
+    bool    ZoomToPlanet(int id);                                       //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it, or if production screen is open selects it
     bool    ZoomToPlanetPedia(int id);                                  //!< Opens the encyclodedia window and presents the entry for the given planet
     bool    ZoomToSystem(int id);                                       //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
     bool    ZoomToFleet(int id);                                        //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
@@ -163,7 +163,7 @@ public:
     static int          SystemTinyIconSizeThreshold();      //!< the width/height of a system icon below which the tiny system icons should be used
     static int          SystemCircleSize();                 //!< the width/height of the system-enclosing circle
     static int          SystemSelectionIndicatorSize();     //!< the width/height of a system selection indicator
-    static int          SystemSelectionIndicatorFPS();      //!< frames per second to animate system selection indicator
+    static int          SystemSelectionIndicatorRPM();      //!< revolutions per minute to rotate system selection indicator
 
     static GG::Clr      SystemNameTextColor();              //!< the colour of system names that aren't owned by any player (as far as this client knows)
 

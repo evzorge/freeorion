@@ -65,7 +65,9 @@ public:
         LOBBY_CHAT,             ///< used to send chat messages in the multiplayer lobby
         LOBBY_EXIT,             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
         START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
-        SAVE_GAME,              ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
+        SAVE_GAME_INITIATE,     ///< sent to server (by the "host" client only) when a game is to be saved
+        SAVE_GAME_DATA_REQUEST, ///< sent to clients by the server when the game is being saved and the server needs save state info from clients
+        SAVE_GAME_COMPLETE,     ///< sent to clients (by the "host" client only) when a game has been saved and written to disk
         LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,            ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
@@ -81,8 +83,6 @@ public:
         DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
         DISPATCH_NEW_DESIGN_ID, ///< sent by server to client with the new design ID.
-        VICTORY_DEFEAT,         ///< sent by server to all clients when one or more players have met victory or defeat conditions
-        PLAYER_ELIMINATED,      ///< sent by server to all clients (except the eliminated player) when a player is eliminated
         END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
         SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
@@ -112,12 +112,6 @@ public:
     GG_CLASS_ENUM(EndGameReason,
         LOCAL_CLIENT_DISCONNECT,///< the local player's client networking detected a disconnection from the server
         PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
-        YOU_ARE_ELIMINATED      ///< the receiving player is eliminated from the game
-    )
-
-    GG_CLASS_ENUM(VictoryOrDefeat,
-        VICTORY,                ///< a player or players have met a victory condition
-        DEFEAT                  ///< a player or players have met a defeat condition
     )
 
     /** \name Structors */ //@{
@@ -198,7 +192,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const EmpireManager& empires, const Universe& universe,
                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
                                        const std::map<int, PlayerInfo>& players,
-                                       const GalaxySetupData& galaxy_setup_data);
+                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * player \a player_id.  Also includes data loaded from a saved game. */
@@ -207,7 +201,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
                                        const std::map<int, PlayerInfo>& players, const OrderSet& orders,
                                        const SaveGameUIData* ui_data,
-                                       const GalaxySetupData& galaxy_setup_data);
+                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * player \a player_id.  Also includes state string loaded from a saved game. */
@@ -216,7 +210,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
                                        const std::map<int, PlayerInfo>& players, const OrderSet& orders,
                                        const std::string* save_state_string,
-                                       const GalaxySetupData& galaxy_setup_data);
+                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/
@@ -242,12 +236,12 @@ FO_COMMON_API Message PlayerStatusMessage(int player_id, int about_player_id, Me
 /** creates a TURN_UPDATE message. */
 FO_COMMON_API Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
                                         const EmpireManager& empires, const Universe& universe,
-                                        const SpeciesManager& species,
-                                        const CombatLogManager& combat_logs,
-                                        const std::map<int, PlayerInfo>& players);
+                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
+                                        const std::map<int, PlayerInfo>& players, bool use_binary_serialization);
 
 /** create a TURN_PARTIAL_UPDATE message. */
-FO_COMMON_API Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe);
+FO_COMMON_API Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe,
+                                               bool use_binary_serialization);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
 FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
@@ -274,13 +268,19 @@ FO_COMMON_API Message RequestNewDesignIDMessage(int sender);
   * client who is waiting for a new design ID */
 FO_COMMON_API Message DispatchDesignIDMessage(int player_id, int new_id);
 
-/** creates a SAVE_GAME request message.  This message should only be sent by
+/** creates a SAVE_GAME_INITIATE request message.  This message should only be sent by
   * the host player.*/
-FO_COMMON_API Message HostSaveGameMessage(int sender, const std::string& filename);
+FO_COMMON_API Message HostSaveGameInitiateMessage(int sender, const std::string& filename);
 
-/** creates a SAVE_GAME data request message.  This message should only be
-    sent by the server to get game data from a client.*/
-FO_COMMON_API Message ServerSaveGameMessage(int receiver, bool synchronous_response);
+/** creates a SAVE_GAME_DATA_REQUEST data request message.  This message should
+    only be sent by the server to get game data from a client, or to respond to
+    the host player requesting a save be initiated. */
+FO_COMMON_API Message ServerSaveGameDataRequestMessage(int receiver, bool synchronous_response);
+
+/** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
+    sent by the server to inform clients that the last initiated save has been
+    completed successfully. */
+FO_COMMON_API Message ServerSaveGameCompleteMessage(int receiver);
 
 /** creates a PLAYER_CHAT, which is sent to the server, and then from the server
   * to all players, including the originating player.*/
@@ -297,23 +297,6 @@ FO_COMMON_API Message DiplomacyMessage(int sender, int receiver, const Diplomati
 /** creates a DIPLOMATIC_STATUS message, which is sent to players by the server to
   * update them on diplomatic status changes between players. */
 FO_COMMON_API Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update);
-
-/** creates a VICTORY_DEFEAT message indicating that the recipient has won the
-  * game by meeting a victory condition.
-  * The \a reason_string should be a stringtable entry name, not a human-
-  * readable string, so that each player's client can look up and display a
-  * victory message in the player's selected language.  The \a winner_empire_ids
-  * and \a winner_empire_names should contain the names and ids of all empires
-  * that have won; this will contain only a single empire if it has won alone,
-  * but could contain multiple empires if an allied victory has occured.  This
-  * message should only be sent by the server.*/
-Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
-                             const std::string& reason_string, int empire_id);
-
-/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a
-  * client is eliminated from play. This message should only be sent by the
-  * server.*/
-Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
 
 /** creates an END_GAME message used to terminate an active game. */
 FO_COMMON_API Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
@@ -361,6 +344,8 @@ FO_COMMON_API Message StartMPGameMessage(int player_id);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal);
 
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string);
+
 FO_COMMON_API void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id,
@@ -371,25 +356,26 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, bool& single_player_ga
                                       SaveGameUIData& ui_data, bool& save_state_string_available,
                                       std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type);
+FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type,
+                                      std::string& version_string);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, OrderSet& orders);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
-                        Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
-                        std::map<int, PlayerInfo>& players);
+                                      Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                                      std::map<int, PlayerInfo>& players);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, int empire_id, Universe& universe);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
-                        SaveGameUIData& ui_data, bool& save_state_string_available,
-                        std::string& save_state_string);
+                                      SaveGameUIData& ui_data, bool& save_state_string_available,
+                                      std::string& save_state_string);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
 
-FO_COMMON_API void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
+FO_COMMON_API void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
@@ -400,9 +386,6 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, int& empire_id, std::s
 FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
-
-FO_COMMON_API void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
-                        std::string& reason_string, int& empire_id);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& directory);
 

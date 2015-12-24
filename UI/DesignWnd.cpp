@@ -87,10 +87,7 @@ namespace {
         if (!part_type)
             return 0.0f;
         switch (part_type->Class()) {
-            case PC_SHORT_RANGE:
-            case PC_POINT_DEFENSE:
-            case PC_MISSILES:
-            case PC_FIGHTERS:
+            case PC_DIRECT_WEAPON:
             case PC_SHIELD:
             case PC_DETECTION:
             case PC_STEALTH:
@@ -102,6 +99,9 @@ namespace {
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:
+                return part_type->Capacity();
+                break;
+            case PC_FIGHTERS:   // fighters may have additional stats, so might need to do something special for their "main" stat that just capacity...
                 return part_type->Capacity();
                 break;
             case PC_GENERAL:
@@ -325,6 +325,7 @@ public:
 
     mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
+
 private:
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_background;
@@ -546,7 +547,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, const Condition::ConditionBase* ref_part_loc) {
     //const Condition::ConditionBase* check_part_loc = check_part->Location();
     //const Condition::ConditionBase* ref_part_loc = ref_part->Location();
-    if (const Condition::All* ref_part_all = boost::dynamic_pointer_cast<const Condition::All>(ref_part_loc))
+    if (boost::dynamic_pointer_cast<const Condition::All>(ref_part_loc))
         return true;
     if (!check_part_loc || !ref_part_loc)
         return false;
@@ -556,8 +557,6 @@ bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, 
     // for now, will simply be conservative
     return false;
 }
-
-
 
 bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
     static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
@@ -1285,9 +1284,9 @@ public:
     };
 
 private:
-    void    BaseDoubleClicked(GG::ListBox::iterator it);
-    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     GG::Pt  ListRowSize();
     void    InitRowSizes();
@@ -1469,7 +1468,7 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
-    if (!wnds.size() == 1)
+    if (wnds.size() != 1)
         ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
@@ -1736,7 +1735,7 @@ void BasesListBox::PopulateWithMonsters() {
     }
 }
 
-void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
 
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
@@ -1767,7 +1766,7 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     }
 }
 
-void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
 
     if (CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it)) {
@@ -1876,7 +1875,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
     }
 }
 
-void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it) {
+void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
 
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
@@ -2189,8 +2188,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
-
     ShipSlotType    SlotType() const;
     double          XPositionFraction() const;
     double          YPositionFraction() const;
@@ -2200,9 +2197,10 @@ public:
     /** \name Mutators */ //@{
     virtual void    StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset);
     virtual void    CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds);
-    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
     virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void    DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                 GG::Flags<GG::ModKey> mod_keys);
     virtual void    DragDropLeave();
 
     virtual void    Render();
@@ -2218,6 +2216,11 @@ public:
     mutable boost::signals2::signal<void (const PartType*)> SlotContentsAlteredSignal;
 
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
+
+protected:
+    virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     /** emits SlotContentsAlteredSignal with PartType* = 0.  needed because
@@ -2271,9 +2274,37 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
         new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), title_text, UserString("SL_TOOLTIP_DESC"))));
 }
 
-void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    //std::cout << "SlotControl::EventFilter " << EventTypeName(event) << std::endl << std::flush;
+
+    if (w == this)
+        return false;
+
+    switch (event.Type()) {
+    case GG::WndEvent::DragDropEnter:
+    case GG::WndEvent::DragDropHere:
+    case GG::WndEvent::CheckDrops:
+    case GG::WndEvent::DragDropLeave:
+    case GG::WndEvent::DragDroppedOn:
+        if (w == this) {
+            ErrorLogger() << "SlotControl::EventFilter w == this";
+            return false;
+        }
+        HandleEvent(event);
+        return true;
+        break;
+    default:
+        return false;
+    }
+}
+
+void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                  const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+{
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
+
+    // if more than one control dropped somehow, reject all
     if (std::distance(first, last) != 1)
         return;
 
@@ -2339,7 +2370,7 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
     }
 }
 
-void SlotControl::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+void SlotControl::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.size() != 1) {
         // delete any extra wnds that won't be processed below
         std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
@@ -2374,8 +2405,12 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     SlotContentsAlteredSignal(0);
 }
 
-void SlotControl::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
-{}
+void SlotControl::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                               GG::Flags<GG::ModKey> mod_keys)
+{
+    Control::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
+    // TODO: mouseover highlight if drop acceptable
+}
 
 void SlotControl::DragDropLeave() {
     if (m_part_control)
@@ -2402,6 +2437,7 @@ void SlotControl::SetPart(const PartType* part_type) {
     if (part_type) {
         m_part_control = new PartControl(part_type);
         AttachChild(m_part_control);
+        m_part_control->InstallEventFilter(this);
 
         // single click shows encyclopedia data
         GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);
@@ -2441,10 +2477,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual void                        DropsAcceptable(DropsAcceptableIter first,
-                                                        DropsAcceptableIter last,
-                                                        const GG::Pt& pt) const;
-
     const std::vector<std::string>      Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
     const std::string&                  Hull() const;               //!< returns name of hull of current shown design
     const std::string&                  DesignName() const;         //!< returns name currently entered for design
@@ -2458,7 +2490,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Sanitize();
@@ -2514,6 +2546,10 @@ public:
     /** emitted when the user clicks on the background of this main panel and
       * a completed design is showing */
     mutable boost::signals2::signal<void (int)>             CompleteDesignClickedSignal;
+
+protected:
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
@@ -3086,12 +3122,13 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     }
 }
 
-void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
-                                           DropsAcceptableIter last,
-                                           const GG::Pt& pt) const
+void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                           const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
+
+    // if multiple things dropped simultaneously somehow, reject all
     if (std::distance(first, last) != 1)
         return;
 
@@ -3115,7 +3152,7 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
     }
 }
 
-void DesignWnd::MainPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.size() != 1) {
         // delete any extra wnds that won't be processed below
         std::vector<GG::Wnd*>::const_iterator it = wnds.begin();
@@ -3241,25 +3278,8 @@ void DesignWnd::Reset() {
 void DesignWnd::Sanitize()
 { m_main_panel->Sanitize(); }
 
-void DesignWnd::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-}
+void DesignWnd::Render()
+{ GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), GG::CLR_ZERO, 0); }
 
 void DesignWnd::InitializeWindows() {
     const GG::X selector_width = GG::X(250);

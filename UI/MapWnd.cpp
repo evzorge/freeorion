@@ -67,7 +67,7 @@
 namespace {
     const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/4.0);
     const double    ZOOM_IN_MAX_STEPS = 12.0;
-    const double    ZOOM_IN_MIN_STEPS = -7.0;   // negative zoom steps indicates zooming out
+    const double    ZOOM_IN_MIN_STEPS = -10.0;//-7.0;   // negative zoom steps indicates zooming out
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
 
@@ -87,6 +87,8 @@ namespace {
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
     const GG::Y     TOOLBAR_HEIGHT(32);
+
+    const double    TWO_PI = 2.0*3.1415926536;
 
     double ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
@@ -127,7 +129,7 @@ namespace {
 
         db.Add("UI.system-tiny-icon-size-threshold",UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"), 10,         RangedValidator<int>(1, 16));
         db.Add("UI.system-selection-indicator-size",UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
-        db.Add("UI.system-selection-indicator-fps", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
+        db.Add("UI.system-selection-indicator-rpm", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
 
         db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
 
@@ -187,23 +189,6 @@ namespace {
     // returns an int-int pair that doesn't depend on the order of parameters
     std::pair<int, int> UnorderedIntPair(int one, int two)
     { return std::make_pair(std::min(one, two), std::max(one, two)); }
-
-    /* Loads background starfield textures int \a background_textures  */
-    void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
-        if (!background_textures.empty())
-            return;
-
-        std::vector<boost::shared_ptr<GG::Texture> > starfield_textures = ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir(), "starfield", false);
-        double scroll_rate = 1.0;
-        for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = starfield_textures.begin(); it != starfield_textures.end(); ++it) {
-            scroll_rate *= 0.5;
-            background_textures.push_back(*it);
-            scroll_rates.push_back(scroll_rate);
-            glBindTexture(GL_TEXTURE_2D, (*it)->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        }
-    }
 
     /* Returns fractional distance along line segment between two points that a
      * third point between them is.assumes the "mid" point is between the
@@ -343,7 +328,7 @@ public:
         glLineWidth(2.0);
 
         glDisable(GL_TEXTURE_2D);
-        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         verts.activate();
         glDrawArrays(GL_LINES, 0, verts.size());
@@ -651,8 +636,6 @@ MapWnd::MapWnd() :
             static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
             static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5),
             GG::INTERACTIVE | GG::DRAGABLE),
-    m_backgrounds(),
-    m_bg_scroll_rate(),
     m_selected_fleet_ids(),
     m_selected_ship_ids(),
     m_zoom_steps_in(0.0),
@@ -679,6 +662,7 @@ MapWnd::MapWnd() :
     m_star_core_quad_vertices(),
     m_star_halo_quad_vertices(),
     m_galaxy_gas_quad_vertices(),
+    m_galaxy_gas_texture_coords(),
     m_star_texture_coords(),
     m_star_circle_vertices(),
     m_starlane_vertices(),
@@ -694,6 +678,8 @@ MapWnd::MapWnd() :
     m_visibility_radii_border_colors(),
     m_radii_radii_vertices_indices_runs(),
     m_scale_circle_vertices(),
+    m_starfield_verts(),
+    m_starfield_colours(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_btn_turn(0),
@@ -1255,16 +1241,12 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
-    //clear background images
-    m_backgrounds.clear();
-    m_bg_scroll_rate.clear();
 
 
     //////////////////
     // General Gamestate response signals
     //////////////////
     FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,    &MapWnd::HandleEmpireElimination,   this);
     Connect(fm.ActiveFleetWndChangedSignal,                 &MapWnd::SelectedFleetsChanged,     this);
     Connect(fm.ActiveFleetWndSelectedFleetsChangedSignal,   &MapWnd::SelectedFleetsChanged,     this);
     Connect(fm.ActiveFleetWndSelectedShipsChangedSignal,    &MapWnd::SelectedShipsChanged,      this);
@@ -1408,20 +1390,17 @@ void MapWnd::Render() {
     if (m_research_wnd->Visible())
         return;
 
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-
-    RenderStarfields();
-
-    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
-
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
-    glScalef(static_cast<GLfloat>(ZoomFactor()), static_cast<GLfloat>(ZoomFactor()), 1.0f);
-    glTranslatef(static_cast<GLfloat>(Value(origin_offset.x / ZoomFactor())),
-                 static_cast<GLfloat>(Value(origin_offset.y / ZoomFactor())),
-                 0.0f);
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
+    glTranslatef(Value(origin_offset.x), Value(origin_offset.y), 0.0f);
+    glScalef(ZoomFactor(), ZoomFactor(), 1.0f);
 
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+
+    RenderStarfields();
     RenderGalaxyGas();
     RenderVisibilityRadii();
     RenderFields();
@@ -1430,57 +1409,110 @@ void MapWnd::Render() {
     RenderSystems();
     RenderFleetMovementLines();
 
-    glPopMatrix();
     glPopClientAttrib();
+    glPopMatrix();
 }
 
 void MapWnd::RenderStarfields() {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-starfields"))
         return;
 
-    glColor3d(1.0, 1.0, 1.0);
+    double starfield_width = GetUniverse().UniverseWidth();
+    if (m_starfield_verts.empty()) {
+        ClearStarfieldRenderingBuffers();
+        Seed(static_cast<int>(starfield_width));
+        m_starfield_colours.clear();
+        std::size_t NUM_STARS = std::pow(2.0, 12.0);
 
-    GG::Pt origin_offset =
-        UpperLeft() + GG::Pt(AppWidth(), AppHeight());
-    glMatrixMode(GL_TEXTURE);
+        m_starfield_verts.reserve(NUM_STARS);
+        m_starfield_colours.reserve(NUM_STARS);
+        for (std::size_t i = 0; i < NUM_STARS; ++i) {
+            float x = RandGaussian(starfield_width/2, starfield_width/3);   // RandDouble(0, starfield_width);
+            float y = RandGaussian(starfield_width/2, starfield_width/3);   // RandDouble(0, starfield_width);
+            float r2 = (x - starfield_width/2)*(x - starfield_width/2) + (y-starfield_width/2)*(y-starfield_width/2);
+            float z = RandDouble(-100, 100)*std::exp(-r2/(starfield_width*starfield_width/4));
+            m_starfield_verts.store(x, y, z);
 
-    GG::GL2DVertexBuffer verts; verts.reserve(4);
-    GG::GLTexCoordBuffer tex;   tex.reserve(4);
-
-    tex.store(0.0f, 0.0f);
-    verts.store(0, 0);
-    tex.store(0.0f, 1.0f);
-    verts.store(0, Value(Height()));
-    tex.store(1.0f, 1.0f);
-    verts.store(Value(Width()), Value(Height()));
-    tex.store(1.0f, 0.0f);
-    verts.store(Value(Width()), 0);
-
-    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    verts.activate();
-    tex.activate();
-
-    for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
-        float texture_coords_per_pixel_x = 1.0f / Value(m_backgrounds[i]->Width());
-        float texture_coords_per_pixel_y = 1.0f / Value(m_backgrounds[i]->Height());
-        glScalef(static_cast<GLfloat>(Value(texture_coords_per_pixel_x * Width())),
-                 static_cast<GLfloat>(Value(texture_coords_per_pixel_y * Height())),
-                 1.0f);
-        glTranslatef(static_cast<GLfloat>(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0f * m_bg_scroll_rate[i])),
-                     static_cast<GLfloat>(Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0f * m_bg_scroll_rate[i])),
-                     0.0f);
-        glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
-        glDrawArrays(GL_QUADS, 0, verts.size());
-
-        glLoadIdentity();
+            float brightness = 1.0f - std::pow(RandZeroToOne(), 2);
+            m_starfield_colours.store(GG::CLR_WHITE * brightness);
+        }
+        m_starfield_verts.createServerBuffer();
+        m_starfield_colours.createServerBuffer();
     }
 
-    glPopClientAttrib();
+
+    GLfloat window_width = Value(AppWidth());
+    GLfloat window_height = std::max(1, Value(AppHeight()));
+    glViewport(0, 0, window_width, window_height);
+
+    bool perspective_starfield = true;
+    GLfloat zpos_1to1 = 0.0f;
+    if (perspective_starfield) {
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+
+        GLfloat aspect_ratio = window_width / window_height;
+        GLfloat zclip_near = window_height/4;
+        GLfloat zclip_far = 3*zclip_near;
+        GLfloat fov_height = zclip_near;
+        GLfloat fov_width = fov_height * aspect_ratio;
+        zpos_1to1 = -2*zclip_near;  // stars rendered at -viewport_size units should be 1:1 with ortho projected stuff
+
+        glFrustum(-fov_width,   fov_width,
+                   fov_height, -fov_height,
+                   zclip_near,  zclip_far);
+        glTranslatef(-window_width/2, -window_height/2, 0.0f);
+    }
+
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // last: standard map panning
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
+    glTranslatef(Value(origin_offset.x), Value(origin_offset.y), 0.0f);
+    glScalef(ZoomFactor(), ZoomFactor(), 1.0f);
+    glTranslatef(0.0, 0.0, zpos_1to1);
+    glScalef(1.0f, 1.0f, ZoomFactor());
+
+    // first: starfield manipulations
+    bool rotate_starfield = false;
+    if (rotate_starfield) {
+        float ticks = GG::GUI::GetGUI()->Ticks();
+        glTranslatef(starfield_width/2, starfield_width/2, 0.0f);   // move back to original position
+        glRotatef(ticks/10, 0.0f, 0.0f, 1.0f);                      // rotate about centre of starfield
+        glTranslatef(-starfield_width/2, -starfield_width/2, 0.0f); // move centre of starfield to origin
+    }
+
+
+    glPointSize(std::min(5.0, 0.5 * ZoomFactor()));
+    glEnable(GL_POINT_SMOOTH);
+    glDisable(GL_TEXTURE_2D);
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    m_starfield_verts.activate();
+    m_starfield_colours.activate();
+    glDrawArrays(GL_POINTS, 0, m_starfield_verts.size());
+    glPopClientAttrib();
+
+    glEnable(GL_TEXTURE_2D);
+    glPointSize(1.0f);
+
+
+    if (perspective_starfield) {
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+    }
+
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glViewport(0, 0, window_width, window_height);
 }
 
 void MapWnd::RenderFields() {
@@ -1543,26 +1575,37 @@ void MapWnd::RenderFields() {
     glPopClientAttrib();
 }
 
+namespace {
+    boost::shared_ptr<GG::Texture> GetGasTexture() {
+        static boost::shared_ptr<GG::Texture> gas_texture;
+        if (!gas_texture) {
+            gas_texture = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png");
+            gas_texture->SetFilters(GL_NEAREST, GL_NEAREST);
+            glBindTexture(GL_TEXTURE_2D, gas_texture->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        }
+        return gas_texture;
+    }
+}
+
 void MapWnd::RenderGalaxyGas() {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
         return;
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+    if (m_galaxy_gas_quad_vertices.empty())
+        return;
+
     glEnable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    m_star_texture_coords.activate();
+    m_galaxy_gas_quad_vertices.activate();
+    m_galaxy_gas_texture_coords.activate();
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
-         m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        if (it->second.empty())
-            continue;
-        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-        it->second.activate();
-        glDrawArrays(GL_QUADS, 0, it->second.size());
-    }
+    glBindTexture(GL_TEXTURE_2D, GetGasTexture()->OpenGLId());
+    glDrawArrays(GL_QUADS, 0, m_galaxy_gas_quad_vertices.size());
 
     glPopClientAttrib();
 }
@@ -1637,7 +1680,6 @@ void MapWnd::RenderSystems() {
 
     RenderScaleCircle();
 
-    const double TWO_PI = 2.0*3.14159;
     if (fog_scanlines || circles) {
         glPushMatrix();
         glLoadIdentity();
@@ -1918,7 +1960,6 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
     const double MARKER_HALF_SIZE = 9;
     const int MARKER_PTS = ClientUI::Pts();
     boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
-    const double TWO_PI = 2.0*3.1415926536;
     GG::Flags<GG::TextFormat> flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
     glPushMatrix();
@@ -2158,6 +2199,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
         bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
         bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+        bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),            1, false, fps));
@@ -2168,8 +2210,9 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),         7, false, gas));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),   8, false, starfields));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),    9, false, scale));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),    10, false, zoomSlider));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"), 11, false, detectionRange));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),  10, false, scaleCircle));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),    11, false, zoomSlider));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"), 12, false, detectionRange));
         // display popup menu
         GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                             ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -2183,8 +2226,9 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                 case 7: { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        break; }
                 case 8: { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  break; }
                 case 9: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        break; }
-                case 10: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);    break; }
-                case 11: { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange); break; }
+                case 10: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);  break; }
+                case 11: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);     break; }
+                case 12: { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);  break; }
                 default: break;
             }
         }
@@ -2274,7 +2318,7 @@ void MapWnd::InitTurn() {
 
     // set turn button to current turn
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
-                                          boost::lexical_cast<std::string>(turn_number)));
+                                       boost::lexical_cast<std::string>(turn_number)));
     MoveChildUp(m_btn_turn);
 
 
@@ -2436,10 +2480,6 @@ void MapWnd::InitTurnRendering() {
                   static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
 
 
-    // set up backgrounds on first turn.  if m_backgrounds already contains textures, does nothing
-    InitBackgrounds(m_backgrounds, m_bg_scroll_rate);
-
-
     // remove any existing fleet movement lines or projected movement lines.  this gets cleared
     // here instead of with the movement line stuff because that would clear some movement lines
     // that come from the SystemIcons
@@ -2483,6 +2523,11 @@ void MapWnd::InitTurnRendering() {
         GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
         GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
     }
+
+    // temp: reset starfield each turn
+    m_starfield_verts.clear();
+    m_starfield_colours.clear();
+    // end temp
 
     // create buffers for system icon and galaxy gas rendering, and starlane rendering
     InitSystemRenderingBuffers();
@@ -2550,10 +2595,10 @@ void MapWnd::InitSystemRenderingBuffers() {
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
     for (std::size_t i = 0; i < m_system_icons.size(); ++i) {
-        m_star_texture_coords.store(1.5,-0.5);
+        m_star_texture_coords.store( 1.5,-0.5);
         m_star_texture_coords.store(-0.5,-0.5);
-        m_star_texture_coords.store(-0.5,1.5);
-        m_star_texture_coords.store(1.5,1.5);
+        m_star_texture_coords.store(-0.5, 1.5);
+        m_star_texture_coords.store( 1.5, 1.5);
     }
 
 
@@ -2592,8 +2637,8 @@ void MapWnd::InitSystemRenderingBuffers() {
 
 
         // add (rotated) gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", system_id)) {
-            const float GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
+        if (boost::shared_ptr<GG::Texture> gas_texture = GetGasTexture()) {
+            const float GAS_SIZE = ClientUI::SystemIconSize() * 6.0;
             const float ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const float COS_THETA = std::cos(ROTATION);
             const float SIN_THETA = std::sin(ROTATION);
@@ -2626,12 +2671,32 @@ void MapWnd::InitSystemRenderingBuffers() {
             const float GAS_X4 = system->X() + X4r;
             const float GAS_Y4 = system->Y() + Y4r;
 
-            GG::GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
+            m_galaxy_gas_quad_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
+            m_galaxy_gas_quad_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
+            m_galaxy_gas_quad_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
+            m_galaxy_gas_quad_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
 
-            gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
-            gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
-            gas_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
-            gas_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
+            unsigned int subtexture_index = system_id % 12;                             //  0  1  2  3  4  5  6  7  8  9 10 11
+            unsigned int subtexture_x_index = subtexture_index / 3;                     //  0  0  0  0  1  1  1  1  2  2  2  2
+            unsigned int subtexture_y_index = subtexture_index - 4*subtexture_x_index;  //  0  1  2  3  0  1  2  3  0  1  2  3
+
+            const GLfloat* default_tex_coords = gas_texture->DefaultTexCoords();
+            const GLfloat tex_coord_min_x = default_tex_coords[0];
+            const GLfloat tex_coord_min_y = default_tex_coords[1];
+            const GLfloat tex_coord_max_x = default_tex_coords[2];
+            const GLfloat tex_coord_max_y = default_tex_coords[3];
+
+            // gas texture is expected to be a 4 wide by 3 high grid
+            // also add a bit of padding to hopefully avoid artifacts of texture edges
+            const GLfloat tx_low_x = tex_coord_min_x  + (subtexture_x_index + 0)*(tex_coord_max_x - tex_coord_min_x)/4;
+            const GLfloat tx_high_x = tex_coord_min_x + (subtexture_x_index + 1)*(tex_coord_max_x - tex_coord_min_x)/4;
+            const GLfloat tx_low_y = tex_coord_min_y  + (subtexture_y_index + 0)*(tex_coord_max_y - tex_coord_min_y)/3;
+            const GLfloat tx_high_y = tex_coord_min_y + (subtexture_y_index + 1)*(tex_coord_max_y - tex_coord_min_y)/3;
+
+            m_galaxy_gas_texture_coords.store(tx_high_x, tx_low_y);
+            m_galaxy_gas_texture_coords.store(tx_low_x,  tx_low_y);
+            m_galaxy_gas_texture_coords.store(tx_low_x,  tx_high_y);
+            m_galaxy_gas_texture_coords.store(tx_high_x, tx_high_y);
         }
     }
 
@@ -2659,24 +2724,16 @@ void MapWnd::InitSystemRenderingBuffers() {
         it->second.createServerBuffer();
     }
 
-    // galaxy gas
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::iterator it = m_galaxy_gas_quad_vertices.begin();
-         it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-        it->second.createServerBuffer();
-    }
-    // fill buffers with star textures
     m_star_texture_coords.createServerBuffer();
+    m_galaxy_gas_quad_vertices.createServerBuffer();
+    m_galaxy_gas_texture_coords.createServerBuffer();
 }
 
 void MapWnd::ClearSystemRenderingBuffers() {
     m_star_core_quad_vertices.clear();
     m_star_halo_quad_vertices.clear();
     m_galaxy_gas_quad_vertices.clear();
+    m_galaxy_gas_texture_coords.clear();
     m_star_texture_coords.clear();
     m_star_circle_vertices.clear();
 }
@@ -3103,10 +3160,9 @@ void MapWnd::InitFieldRenderingBuffers() {
 
         // also add circles to render scanlines for not-visible fields
         if (!current_field_visible) {
-            const double PI = 3.141594;
             GG::Pt circle_ul = GG::Pt(GG::X(field->X() - FIELD_SIZE), GG::Y(field->Y() - FIELD_SIZE));
             GG::Pt circle_lr = GG::Pt(GG::X(field->X() + FIELD_SIZE), GG::Y(field->Y() + FIELD_SIZE));
-            BufferStoreCircleArcVertices(m_field_scanline_circles, circle_ul, circle_lr, 0, 2*PI, true, 0, false);
+            BufferStoreCircleArcVertices(m_field_scanline_circles, circle_ul, circle_lr, 0, TWO_PI, true, 0, false);
         }
     }
     m_field_scanline_circles.createServerBuffer();
@@ -3246,7 +3302,6 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     }
 
 
-    const double TWO_PI = 2.0*3.1415926536;
     const GG::Pt BORDER_INSET(GG::X(1.0f), GG::Y(1.0f));
 
     // loop over colours / empires, adding a batch of triangles to buffers for
@@ -3331,8 +3386,6 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
     GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
     GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
 
-    const double TWO_PI = 2.0*3.1415926536;
-
     BufferStoreCircleArcVertices(m_scale_circle_vertices, ul, lr, 0, TWO_PI, false, 0, true);
 
     m_scale_circle_vertices.createServerBuffer();
@@ -3340,6 +3393,11 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
 
 void MapWnd::ClearScaleCircleRenderingBuffer()
 { m_scale_circle_vertices.clear(); }
+
+void MapWnd::ClearStarfieldRenderingBuffers() {
+    m_starfield_verts.clear();
+    m_starfield_colours.clear();
+}
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
     m_zoom_steps_in = data.map_zoom_steps_in;
@@ -4397,7 +4455,7 @@ void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
     GG::X contents_width(static_cast<int>(ZoomFactor() * GetUniverse().UniverseWidth()));
     GG::X app_width =  AppWidth();
     GG::Y app_height = AppHeight();
-    GG::X map_margin_width(app_width / 2.0);
+    GG::X map_margin_width(app_width);
 
     //std::cout << "MapWnd::CorrectMapPosition appwidth: " << Value(app_width) << " appheight: " << Value(app_height)
     //          << " to_x: " << Value(move_to_pt.x) << " to_y: " << Value(move_to_pt.y) << std::endl;;
@@ -4910,9 +4968,6 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     }
 }
 
-void MapWnd::HandleEmpireElimination(int empire_id)
-{}
-
 void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     if (obj)
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
@@ -4983,11 +5038,18 @@ void MapWnd::Sanitize() {
 
     SelectSystem(INVALID_OBJECT_ID);
 
+    // temp
+    m_starfield_verts.clear();
+    m_starfield_colours.clear();
+    // end temp
+
     ClearSystemRenderingBuffers();
     ClearStarlaneRenderingBuffers();
     ClearFieldRenderingBuffers();
     ClearVisibilityRadiiRenderingBuffers();
     ClearScaleCircleRenderingBuffer();
+    ClearStarfieldRenderingBuffers();
+
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         // clearing of message window commented out because scrollbar has quirks
@@ -5082,17 +5144,31 @@ bool MapWnd::ReturnToMap() {
         some_subscreen_was_visible = true;
     }
 
-    if (!some_subscreen_was_visible) {
-        // close fleets window if open
-        FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-        GG::Wnd* active_fleet_wnd = fm.ActiveFleetWnd();
-        if (active_fleet_wnd) {
-            fm.CloseAll();
-        } else {
-            // else close sidepanel if open
-            SelectSystem(INVALID_OBJECT_ID);
-        }
+    if (some_subscreen_was_visible)
+        return true;
+
+    if (m_pedia_panel->Visible()) {
+        TogglePedia();
+        return true;
     }
+
+    // close fleets window if open
+    FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
+    GG::Wnd* active_fleet_wnd = fm.ActiveFleetWnd();
+    if (active_fleet_wnd) {
+        fm.CloseAll();
+        return true;
+    }
+
+    // close sidepanel if open
+    if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
+       SelectSystem(INVALID_OBJECT_ID);
+       return true;
+    }
+
+    // close empire/player list and messages windows if nothing else was open...
+    HideEmpires();
+    HideMessages();
 
     return true;
 }
@@ -6022,9 +6098,10 @@ namespace { //helper function for DispatchFleetsExploring
         frontier.insert(system_id);
         int distance = 0;
         bool found = false;
-        while(distance < 50 && !found){ //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
-            for(std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++){
-                if(supplyable_systems.count(*sys) > 0){
+
+        while (distance < 50 && !found) { //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
+            for (std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++) {
+                if (supplyable_systems.count(*sys) > 0) {
                     //we found a route to a supplyable system
                     return std::pair<int, int>(*sys, distance);
                 }

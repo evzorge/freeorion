@@ -88,12 +88,53 @@ Special
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetTargetResearch value = Value + 3
-                SetTargetPopulation value = Value - 3
+                SetMaxSupply value = Value -2
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
+
+Special
+    name = "TIDAL_LOCK_SPECIAL"
+    description = "TIDAL_LOCK_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = EffectsGroup
+        scope = And [
+            Source
+            Focus type = "FOCUS_INDUSTRY"
+        ]
+        effects = [
+            SetTargetIndustry value = Value + Target.Population * 0.2
+        ]
+    graphic = "icons/specials_huge/tidal_lock.png"
+
+Special
+    name = "TEMPORAL_ANOMALY_SPECIAL"
+    description = "TEMPORAL_ANOMALY_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.3
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Species
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 25 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/specials_huge/temporal_anomaly.png"
 
 Special
     name = "ANCIENT_RUINS_SPECIAL"
@@ -286,6 +327,69 @@ Special
                     empire = Source.Owner
             ]
 
+        // Find extinct species
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = 0.75
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            effects = [
+                If condition = Random probability = 0.33
+                    effects = [ 
+                        AddSpecial name = "EXTINCT_BANFORO_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            icon = "icons/specials_huge/extinct_banforo.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_BANFORO"
+                            ]
+                            empire = Source.Owner
+                         GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            icon = "icons/specials_huge/extinct_banforo.png"
+                            parameters = [
+                                tag = "species" data = "SP_BANFORO"
+                            ]
+                    ]
+                else = If condition = Random probability = 0.5
+                    effects = [ 
+                        AddSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            icon = "icons/specials_huge/extinct_kilandow.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_KILANDOW"
+                            ]
+                            empire = Source.Owner
+                         GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            icon = "icons/specials_huge/extinct_kilandow.png"
+                            parameters = [
+                                tag = "species" data = "SP_KILANDOW"
+                            ]
+                    ]
+                    else = [
+                        AddSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            icon = "icons/specials_huge/extinct_misiorla.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_MISIORLA"
+                            ]
+                            empire = Source.Owner
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            icon = "icons/specials_huge/extinct_misiorla.png"
+                            parameters = [
+                                tag = "species" data = "SP_MISIORLA"
+                            ]
+                     ]
+            ]
+
         EffectsGroup
             scope = Source
             activation = OwnerHasTech name = "LRN_XENOARCH"
@@ -401,6 +505,7 @@ Special
                         Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
@@ -418,6 +523,7 @@ Special
                         Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             effects = [
@@ -443,7 +549,11 @@ Special
                         Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
                 Structure high = 3
             ]
             effects = [
@@ -569,7 +679,7 @@ Special
     name = "HONEYCOMB_SPECIAL"
     description = "HONEYCOMB_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 5.0
+    spawnrate = 9.0
     spawnlimit = 1
     location = And [
         Planet
@@ -579,6 +689,16 @@ Special
             Contains And [
                 Planet
                 OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                Or [
+                    Species
+                    HasSpecial
+                ]
             ]
         ]
     ]
@@ -789,7 +909,7 @@ Special
     spawnlimit = 1
     location = And [
         Planet
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [Asteroids GasGiant Inferno]
         Not Planet size = [tiny huge]
         Not WithinStarlaneJumps jumps = 2 condition = And [
             System
@@ -822,7 +942,6 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
-    stealth = 0
     spawnrate = 0.0
     effectsgroups = [
         EffectsGroup
@@ -837,6 +956,24 @@ Special
             effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
         ]
     graphic = "icons/specials_huge/ancient_ruins_excavated.png"
+
+Special
+    name = "EXTINCT_BANFORO_SPECIAL"
+    description = "EXTINCT_BANFORO_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_banforo.png"
+
+Special
+    name = "EXTINCT_KILANDOW_SPECIAL"
+    description = "EXTINCT_KILANDOW_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_kilandow.png"
+
+Special
+    name = "EXTINCT_MISIORLA_SPECIAL"
+    description = "EXTINCT_MISIORLA_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_misiorla.png"
     
 Special
     name = "KRAKEN_NEST_SPECIAL"
@@ -1312,8 +1449,10 @@ Special
                 AddSpecial name = "DERELICT_SPECIAL2"
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_MAP"
+                    icon = "icons/specials_huge/derelict.png"
                     parameters = [
                         tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL2"
                     ]
                     empire = Target.Owner
             ]
@@ -1367,6 +1506,7 @@ Special
                     icon = "icons/meter/fuel.png"
                     parameters = [
                         tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL3"
                     ]
                     empire = Target.Owner
             ]
@@ -1398,6 +1538,48 @@ Special
             ]
     ]
     graphic = "icons/specials_huge/derelict.png"
+
+Special
+    name = "ACCRETION_DISC_SPECIAL"
+    description = "ACCRETION_DISC_SPECIAL_DESC"
+    spawnrate = 99
+    spawnlimit = 9999
+    location = And [
+        System
+        Or [
+            And [
+                Star type = [BlackHole]
+                Not Contains Capital
+                Random probability = 0.85
+            ]
+            And [
+                Random probability = 0.1
+                Not Star type = [NoStar]
+                Not WithinStarlaneJumps jumps = 2 condition = And [
+                    System
+                    Contains And [
+                        Planet
+                        OwnedBy affiliation = AnyEmpire
+                    ]
+                ]
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            effects = CreateField type = "FLD_ACCRETION_DISC" size = 20
+
+        EffectsGroup
+            scope = And [
+                Planet
+                ContainedBy Source
+            ]
+            effects = SetMaxSupply value = Value - 1
+    ]
+
+    graphic = "nebulae/nebula20.png"
 
 Special
     name = "SUPERNOVA_SPECIAL"
@@ -1470,6 +1652,8 @@ Special
     spawnlimit = 0
     graphic = "icons/specials_huge/nova_boom.png"
 
+//## Growth Specials ##
+
 Special
     name = "PROBIOTIC_SPECIAL"
     description = "PROBIOTIC_SPECIAL_DESC"
@@ -1498,6 +1682,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "PROBIOTIC_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1506,6 +1691,7 @@ Special
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "PROBIOTIC_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1541,6 +1727,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1549,6 +1736,7 @@ Special
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "FRUIT_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1583,6 +1771,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1591,6 +1780,7 @@ Special
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "SPICE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1627,6 +1817,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1635,6 +1826,7 @@ Special
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "MONOPOLE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1671,6 +1863,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1679,6 +1872,7 @@ Special
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "SUPERCONDUCTOR_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1716,6 +1910,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1724,6 +1919,7 @@ Special
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "POSITRONIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1761,6 +1957,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1769,6 +1966,7 @@ Special
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "MINERALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1805,6 +2003,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1813,6 +2012,7 @@ Special
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "CRYSTALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1850,6 +2050,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "ELERIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1858,6 +2059,7 @@ Special
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "ELERIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1929,6 +2131,24 @@ CHANCE_OF_GUARD_1
                 ]
             ]
             effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
+'''
+
+ANCIENT_RUINS_DEPLETED_CONTENT
+'''    stealth = 0
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+        ]
+    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
 '''
 
 // keep this entry at bottom, to best preserve line numbering for debugging

@@ -29,7 +29,8 @@ struct MessageEventBase
     (HostID)                                   \
     (LobbyUpdate)                              \
     (LobbyChat)                                \
-    (SaveGame)                                 \
+    (SaveGameDataRequest)                      \
+    (SaveGameComplete)                         \
     (GameStart)                                \
     (TurnUpdate)                               \
     (TurnPartialUpdate)                        \
@@ -38,8 +39,6 @@ struct MessageEventBase
     (PlayerChat)                               \
     (Diplomacy)                                \
     (DiplomaticStatusUpdate)                   \
-    (VictoryDefeat)                            \
-    (PlayerEliminated)                         \
     (EndGame)
 
 

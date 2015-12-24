@@ -28,6 +28,7 @@
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
+#include "../util/Version.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -106,9 +107,8 @@ ServerSaveGameData::ServerSaveGameData() :
     m_current_turn(INVALID_GAME_TURN)
 {}
 
-ServerSaveGameData::ServerSaveGameData(int current_turn, const std::map<int, std::set<std::string> >& victors) :
-    m_current_turn(current_turn),
-    m_victors(victors)
+ServerSaveGameData::ServerSaveGameData(int current_turn) :
+    m_current_turn(current_turn)
 {}
 
 
@@ -129,6 +129,8 @@ ServerApp::ServerApp() :
     const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
 
     InitLogger(SERVER_LOG_FILENAME, "Server");
+
+    LogDependencyVersions();
 
     m_fsm->initiate();
 
@@ -238,8 +240,6 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-        args.push_back("--binary-serialization");
-        args.push_back(GetOptionsDB().GetValueString("binary-serialization"));
         args.push_back("--ai-path");
         args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
         DebugLogger() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
@@ -286,7 +286,7 @@ ServerNetworking& ServerApp::Networking()
 { return m_networking; }
 
 std::string ServerApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
-    if(!object) {
+    if (!object) {
         ErrorLogger() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
@@ -322,7 +322,7 @@ void ServerApp::CleanupAIs() {
         for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
             PlayerConnectionPtr player = *it;
             if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                player->SendMessage(EndGameMessage(player->PlayerID(), Message::YOU_ARE_ELIMINATED));
+                player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
                 ai_connection_lingering = true;
             }
         }
@@ -370,8 +370,8 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
-                               << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
-                               << player_connection->PlayerID() << ".  Ignoring.";
+                      << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
+                      << player_connection->PlayerID() << ".  Ignoring.";
         return;
     }
 
@@ -382,7 +382,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
     case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
-    case Message::SAVE_GAME:                m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
+    case Message::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
     case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
     case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
@@ -397,7 +397,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
-    
+
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
         m_networking.Disconnect(player_connection);
@@ -447,7 +447,7 @@ void ServerApp::SelectNewHost() {
 
     // scan through players for a human to host
     for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
-            players_it != m_networking.established_end(); ++players_it)
+         players_it != m_networking.established_end(); ++players_it)
     {
         PlayerConnectionPtr player_connection = *players_it;
         if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
@@ -657,14 +657,11 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
     // clear previous game player state info
     m_turn_sequence.clear();
-    m_eliminated_players.clear();
     m_player_empire_ids.clear();
 
 
     // set server state info for new game
     m_current_turn = BEFORE_FIRST_TURN;
-    m_victors.clear();
-
 
     // create universe and empires for players
     DebugLogger() << "ServerApp::NewGameInit: Creating Universe";
@@ -709,7 +706,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     // update visibility information to ensure data sent out is up-to-date
     DebugLogger() << "ServerApp::NewGameInit: Updating first-turn Empire stuff";
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
-    
+
     // initialize empire owned object counters
     EmpireManager& empires = Empires();
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
@@ -718,9 +715,9 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
     // Determine initial supply distribution and exchanging and resource pools for empires
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -739,11 +736,13 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
         int empire_id = PlayerEmpireID(player_id);
+        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
         player_connection->SendMessage(GameStartMessage(player_id,              m_single_player_game,
                                                         empire_id,              m_current_turn,
                                                         m_empires,              m_universe,
                                                         GetSpeciesManager(),    GetCombatLogManager(),
-                                                        player_info_map,        m_galaxy_setup_data));
+                                                        player_info_map,        m_galaxy_setup_data,
+                                                        use_binary_serialization));
     }
 }
 
@@ -795,7 +794,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     ExtractMessageData(msg, directory_name);
 
     DebugLogger() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
-    
+
     fs::path directory = GetSaveDir() / directory_name;
     // Do not allow a relative path to lead outside the save directory.
     if(!IsInside(directory, GetSaveDir())) {
@@ -806,7 +805,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
         directory = GetSaveDir();
         directory_name = ".";
     }
-    
+
     PreviewInformation preview_information;
     preview_information.folder = directory_name;
     ListSaveSubdirectories( preview_information.subdirectories);
@@ -1029,14 +1028,11 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // clear previous game player state info
     m_turn_sequence.clear();
-    m_eliminated_players.clear();
     m_player_empire_ids.clear();
 
 
     // restore server state info from save
     m_current_turn = server_save_game_data->m_current_turn;
-    m_victors =      server_save_game_data->m_victors;
-    // todo: save and restore m_eliminated_players ?
 
     std::map<int, PlayerSaveGameData> player_id_save_game_data;
 
@@ -1105,9 +1101,9 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // Determine supply distribution and exchanging and resource pools for empires
     EmpireManager& empires = Empires();
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -1148,6 +1144,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // when they end their turn
         boost::shared_ptr<OrderSet> orders = psgd.m_orders;
 
+        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
 
         if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // get save state string
@@ -1159,14 +1156,14 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             player_info_map, *orders, sss,
-                                                            m_galaxy_setup_data));
+                                                            m_galaxy_setup_data, use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             player_info_map, *orders, psgd.m_ui_data.get(),
-                                                            m_galaxy_setup_data));
+                                                            m_galaxy_setup_data, use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
                    client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -1175,7 +1172,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            player_info_map, m_galaxy_setup_data));
+                                                            player_info_map, m_galaxy_setup_data,
+                                                            use_binary_serialization));
         } else {
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
@@ -1285,11 +1283,11 @@ bool ServerApp::AllOrdersReceived() {
 namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
-      * having no ships and no fleets. */
-    //bool EmpireEliminated(int empire_id) {
-    //    return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-    //            Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
-    //}
+      * having no ships and no planets. */
+      bool EmpireEliminated(int empire_id) {
+          return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+                  Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
+      }
 
     /** Compiles and return set of ids of empires that are controlled by a
       * human player.*/
@@ -2615,7 +2613,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // update production queues after order execution
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        if (Empires().Eliminated(it->first))
+        if (it->second->Eliminated())
             continue;   // skip eliminated empires
         it->second->UpdateProductionQueue();
     }
@@ -2687,8 +2685,9 @@ void ServerApp::PreCombatProcessTurns() {
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
+        bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
         player->SendMessage(TurnPartialUpdateMessage(player_id, PlayerEmpireID(player_id),
-                                                     m_universe));
+                                                     m_universe, use_binary_serialization));
     }
 }
 
@@ -2854,9 +2853,9 @@ void ServerApp::PostCombatProcessTurns() {
     // Determine how much of each resource is available, and determine how to
     // distribute it to planets or on queues
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -2869,7 +2868,7 @@ void ServerApp::PostCombatProcessTurns() {
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (!empires.Eliminated(it->first)) {
+        if (!it->second->Eliminated()) {
             Empire* empire = it->second;
             empire->UpdateAvailableLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
@@ -2887,9 +2886,10 @@ void ServerApp::PostCombatProcessTurns() {
     // objects for completed production and give techs to empires that have
     // researched them
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires
+
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();
@@ -2900,6 +2900,9 @@ void ServerApp::PostCombatProcessTurns() {
         DebugLogger() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
         DebugLogger() << objects.Dump();
     }
+
+    // execute turn events implemented as Python scripts
+    ExecuteScriptedTurnEvents();
 
     // Execute meter-related effects on objects created this turn, so that new
     // UniverseObjects will have effects applied to them this turn, allowing
@@ -2927,10 +2930,6 @@ void ServerApp::PostCombatProcessTurns() {
     // store initial values of meters for this turn.
     m_universe.BackPropegateObjectMeters();
     empires.BackPropegateMeters();
-
-
-    // execute turn events implemented as Python scripts
-    ExecuteScriptedTurnEvents();
 
 
     // check for loss of empire capitals
@@ -2965,6 +2964,8 @@ void ServerApp::PostCombatProcessTurns() {
         DebugLogger() << objects.Dump();
     }
 
+    // this has to be here for the sitreps it creates to be in the right turn
+    CheckForEmpireElimination();
 
     // update current turn number so that following visibility updates and info
     // sent to players will have updated turn associated with them
@@ -2978,7 +2979,6 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // misc. other updates and records
-    CheckForEmpireEliminationOrVictory();
     m_universe.UpdateStatRecords();
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
         empire_it->second->UpdateOwnedObjectCounters();
@@ -3009,159 +3009,29 @@ void ServerApp::PostCombatProcessTurns() {
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
+        bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
         player->SendMessage(TurnUpdateMessage(player_id,                PlayerEmpireID(player_id),
                                               m_current_turn,           m_empires,
                                               m_universe,               GetSpeciesManager(),
-                                              GetCombatLogManager(),    players));
+                                              GetCombatLogManager(),    players,
+                                              use_binary_serialization));
     }
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
 
-void ServerApp::CheckForEmpireEliminationOrVictory() {
-    //EmpireManager& empires = Empires();
-    //ObjectMap& objects = m_universe.Objects();
+void ServerApp::CheckForEmpireElimination() {
+    std::set<Empire*> surviving_empires;
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        if (it->second->Eliminated())
+            continue;   // don't double-eliminate an empire
+        else if (EmpireEliminated(it->first))
+            it->second->Eliminate();
+        else
+            surviving_empires.insert(it->second);
+    }
 
-    //// check for eliminated empires and players
-    //std::map<int, int> eliminations; // map from player id to empire id of eliminated players, for empires eliminated this turn
-    //for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
-    //    int empire_id = it->first;
-    //    if (empires.Eliminated(empire_id))
-    //        continue;   // don't double-eliminate an empire
-    //    DebugLogger() << "empire " << empire_id << " not yet eliminated";
-
-    //    if (!EmpireEliminated(empire_id))
-    //        continue;
-    //    DebugLogger() << " ... but IS eliminated this turn";
-
-    //    int elim_player_id = EmpirePlayerID(empire_id);
-    //    eliminations[elim_player_id] = empire_id;
-    //}
-
-
-    //// check for victorious players
-    //std::map<int, std::set<std::string> > new_victors; // map from player ID to set of victory reason strings
-
-    //// marked by Victory effect?
-    //const std::multimap<int, std::string>& marked_for_victory = m_universe.GetMarkedForVictory();
-    //for (std::multimap<int, std::string>::const_iterator it = marked_for_victory.begin(); it != marked_for_victory.end(); ++it) {
-    //    const UniverseObject* obj = objects.Object(it->first);
-    //    if (!obj || obj->Unowned()) continue; // perhaps it was destroyed?
-    //    int empire_id = obj->Owner();
-    //    if (empires.Lookup(empire_id))
-    //        new_victors[EmpirePlayerID(empire_id)].insert(it->second);
-    //}
-
-    //// all enemies eliminated?
-    //if (eliminations.size() == m_networking.NumEstablishedPlayers() - 1) {
-    //    // only one player not eliminated.  treat this as a win for the remaining player
-    //    ServerNetworking::established_iterator player_it = m_networking.established_begin();
-    //    if (player_it != m_networking.established_end()) {
-    //        boost::shared_ptr<PlayerConnection> player_connection = *player_it;
-    //        int cur_player_id = player_connection->PlayerID();
-    //        if (eliminations.find(cur_player_id) == eliminations.end())
-    //            new_victors[cur_player_id].insert(UserStringNop("ALL_ENEMIES_ELIMINATED_VICTORY"));
-    //    }
-    //}
-
-
-    //// check if any victors are new.  (don't want to re-announce old victors each subsequent turn)
-    //if (!new_victors.empty()) {
-    //    for (std::map<int, std::set<std::string> >::const_iterator it = new_victors.begin(); it != new_victors.end(); ++it) {
-    //        int victor_player_id = it->first;
-
-    //        const std::set<std::string>& reasons = it->second;
-    //        for (std::set<std::string>::const_iterator reason_it = reasons.begin(); reason_it != reasons.end(); ++reason_it) {
-    //            std::string reason_string = *reason_it;
-
-    //            // see if player has already won the game...
-    //            bool new_victory = false;
-    //            std::map<int, std::set<std::string> >::const_iterator vict_it = m_victors.find(victor_player_id);
-    //            if (vict_it == m_victors.end()) {
-    //                // player hasn't yet won, so victory is new
-    //                new_victory = true;
-    //            } else {
-    //                // player has won at least once, but also need to check of the type of victory is new
-    //                std::set<std::string>::const_iterator vict_type_it = vict_it->second.find(reason_string);
-    //                if (vict_type_it == vict_it->second.end())
-    //                    new_victory = true;
-    //            }
-
-    //            if (new_victory) {
-    //                // record victory
-    //                m_victors[victor_player_id].insert(reason_string);
-
-    //                Empire* empire = GetPlayerEmpire(victor_player_id);
-    //                if (!empire) {
-    //                    ErrorLogger() << "Trying to grant victory to a missing empire!";
-    //                    continue;
-    //                }
-    //                const std::string& victor_empire_name = empire->Name();
-    //                int victor_empire_id = empire->EmpireID();
-
-
-    //                // notify all players of victory
-    //                for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-    //                    boost::shared_ptr<PlayerConnection> player_connection = *player_it;
-    //                    int recipient_player_id = player_connection->PlayerID();
-    //                    player_connection->SendMessage(VictoryDefeatMessage(recipient_player_id, Message::VICTORY, reason_string, victor_empire_id));
-    //                    if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
-    //                        recipient_empire->AddSitRepEntry(CreateVictorySitRep(reason_string, victor_empire_name));
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
-
-    //if (eliminations.empty())
-    //    return;
-
-
-    // time for elimination messages to propegate
-    //boost::this_thread::sleep(boost::posix_time::seconds(1));
-
-
-    //// inform all players of eliminations
-    //for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-    //    int elim_player_id = it->first;
-    //    int elim_empire_id = it->second;
-    //    Empire* empire = empires.Lookup(elim_empire_id);
-    //    if (!empire) {
-    //        ErrorLogger() << "Trying to eliminate a missing empire!";
-    //        continue;
-    //    }
-    //    const std::string& elim_empire_name = empire->Name();
-
-    //    // notify all players of disconnection, and end game of eliminated player
-    //    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-    //        boost::shared_ptr<PlayerConnection> player_connection = *player_it;
-    //        int recipient_player_id = player_connection->PlayerID();
-    //        if (recipient_player_id == elim_player_id) {
-    //            player_connection->SendMessage(EndGameMessage(recipient_player_id, Message::YOU_ARE_ELIMINATED));
-    //            m_ai_client_processes.erase(recipient_player_id);   // done now so that PlayerConnection doesn't need to be re-retreived when dumping connections
-    //        } else {
-    //            player_connection->SendMessage(PlayerEliminatedMessage(recipient_player_id, elim_empire_id, elim_empire_name));    // PlayerEliminatedMessage takes the eliminated empire id, not the eliminated player id, for unknown reasons, as of this writing
-    //            if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
-    //                recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_id));
-    //        }
-    //    }
-    //}
-
-    //// dump connections to eliminated players, and remove server-side empire data
-    //for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-    //    int elim_empire_id = it->second;
-    //    // remove eliminated empire's ownership of UniverseObjects
-    //    std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(elim_empire_id));
-    //    for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
-    //        (*obj_it)->SetOwner(ALL_EMPIRES);
-
-    //    DebugLogger() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
-    //    m_eliminated_players.insert(it->first);
-    //    m_networking.Disconnect(it->first);
-
-    //    empires.EliminateEmpire(it->second);
-    //    RemoveEmpireTurn(it->second);
-    //}
+    if (surviving_empires.size() == 1) // last man standing
+        (*surviving_empires.begin())->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
 }
 
 void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {

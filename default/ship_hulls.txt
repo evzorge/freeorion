@@ -462,6 +462,7 @@ Hull
     icon = "icons/ship_hulls/logistics_facilitator_hull_small.png"
     graphic = "hulls_design/logistics_facilitator_hull.png"
 
+    
 Hull
     name = "SH_ASTEROID"
     description = "SH_ASTEROID_DESC"
@@ -495,14 +496,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -539,14 +533,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -590,14 +577,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -642,6 +622,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
             effects = SetStealth value = Value + 40
 
         [[REGULAR_HULL_DETECTION]]
@@ -680,14 +661,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -801,14 +775,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-            
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         EffectsGroup
             scope = Source
             activation = Source
@@ -881,6 +848,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
             effects = SetStealth value = Value + 40
 
         EffectsGroup
@@ -943,14 +911,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1393,16 +1354,16 @@ Hull
     stealth = 25
     structure = 12
     slots = [
-        Slot type = External position = (0.10, 0.35)
-        Slot type = External position = (0.25, 0.35)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.55, 0.15)
-        Slot type = External position = (0.70, 0.15)
-        Slot type = External position = (0.85, 0.35)
+        Slot type = External position = (0.40, 0.40)
+        Slot type = External position = (0.50, 0.40)
+        Slot type = External position = (0.70, 0.40)
+        Slot type = External position = (0.70, 0.60)
+        Slot type = External position = (0.80, 0.40)
+        Slot type = External position = (0.80, 0.60)
+        Slot type = Internal position = (0.40, 0.60)
+        Slot type = Internal position = (0.50, 0.60)
         Slot type = Internal position = (0.35, 0.75)
-        Slot type = Internal position = (0.50, 0.75)
-        Slot type = Internal position = (0.65, 0.75)
-        Slot type = Core     position = (0.50, 0.50)
+        Slot type = Core     position = (0.60, 0.50)
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 8
@@ -1496,6 +1457,43 @@ Hull
     ]
     icon = "icons/ship_hulls/compressed_energy_hull_small.png"
     graphic = "hulls_design/compressed_energy_hull.png"
+
+Hull
+    name = "SH_ENERGY_FRIGATE"
+    description = "SH_ENERGY_FRIGATE_DESC"
+    speed = 120
+    fuel = 4
+    stealth = 5
+    structure = 15
+    slots = [
+        Slot type = External position = (0.30, 0.20)
+        Slot type = Internal position = (0.25, 0.45)
+        Slot type = External position = (0.45, 0.40)
+        Slot type = External position = (0.55, 0.47)
+        Slot type = External position = (0.65, 0.55)
+    ]
+    buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 3
+    location = And [
+        Contains And [
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        OwnedBy empire = Source.Owner
+        Star type = [White Blue BlackHole]
+    ]
+    effectsgroups = [
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    icon = "icons/ship_hulls/energy_frigate_hull_small.png"
+    graphic = "hulls_design/energy_frigate_hull.png"
 
 Hull
     name = "SH_FRACTAL_ENERGY"
@@ -1932,7 +1930,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 30
+                InSystem
+            ]
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = CreateShip designname = "SM_KRILL_2"
 
@@ -1949,7 +1950,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 30
+                InSystem
+            ]
             effects = Destroy
 
         EffectsGroup    // mature into medium krill
@@ -1960,7 +1964,11 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.1
+            activation = And [
+                Turn low = 30
+                Random probability = 0.1
+                InSystem
+            ]
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_2"
@@ -2023,8 +2031,11 @@ Hull
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
-            activation = InSystem
-           stackinggroup = "KRILL_2_ACTION_STACK"
+            activation = And [
+                Turn low = 60
+                InSystem
+            ]
+            stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_3"
                 /*
@@ -2049,8 +2060,11 @@ Hull
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
-            activation = InSystem
-            effects = Destroy
+            activation = And [
+                Turn low = 60
+                InSystem
+            ]
+           effects = Destroy
 
         EffectsGroup
             scope = And [
@@ -2060,7 +2074,11 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.15
+            activation = And [
+                Turn low = 60
+                Random probability = 0.15
+                InSystem
+            ]
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_1"
@@ -2123,7 +2141,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 90
+                InSystem
+            ]
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_4"
@@ -2149,7 +2170,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 90
+                InSystem
+            ]
             effects = Destroy
 
         EffectsGroup
@@ -2160,7 +2184,11 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.08
+            activation = And [
+                Turn low = 90
+                Random probability = 0.08
+                InSystem
+            ]
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_1"
@@ -2973,6 +3001,17 @@ Hull
     ]
     icon = ""
     graphic = ""
+    
+ASTEROID_FIELD_STEALTH_BONUS
+'''EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
+            effects = SetStealth value = Value + 20
+'''
 
 REGULAR_HULL_DETECTION
 '''EffectsGroup

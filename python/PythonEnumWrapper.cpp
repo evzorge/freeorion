@@ -134,10 +134,8 @@ namespace FreeOrionPython {
             .value("core",          SL_CORE)
         ;
         enum_<ShipPartClass>("shipPartClass")
-            .value("shortRange",        PC_SHORT_RANGE)
-            .value("missiles",          PC_MISSILES)
+            .value("shortRange",        PC_DIRECT_WEAPON)
             .value("fighters",          PC_FIGHTERS)
-            .value("pointDefense",      PC_POINT_DEFENSE)
             .value("shields",           PC_SHIELD)
             .value("armour",            PC_ARMOUR)
             .value("troops",            PC_TROOPS)
@@ -185,8 +183,9 @@ namespace FreeOrionPython {
             .value("spiral4",       SPIRAL_4)
             .value("cluster",       CLUSTER)
             .value("elliptical",    ELLIPTICAL)
-            .value("irregular1",    IRREGULAR1)
-            .value("irregular2",    IRREGULAR2)
+            .value("disc",          DISC)
+            .value("box",           BOX)
+            .value("irregular",     IRREGULAR)
             .value("ring",          RING)
             .value("random",        RANDOM)
         ;

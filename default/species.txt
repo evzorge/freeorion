@@ -133,6 +133,63 @@ Species
 
 
 Species
+    name = "SP_BANFORO"
+    description = "SP_BANFORO_DESC"
+    gameplay_description = "SP_BANFORO_GAMEPLAY_DESC"
+    CanProduceShips
+    CanColonize
+    
+    tags = [ "LITHIC" "LIGHT_SENSITIVE" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_ULTIMATE_DETECTION" "AI_TAG_GOOD_STEALTH" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        [[ULTIMATE_DETECTION]]
+        [[GOOD_STEALTH]]
+
+        EffectsGroup
+            description = "LIGHT_SENSITIVE"
+            scope = Source
+            activation = AND [
+                Planet
+                Star type = [Blue]
+            ]
+            accountinglabel = "VERY_BRIGHT_STAR"
+            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Star type = [White]
+            ]
+            accountinglabel = "BRIGHT_STAR"
+            effects = SetTargetPopulation value = Value - Source.SizeAsDouble
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+    
+    [[BARREN_STANDARD_EP]]
+
+    graphic = "icons/species/banforo.png"
+
+
+Species
     name = "SP_BEIGEGOO"
     description = "SP_BEIGEGOO_DESC"
     gameplay_description = "SP_BEIGEGOO_GAMEPLAY_DESC"
@@ -291,7 +348,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_NO_ATTACKTROOPS" ]
+    tags = [ "ORGANIC" "TELEPATHIC" "NO_ATTACKTROOPS" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_NO_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -858,6 +915,59 @@ Species
 
 
 Species
+    name = "SP_KILANDOW"
+    description = "SP_KILANDOW_DESC"
+    gameplay_description = "SP_KILANDOW_GAMEPLAY_DESC"
+    CanProduceShips
+    CanColonize
+    
+    tags = [ "PHOTOTROPHIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_STEALTH" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[AVERAGE_INDUSTRY]]
+        [[GREAT_RESEARCH]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+
+        [[BAD_STEALTH]]
+
+        EffectsGroup
+            description = "GREAT_ASTEROID_INDUSTRY"
+            scope = And [
+                Source
+                Focus type = "FOCUS_INDUSTRY"
+                ContainedBy And [
+                    System 
+                    Contains And [
+                        Planet
+                        Planet type = Asteroids
+                        OwnedBy empire = Source.Owner
+                    ]
+                ]
+            ]
+            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+    
+    [[RADIATED_STANDARD_EP]]
+
+    graphic = "icons/species/kilandow.png"
+
+
+Species
     name = "SP_KOBUNTURA"
     description = "SP_KOBUNTURA_DESC"
     gameplay_description = "SP_KOBUNTURA_GAMEPLAY_DESC"
@@ -935,6 +1045,55 @@ Species
     [[OCEAN_STANDARD_EP]]
     
     graphic = "icons/species/laenfa.png"
+
+
+Species
+    name = "SP_MISIORLA"
+    description = "SP_MISIORLA_DESC"
+    gameplay_description = "SP_MISIORLA_GAMEPLAY_DESC"
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_ULTIMATE_WEAPONS" "AI_TAG_BAD_SUPPLY" "AI_TAG_BAD_DETECTION" "AI_TAG_BAD_STEALTH" ]
+    
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[BAD_RESEARCH]]
+        
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+
+        [[ULTIMATE_WEAPONS]]
+        
+        [[BAD_DETECTION]]
+        [[BAD_STEALTH]]
+
+        EffectsGroup
+            description = "BAD_FUEL"
+            scope = And [
+                Ship
+                Source
+            ]
+            effects = SetMaxFuel value = Value - 1
+        
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+    
+    [[TOXIC_STANDARD_EP]]
+    
+    graphic = "icons/species/misiorla.png"
 
 
 Species
@@ -1171,7 +1330,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_STEALTH" "AI_TAG_NO_ATTACKTROOPS" ]
+    tags = [ "ORGANIC" "NO_ATTACKTROOPS" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_STEALTH" "AI_TAG_NO_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -2222,7 +2381,7 @@ BASIC_POPULATION
         [[PHOTOTROPHIC_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
         [[GAIA_POP_MODIFIER]]
-        [[WORLDTREE_POP_MODIFIER]]
+        [[SPECIALS_POP_MODIFIER]]
         [[GRO_HAB_MODIFIER]]
         [[POPULATION_TECHS]]
         
@@ -2245,6 +2404,7 @@ BAD_POPULATION
             scope = Source
             activation = Planet
             accountinglabel = "BAD_POPULATION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetPopulation value = Value -0.25*abs(Value) 
 '''
 
@@ -2256,6 +2416,7 @@ GOOD_POPULATION
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_POPULATION_LABEL"
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetPopulation value = Value +0.25*abs(Value) 
 '''
 
@@ -2309,7 +2470,8 @@ XENOPHOBIC_SELF
             ]
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
-            effects = SetTargetPopulation value = Value * (0.6 + (0.4 * (0.8 ^ 
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = max(Value * (0.6 + (0.4 * (0.8 ^ 
                 Count condition = And [
                     PopulationCenter
                     Not OR [ 
@@ -2323,7 +2485,7 @@ XENOPHOBIC_SELF
                               condition = ExploredByEmpire
                                           empire = Source.Owner
                 ]
-                ) ) )
+                ) ) ), (Value - 3 * Target.SizeAsDouble)) // Sets the pop malus dependent on the number of other species nearby up to a max of the self sustaining bonus
 
 '''
 
@@ -2359,6 +2521,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Uninhabitable
             ]
             accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = -999
             
         EffectsGroup
@@ -2368,6 +2531,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Hostile
             ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble
             
         EffectsGroup
@@ -2377,6 +2541,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Poor
             ]
             accountinglabel = "POOR_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
 
 /*        EffectsGroup
@@ -2393,6 +2558,7 @@ ENVIRONMENT_MODIFIER
             scope = Source
             activation = Planet environment = Good
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
 
         EffectsGroup
@@ -2404,6 +2570,7 @@ ENVIRONMENT_MODIFIER
                 Not OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
             ]
             accountinglabel = "GRO_PLANET_ECOL"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1
 
         EffectsGroup
@@ -2414,6 +2581,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
             ]
             accountinglabel = "GRO_SYMBIOTIC_BIO"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
@@ -2424,6 +2592,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech name = "GRO_XENO_GENETICS"
             ]
             accountinglabel = "GRO_XENO_GENETICS"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
 
         EffectsGroup
@@ -2434,6 +2603,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech name = "GRO_XENO_GENETICS"
             ]
             accountinglabel = "GRO_XENO_GENETICS"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
@@ -2444,6 +2614,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech name = "GRO_XENO_HYBRIDS"
             ]
             accountinglabel = "GRO_XENO_HYBRIDS"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
@@ -2454,6 +2625,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech name = "GRO_XENO_HYBRIDS"
             ]
             accountinglabel = "GRO_XENO_HYBRIDS"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
 
         EffectsGroup
@@ -2464,6 +2636,7 @@ ENVIRONMENT_MODIFIER
                 OwnerHasTech name = "GRO_CYBORG"
             ]
             accountinglabel = "GRO_CYBORG"
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble  
 '''
 
@@ -2476,6 +2649,7 @@ HOMEWORLD_BONUS_POPULATION
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  
 '''
 
@@ -2496,6 +2670,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
             ]
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_SUPPLY"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 '''
 
@@ -2507,7 +2682,8 @@ GRO_HAB_MODIFIER
                 OwnerHasTech name = "GRO_SUBTER_HAB"
                 //TargetPopulation low = 0
             ]
-            accountinglabel = "SUBTERRANEAN_LABEL"
+            accountinglabel = "GRO_SUBTER_HAB"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 '''
 
@@ -2521,14 +2697,24 @@ GAIA_POP_MODIFIER
                 //TargetPopulation low = 0
             ]
             accountinglabel = "GAIA_LABEL"
+            priority = [[LATE_PRIORITY]]
             effects = [
                 SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
                 SetTargetHappiness value = Value + 5
             ]
 '''
 
-WORLDTREE_POP_MODIFIER
+SPECIALS_POP_MODIFIER
 '''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TIDAL_LOCK_SPECIAL"
+            ]
+            accountinglabel = "TIDAL_LOCK_LABEL"
+            effects = SetTargetPopulation value = Value - 1 * Target.SizeAsDouble
+
+     EffectsGroup
             scope = Source
             activation = AND [
                 Planet
@@ -2536,7 +2722,18 @@ WORLDTREE_POP_MODIFIER
                 //TargetPopulation low = 0
             ]
             accountinglabel = "WORLDTREE_LABEL"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1
+
+     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TEMPORAL_ANOMALY_SPECIAL"
+            ]
+            accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 5 * Target.SizeAsDouble
 '''
 
 POPULATION_TECHS
@@ -2548,6 +2745,7 @@ POPULATION_TECHS
                 //TargetPopulation low = 0
             ]
             accountinglabel = "NDIM_STRC_LABEL"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
             
         EffectsGroup
@@ -2558,25 +2756,25 @@ POPULATION_TECHS
                 //TargetPopulation low = 0
             ]
             accountinglabel = "ORBITAL_HAB_LABEL"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 '''
 
 // This is dependent on current placement in population effects calc, just after Homeworld and Environment
 SELF_SUSTAINING_BONUS
 '''     EffectsGroup
-            scope = AND [
-                Source
-                NOT Homeworld name = Source.Species
-            ]
+            scope = Source
             activation = And [
                 Planet
                 HasTag name = "SELF_SUSTAINING"
                 //TargetPopulation low = 0
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
-            effects = SetTargetPopulation value = Value * 2    // Gets double the population based on environment and environment techs
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble  // Gets the same bonus as three growth specials
 
-        EffectsGroup
+/* Redundant as we now have effects priorities, remove after testing these properly
+EffectsGroup
             scope = AND [
                 Source
                 Homeworld name = Source.Species
@@ -2587,7 +2785,9 @@ SELF_SUSTAINING_BONUS
                 //TargetPopulation low = 0
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
+*/
 '''
 
 PHOTOTROPHIC_BONUS
@@ -2614,6 +2814,7 @@ PHOTOTROPHIC_BONUS
                 TargetPopulation low = 0
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 3 * Source.SizeAsDouble
             
         EffectsGroup
@@ -2625,6 +2826,7 @@ PHOTOTROPHIC_BONUS
                 TargetPopulation low = 0
             ]
             accountinglabel = "BRIGHT_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1.5 * Source.SizeAsDouble
             
         EffectsGroup
@@ -2635,6 +2837,7 @@ PHOTOTROPHIC_BONUS
                 Star type = [Red Neutron]
             ]
             accountinglabel = "DIM_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value - 1 * Source.SizeAsDouble
             
         EffectsGroup
@@ -2645,6 +2848,7 @@ PHOTOTROPHIC_BONUS
                 Star type = [BlackHole NoStar]
             ]
             accountinglabel = "NO_STAR"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
 '''
 // Population end
@@ -3683,22 +3887,10 @@ BAD_WEAPONS
             description = "BAD_WEAPONS"
             scope = Source
             effects = [
-                SetDamage partname = "SR_WEAPON_1_1" value = Value - 1
-                SetDamage partname = "SR_WEAPON_1_2" value = Value - 1
-                SetDamage partname = "SR_WEAPON_1_3" value = Value - 2
-                SetDamage partname = "SR_WEAPON_1_4" value = Value - 2
-                SetDamage partname = "SR_WEAPON_2_1" value = Value - 2
-                SetDamage partname = "SR_WEAPON_2_2" value = Value - 2
-                SetDamage partname = "SR_WEAPON_2_3" value = Value - 3
-                SetDamage partname = "SR_WEAPON_2_4" value = Value - 3
-                SetDamage partname = "SR_WEAPON_3_1" value = Value - 3
-                SetDamage partname = "SR_WEAPON_3_2" value = Value - 3
-                SetDamage partname = "SR_WEAPON_3_3" value = Value - 4
-                SetDamage partname = "SR_WEAPON_3_4" value = Value - 5
-                SetDamage partname = "SR_WEAPON_4_1" value = Value - 4
-                SetDamage partname = "SR_WEAPON_4_2" value = Value - 5
-                SetDamage partname = "SR_WEAPON_4_3" value = Value - 7
-                SetDamage partname = "SR_WEAPON_4_4" value = Value - 8
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 2
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 3
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 5
         ]
 '''
 
@@ -3707,22 +3899,10 @@ GOOD_WEAPONS
             description = "GOOD_WEAPONS"
             scope = Source
             effects = [
-                SetDamage partname = "SR_WEAPON_1_1" value = Value + 1
-                SetDamage partname = "SR_WEAPON_1_2" value = Value + 1
-                SetDamage partname = "SR_WEAPON_1_3" value = Value + 2
-                SetDamage partname = "SR_WEAPON_1_4" value = Value + 2
-                SetDamage partname = "SR_WEAPON_2_1" value = Value + 2
-                SetDamage partname = "SR_WEAPON_2_2" value = Value + 2
-                SetDamage partname = "SR_WEAPON_2_3" value = Value + 3
-                SetDamage partname = "SR_WEAPON_2_4" value = Value + 3
-                SetDamage partname = "SR_WEAPON_3_1" value = Value + 3
-                SetDamage partname = "SR_WEAPON_3_2" value = Value + 3
-                SetDamage partname = "SR_WEAPON_3_3" value = Value + 4
-                SetDamage partname = "SR_WEAPON_3_4" value = Value + 5
-                SetDamage partname = "SR_WEAPON_4_1" value = Value + 4
-                SetDamage partname = "SR_WEAPON_4_2" value = Value + 5
-                SetDamage partname = "SR_WEAPON_4_3" value = Value + 7
-                SetDamage partname = "SR_WEAPON_4_4" value = Value + 8
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 1
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 2
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 3
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 5
         ]
 '''
 
@@ -3731,22 +3911,10 @@ GREAT_WEAPONS
             description = "GREAT_WEAPONS"
             scope = Source
             effects = [
-                SetDamage partname = "SR_WEAPON_1_1" value = Value + 2
-                SetDamage partname = "SR_WEAPON_1_2" value = Value + 2
-                SetDamage partname = "SR_WEAPON_1_3" value = Value + 3
-                SetDamage partname = "SR_WEAPON_1_4" value = Value + 3
-                SetDamage partname = "SR_WEAPON_2_1" value = Value + 3
-                SetDamage partname = "SR_WEAPON_2_2" value = Value + 3
-                SetDamage partname = "SR_WEAPON_2_3" value = Value + 5
-                SetDamage partname = "SR_WEAPON_2_4" value = Value + 6
-                SetDamage partname = "SR_WEAPON_3_1" value = Value + 5
-                SetDamage partname = "SR_WEAPON_3_2" value = Value + 6
-                SetDamage partname = "SR_WEAPON_3_3" value = Value + 8
-                SetDamage partname = "SR_WEAPON_3_4" value = Value + 9
-                SetDamage partname = "SR_WEAPON_4_1" value = Value + 8
-                SetDamage partname = "SR_WEAPON_4_2" value = Value + 10
-                SetDamage partname = "SR_WEAPON_4_3" value = Value + 13
-                SetDamage partname = "SR_WEAPON_4_4" value = Value + 15
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 2
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 4
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 6
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 10
         ]
 '''
 
@@ -3755,22 +3923,10 @@ ULTIMATE_WEAPONS
             description = "ULTIMATE_WEAPONS"
             scope = Source
             effects = [
-                SetDamage partname = "SR_WEAPON_1_1" value = Value + 3
-                SetDamage partname = "SR_WEAPON_1_2" value = Value + 4
-                SetDamage partname = "SR_WEAPON_1_3" value = Value + 5
-                SetDamage partname = "SR_WEAPON_1_4" value = Value + 6
-                SetDamage partname = "SR_WEAPON_2_1" value = Value + 5
-                SetDamage partname = "SR_WEAPON_2_2" value = Value + 7
-                SetDamage partname = "SR_WEAPON_2_3" value = Value + 9
-                SetDamage partname = "SR_WEAPON_2_4" value = Value + 11
-                SetDamage partname = "SR_WEAPON_3_1" value = Value + 9
-                SetDamage partname = "SR_WEAPON_3_2" value = Value + 12
-                SetDamage partname = "SR_WEAPON_3_3" value = Value + 15
-                SetDamage partname = "SR_WEAPON_3_4" value = Value + 18
-                SetDamage partname = "SR_WEAPON_4_1" value = Value + 15
-                SetDamage partname = "SR_WEAPON_4_2" value = Value + 20
-                SetDamage partname = "SR_WEAPON_4_3" value = Value + 25
-                SetDamage partname = "SR_WEAPON_4_4" value = Value + 30
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + 3
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + 6
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + 9
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15
         ]
 
 '''

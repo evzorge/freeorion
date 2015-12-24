@@ -426,12 +426,6 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
                 DebugLogger() << " ... " << (*t_it)->Dump();
         }
 
-        if (log_verbose) {
-            DebugLogger() << "ExecuteEffects Targets after: ";
-            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                DebugLogger() << " ... " << (*t_it)->Dump();
-        }
-
         // for non-meter effects, can do default batch execute
         if (!accounting_map || (!set_meter_effect && !set_ship_part_meter_effect)) {
             Execute(source_context, targets);
@@ -486,6 +480,12 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
 
             // add accounting for this effect to end of vector
             (*accounting_map)[target->ID()][meter_type].push_back(info);
+        }
+
+        if (log_verbose) {
+            DebugLogger() << "ExecuteEffects Targets after: ";
+            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+                DebugLogger() << " ... " << (*t_it)->Dump();
         }
     }
 }
@@ -691,6 +691,7 @@ std::string SetShipPartMeter::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
         case METER_CAPACITY:    retval += "SetCapacity";    break;
+        case METER_MAX_CAPACITY:retval += "SetMaxCapacity";    break;
         default:                retval += "Set???";         break;
     }
 
@@ -1626,13 +1627,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
 
     ship->ResetTargetMaxUnpairedMeters();
     ship->ResetPairedActiveMeters();
-
-    ship->GetMeter(METER_MAX_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_MAX_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_MAX_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+    ship->SetShipMetersToMax();
 
     ship->BackPropegateMeters();
 
@@ -3132,7 +3127,10 @@ void Victory::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "Victory::Execute given no target object";
         return;
     }
-    GetUniverse().EffectVictory(context.effect_target->ID(), m_reason_string);
+    if (Empire* empire = GetEmpire(context.effect_target->Owner()))
+        empire->Win(m_reason_string);
+    else
+        ErrorLogger() << "Trying to grant victory to a missing empire!";
 }
 
 std::string Victory::Description() const

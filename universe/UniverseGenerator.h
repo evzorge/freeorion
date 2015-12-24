@@ -5,29 +5,10 @@
 #include "Condition.h"
 #include "Universe.h"
 
-#include "../util/DataTable.h"
 #include "../util/MultiplayerCommon.h"
 
 
-// Minimum distance between systems in universe units [0.0, m_universe_width]
-const double    MIN_SYSTEM_SEPARATION       = 35.0;
-
 struct PlayerSetupData;
-
-// Class representing a position on the galaxy map, used
-// to store the positions at which systems shall be created
-struct SystemPosition {
-    double x;
-    double y;
-
-    SystemPosition(double pos_x, double pos_y) :
-        x(pos_x),
-        y(pos_y)
-    {}
-    
-    bool operator == (const SystemPosition &p)
-    { return ((x == p.x) && (y == p.y)); }
-};
 
 /** A combination of names of ShipDesign that can be put together to make a
  * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
@@ -85,31 +66,6 @@ protected:
     const Condition::ConditionBase* m_location;
 };
 
-
-// Returns map of universe tables
-DataTableMap& UniverseDataTables();
-
-// Calculates typical universe width based on number of systems
-// A 150 star universe should be 1000 units across
-double CalcTypicalUniverseWidth(int size);
-
-// Helper functions that calculate system positions for various
-// predefined galaxy shapes
-void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                               unsigned int arms, unsigned int stars, double width, double height);
-
-void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                                   unsigned int stars, double width, double height);
-
-void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int clusters,
-                                unsigned int stars, double width, double height);
-
-void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int stars,
-                             double width, double height);
-
-void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
-                              double width, double height);
-
 /** Set active meter current values equal to target/max meter current
  * values.  Useful when creating new object after applying effects. */
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
@@ -119,7 +75,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
 void SetNativePopulationValues(ObjectMap& object_map);
     
 /** Creates starlanes and adds them systems already generated. */
-void GenerateStarlanes(GalaxySetupOption freq);
+void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength);
 
 /** Sets empire homeworld
  * This includes setting ownership, capital, species,

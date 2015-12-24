@@ -66,6 +66,8 @@ public:
     /** \name Mutators */ //@{
     virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
 
+    virtual void    BackPropegateMeters();                                      ///< back propegates part meters (which UniverseObject equivalent doesn't)
+
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
 
     void            Resupply();
@@ -85,6 +87,8 @@ public:
     Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void    ResetTargetMaxUnpairedMeters();
+    virtual void    ResetPairedActiveMeters();
+    virtual void    SetShipMetersToMax();
     //@}
 
 protected:

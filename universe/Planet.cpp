@@ -20,8 +20,8 @@
 #include <boost/assign/list_of.hpp>
 
 namespace {
-    // high tilt is arbitrarily taken to mean 35 degrees or more
-    const float HIGH_TILT_THERSHOLD = 35.0f;
+    // high tilt is arbitrarily taken to mean 45 degrees or more
+    const float HIGH_TILT_THERESHOLD = 45.0f;
 
     float SizeRotationFactor(PlanetSize size) {
         switch (size) {
@@ -85,7 +85,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_orbital_period(1.0f),
     m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159f),
     m_rotational_period(1.0f),
-    m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
+    m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERESHOLD),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
     m_is_about_to_be_invaded(false),
@@ -564,7 +564,7 @@ void Planet::SetRotationalPeriod(Day days)
 
 void Planet::SetHighAxialTilt() {
     const double MAX_TILT = 90.0;
-    m_axial_tilt = HIGH_TILT_THERSHOLD + RandZeroToOne() * (MAX_TILT - HIGH_TILT_THERSHOLD);
+    m_axial_tilt = HIGH_TILT_THERESHOLD + RandZeroToOne() * (MAX_TILT - HIGH_TILT_THERESHOLD);
 }
 
 void Planet::AddBuilding(int building_id) {
@@ -810,12 +810,10 @@ void Planet::PopGrowthProductionResearchPhase() {
 
     PopCenterPopGrowthProductionResearchPhase();
 
-    // check for planets with zero population.  If they have a species set, then
-    // they probably just starved
+    // check for colonies without positive population, and change to outposts
     if (!SpeciesName().empty() && GetMeter(METER_POPULATION)->Current() <= 0.0f) {
         if (Empire* empire = GetEmpire(this->Owner())) {
-            // generate starvation sitrep for empire that owns this depopulated planet
-            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
+            empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
             // record depopulation of planet with species while owned by this empire
             std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());

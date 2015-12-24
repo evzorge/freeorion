@@ -3,8 +3,9 @@ Français
 #This is the French String Table file for FreeOrion.
 #Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction terminée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
 
-# Note: to avoid potential conflict with functional keys in other files, do not make
+# Notes: to avoid potential conflict with functional keys in other files, do not make
 # any stringtable keys beginning with "FUNCTIONAL_"
+# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
 
 #################
 #    Common     #
@@ -78,6 +79,12 @@ Modérateur
 
 NO_PLAYER
 Aucun
+
+NO_PLAYERS
+Aucun joueur
+
+NO_EMPIRE
+Aucun empire
 
 DROP_PLAYER
 Ôter
@@ -720,6 +727,12 @@ Faille Dimensionnelle
 FLD_SUBSPACE_RIFT_DESC
 Une violente et dévastatrice déchirure de l'espace-temps se refermant aussi rapidement qu'elle est apparue. Attire et dévore les astronefs, planètes, et systèmes se situant dans son champ gravitationnel. Toutefois, les astronefs disposant d'une vitesse suffisante sont éventuellement capables d'y échapper.
 
+FLD_ACCRETION_DISC
+Disque d'Accrétion
+
+FLD_ACCRETION_DISC_DESC
+Un disque d'accrétion est une structure astrophysique (la plupart du temps un disque circumstellaire) composée de matière diffuse en orbite autour d'un corps massif central. Toutes les planètes d'un système se situant dans la zone d'influence d'un disque d'accrétion ont un malus d'[[encyclopedia SUPPLY_TITLE]] de -1.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -764,17 +777,8 @@ Le serveur a envoyé un message de fin de jeu. Au revoir.
 PLAYER_DISCONNECTED
 Le joueur %1% n'est plus connecté au serveur.
 
-PLAYER_DEFEATED
-Vous êtes vaincu.
-
-EMPIRE_DEFEATED
-L'empire %1% n'est plus.
-
 UNKNOWN_EMPIRE
 Empire inconnu
-
-LAST_OPPONENT_DEFEATED_VICTORY
-Votre dernier adversaire est vaincu! Vous êtes victorieux!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Le serveur a reçu des données de sauvegarde client invalides. Certaines seront peut-être ignorées.
@@ -972,10 +976,16 @@ OPTIONS_DB_SHOW_FPS
 Affiche/Cache le nombre d'images par seconde.
 
 OPTIONS_DB_LIMIT_FPS
-Active/Désactive la limitation du Ni/s (nombre d'images par secondes). La limite est définie avec l'option Ni/s Maximal.
+Active/Désactive la limitation du Ni/s (nombre d'images par seconde). La limite est définie avec l'option Ni/s Maximal.
 
 OPTIONS_DB_MAX_FPS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque sa limitation est activée avec l'option Limitation Ni/s.
+
+OPTIONS_DB_LIMIT_FPS_NO_FOCUS
+Active/désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'est pas sélectionnée. La limite est définie avec l'option Ni/s Maximal (hors-fenêtre).
+
+OPTIONS_DB_MAX_FPS_NO_FOCUS
+Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque la fenêtre principale de jeu n'est pas sélectionnée, si la limitation est activée avec l'option Limitation Ni/s (hors-fenêtre).
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Active/Désactive les effets sonores de l'interface utilisateur.
@@ -1158,7 +1168,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de système stellaire sélectionnées, relativement à celle de ces dernières.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Fixe la vitesse d'animation des cercles entourant les icônes de systèmes stellaire sélectionnés.
+Fixe la vitesse de rotation (en tours par minute) des cercles entourant les icônes de systèmes stellaire sélectionnés.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales affichées auront une taille fixe.
@@ -1348,7 +1358,7 @@ OPTIONS_DB_AUTO_QUIT
 Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (valeur défaut à zéro), utile pour le débogage notamment avec --quickstart ou --load.
 
 OPTIONS_DB_BINARY_SERIALIZATION
-Utilise la sérialisation binaire pour les fichiers de sauvegarde et les communications serveur-client (plus compact et rapide mais peut causer des problèmes de compatibilité cross-platform); si désactivé, la sérialisation texte XML est utilisée. Il est conseillé de redémarrer après modification de ce réglage.
+Utilise la sérialisation binaire pour les fichiers de sauvegarde. La sérialisation binaire est plus rapide lors de la sauvegarde et du chargement, mais peut rencontrer des problèmes de compatibilité si le fichier de sauvegarde est utilisé sur un système d'exploitation différent.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 Vrai si une fenêtre avec ce nom spécifique existe, faux si une fenêtre a été créée puis effacée, n'existe pas si une fenêtre n'a pas encore été créée avec ce nom.
@@ -1540,10 +1550,10 @@ Nom du joueur
 #Button names####
 
 HOST_GAME_BN
-Héberger une partie
+Héberger une partie (sérialisation XML conseillée)
 
 JOIN_GAME_BN
-Rejoindre une partie
+Rejoindre une partie (Cf. Options/Autres)
 
 REFRESH_LIST_BN
 Rafraîchir
@@ -1653,9 +1663,11 @@ GSETUP_CLUSTER
 Amas
 GSETUP_ELLIPTICAL
 Elliptique
-GSETUP_IRREGULAR1  # translated
+GSETUP_DISC
+Disque
+GSETUP_BOX  # translated
 Box
-GSETUP_IRREGULAR2
+GSETUP_IRREGULAR
 Irrégulière
 GSETUP_RING
 Annulaire
@@ -1899,16 +1911,16 @@ OPTIONS_TOOLTIP_DELAY
 Délai avant infobulle (ms)
 
 OPTIONS_KEYPRESS_REPEAT_DELAY
-Délai avant répétition touche maintenue
+Délai avant répétition touche maintenue (ms)
 
 OPTIONS_KEYPRESS_REPEAT_INTERVAL
-Intervalle répétion touche maintenue
+Intervalle répétion touche maintenue (ms)
 
 OPTIONS_MOUSE_REPEAT_DELAY
-Délai avant répétition bouton de souris maintenu
+Délai avant répétition bouton de souris maintenu (ms)
 
 OPTIONS_MOUSE_REPEAT_INTERVAL
-Intervalle répétition bouton de souris maintenu
+Intervalle répétition bouton de souris maintenu (ms)
 
 OPTIONS_SWAP_MOUSE_LR
 Inverser les clics droits et gauches de la souris.
@@ -1958,6 +1970,12 @@ Limitation du Ni/s
 OPTIONS_MAX_FPS
 Ni/s Maximal
 
+OPTIONS_LIMIT_FPS_NO_FOCUS
+Limitation du Ni/s (hors-fenêtre)
+
+OPTIONS_MAX_FPS_NO_FOCUS
+Ni/s Maximal (hors-fenêtre)
+
 OPTIONS_APPLY
 Appliquer
 
@@ -2004,7 +2022,7 @@ OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Taille relative du sélecteur de systèmes
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Ni/s de l'animation de sélection d'un système
+Vitesse d'animation de sélection d'un système (rpm)
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Seuil de taille de l'icône minimale d'un système
@@ -2298,7 +2316,7 @@ OPTIONS_ADD_SAVED_DESIGNS
 Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
 OPTIONS_USE_BINARY_SERIALIZATION
-Sérialisation binaire
+Utiliser des fichiers de sauvegarde binaire
 
 #################
 # Main Map      #
@@ -2995,7 +3013,10 @@ PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Quantité
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-Ajouter à la file
+Ajouter à la file d'attente
+
+PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE
+Ajouter en tête de file d'attente
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centrer sur construction
@@ -3223,6 +3244,11 @@ ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''%1% n'est pas propice à la colonisation par les espèces suivantes. Soit toute tentative échouera dès l'approche de la planète, soit la colonie finira par y dépérir plus ou moins rapidement.
 
+'''
+
+ENC_SUITABILITY_REPORT_WHEEL_INTRO
+'''
+L'Habitabilité est définie par la distance au type d'environnement favori sur cette représentation circulaire:
 '''
 
 # types of things that can be shown in encyclopedia
@@ -4039,6 +4065,10 @@ Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_
 AI_ERROR_MSG
 Erreur_IA : Erreur de script d'IA
 
+SERVER_MESSAGE_NOT_UNDERSTOOD
+Le serveur a envoyé un message ne pouvant être interprété.
+
+
 ####################
 # Combat Messages  #
 ####################
@@ -4356,19 +4386,19 @@ FILTERS
 Filtres
 
 SITREP_SNOOZE_5_TURNS
-'''  Retrait de ce SitRep pour 5 tours'''
+'''  Masquer ce SitRep pour 5 tours'''
 
 SITREP_SNOOZE_10_TURNS
-'''  Retrait de ce SitRep pour 10 tours'''
+'''  Masquer ce SitRep pour 10 tours'''
 
 SITREP_SNOOZE_INDEFINITE
-'''  Retrait indéfini pour ce SitRep'''
+'''  Désactiver indéfiniment ce SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Réinitialiser tous les retraits indéfinis de SitRep'''
+'''  Réafficher tous les SitReps désactivés indéfiniment'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Réinitialiser tous les retraits de SitRep'''
+'''  Réafficher tous les SitReps masqués ou désactivés'''
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -4521,10 +4551,10 @@ La planète %planet% a été capturée par %empire%.
 SITREP_PLANET_CAPTURED_LABEL
 Planète capturée
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
-La colonie établie sur %planet% a été détruite!
-SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
-Colonie détruite
+SITREP_PLANET_DEPOPULATED
+La population de la planète %planet% a été totalement décimée!
+SITREP_PLANET_DEPOPULATED_LABEL
+Planète détruite
 
 SITREP_PLANET_COLONIZED
 La planète %planet% a été colonisée.
@@ -4534,7 +4564,7 @@ Planète colonisée
 SITREP_NEW_COLONY_ESTABLISHED
 Sur %planet% : une nouvelle colonie %species% s'est établie.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
-Nouvelle Colonie Établie
+Nouvelle colonie établie
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La flotte %fleet% (%rawtext% astronefs) a atteint le système %system%.
@@ -4576,43 +4606,13 @@ La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %sys
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte étrangère arrivée à destination
 
-SITREP_EMPIRE_ELIMINATED
-L'empire %empire% a été détruit!
-SITREP_EMPIRE_ELIMINATED_LABEL
-Empire détruit
-
-SITREP_VICTORY
-L'empire %empire% %text%
-SITREP_VICTORY_LABEL
-Victoire
-
-SITREP_VICTORY_DESTRUCTION
-Enfin, le fléau violent et mystérieux qui tourmentait la galaxie a été éradiqué. Cette menace qui mettait en péril la galaxie a été vaincu, mais son origine demeure une énigme, tapie à jamais dans les profondeurs insondables du Cosmos.
-SITREP_VICTORY_DESTRUCTION_LABEL
-Victoire par Éradication
-
-SITREP_VICTORY_CAPTURE
-Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez.
-SITREP_VICTORY_CAPTURE_LABEL
-Victoire par Capture
-
-SITREP_VICTORY_TECH
-Votre Empire a découvert la Singularité Transcendantale. Vous gagnez la partie !
-SITREP_VICTORY_TECH_LABEL
-Victoire Technologique
-
-SITREP_VICTORY_BIO
-Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, ont rencontré leur inévitable destin sous la puissance de feu de votre formidable flotte de guerre.
-SITREP_VICTORY_BIO_LABEL
-Victoire Biologique
-
 SITREP_POP_THRESHOLD
 Sur %planet% : la colonie a atteint la taille et le [[encyclopedia HAPPINESS_TITLE]] prérequis pour entreprendre la colonisation d'autres planètes.
 SITREP_POP_THRESHOLD_LABEL
 Seuil de Colonisation
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés sur la planète %planet%, rôdant près de l'Avant-Poste %species%!
+ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Apparition de monstre Expérimentateur
 
@@ -4646,6 +4646,16 @@ Une rumeur se propageant dans toute la galaxie prétend qu'une technologie %tech
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Rumeur de technologie ancestrale
 
+EFFECT_ANCIENT_EXTINCT_SPECIES
+Sur %planet% : des corps parfaitement conservés de l'espèce éteinte %species% ont été découverts au sein de Ruines Ancestrales!
+EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
+Découverte d'une espèce éteinte
+
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
+Une rumeur se propageant dans toute la galaxie prétend que des corps parfaitement conservés de l'espèce éteinte %species% ont été découverts au sein de Ruines Ancestrales!
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
+Rumeur d'une espèce éteinte redécouverte
+
 EFFECT_ANCIENT_RUINS_EMPTY
 Sur %planet% : des Ruines Ancestrales ont été excavées, mais ne révélant que de faibles traces d'une technologie ancestrale.
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
@@ -4673,6 +4683,8 @@ Terraformation Gaia
 
 EFFECT_GAIA
 Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
+EFFECT_GAIA_LABEL
+Paradis Gaia
 
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
@@ -4680,8 +4692,8 @@ EFFECT_TERRAFORM_LABEL
 Terraformation
 
 EFFECT_STARLANE_BORE
-Sur %planet% : une nouvelle Voie spatiale a été ouverte vers un système proche.
-EFFECT_TERRAFORM_LABEL
+Dans %system% : une nouvelle Voie spatiale a été ouverte vers un système proche.
+EFFECT_STARLANE_BORE_LABEL
 Générateur de Voies Spatiales
 
 EFFECT_BLACKHOLE
@@ -4705,12 +4717,12 @@ EFFECT_TAME_MONSTER_HATCHED_LABEL
 Éclosion de monstre
 
 EFFECT_TAME_MONSTER_MATURED
-Un %predefinedshipdesign% apprivoisé a évolué vers une forme plus puissante dans le système %system%.
+Dans %system% : un %predefinedshipdesign% apprivoisé a évolué en une forme plus puissante.
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Mutation de monstre
 
 EFFECT_SENTRY_CREATED
-Sur %planet%: a %predefinedshipdesign% est prêt pour le service.
+Sur %planet% : un %predefinedshipdesign% est prêt pour le service.
 EFFECT_SENTRY_CREATED_LABEL
 Création Factionnaire
 
@@ -4735,22 +4747,22 @@ EFFECT_TREE_LABEL
 Forêt Dyson
 
 EFFECT_DERELICT_MINERALS
-20 unités de minerai ont été récupérées sur une épave abandonnée dans le système %system%.
+Dans %system% : 20 unités de minerai ont été récupérées sur une épave abandonnée.
 EFFECT_DERELICT_MINERALS_LABEL
 Découverte de minerai
 
 EFFECT_DERELICT_MAP
-Des informations sur la région de %system% ont été découvertes sur une épave abandonnée.
+Dans %system% : des informations sur la région de %system% ont été découvertes sur une %special% abandonnée.
 EFFECT_DERELICT_MAP_LABEL
 Découverte de carte
 
 EFFECT_DERELICT_FUEL
-Les astronefs ont été réapprovisionnés grâce à des réserves de carburant trouvées sur une épave abandonnée dans le système %system%.
+Dans %system% : les astronefs ont été réapprovisionnés grâce à des réserves de carburant trouvées sur une %special% abandonnée.
 EFFECT_DERELICT_FUEL_LABEL
 Découverte de carburant
 
 EFFECT_BIOWEAPON
-Le système %system% a perdu sa population suite à une attaque biologique.
+La planète %planet% a perdu une population de %rawtext% suite à une attaque de %shippart%.
 EFFECT_BIOWEAPON_LABEL
 Attaque par armes biologiques
 
@@ -4760,7 +4772,7 @@ EFFECT_EVACUEES_LABEL
 Évacués
 
 EFFECT_STARGATE
-La flotte %fleet% a atteint le système %system% via Stargate.
+La flotte %fleet% a atteint le système %system% via un Stargate.
 EFFECT_STARGATE_LABEL
 Utilisation Stargate
 
@@ -4790,12 +4802,12 @@ EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
 EFFECT_FLEET_MOVED_TOWARDS
-La flotte %fleet% a été repoussée vers le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a repoussé la flotte %fleet% vers le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
 EFFECT_FLEET_MOVED_TOWARDS_LABEL
 Flotte repoussée vers
 
 EFFECT_FLEET_MOVED_TO
-La flotte %fleet% a éte renvoyée dans le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a renvoyé la flotte %fleet% dans le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
 EFFECT_FLEET_MOVED_TO_LABEL
 Flotte renvoyée dans
 
@@ -4826,11 +4838,22 @@ Custom_4
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-%1% a remporté une victoire technologique.
+VICTORY_TECH
+L'empire %empire% a remporté une victoire technologique!
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-a remporté une victoire comme dernier survivant.
+VICTORY_ALL_ENEMIES_ELIMINATED
+L'empire %empire% a remporté une victoire en tant que dernier survivant!
+
+VICTORY_EXPERIMENTOR_CAPTURE
+L'empire %empire% a remporté la victoire en capturant les puissants Expérimentateurs, mettant ainsi un terme à l'effroyable fléau menaçant la galaxie!
+
+SITREP_VICTORY_LABEL
+Victoire
+
+SITREP_EMPIRE_ELIMINATED
+L'empire %empire% a été vaincu!
+SITREP_EMPIRE_ELIMINATED_LABEL
+Empire vaincu
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -5504,6 +5527,64 @@ Raison de la sédentarité:
 Les Furthest considèrent le voyage spatial comme bien trop dangereux pour un être sensé, mais certains d'entre eux considérant leur planète natale comme tout aussi dangereuse, pourraient bien envisager de coloniser un autre monde.
 '''
 
+SP_BANFORO  # translated
+Banforo
+SP_BANFORO_GAMEPLAY_DESC
+'''Êtres adorables et contemplateurs d'étoiles.
+Préfèrent les Planètes stériles.
+[[encyclopedia LITHIC_SPECIES_TITLE]]
+'''
+
+SP_BANFORO_DESC
+'''Description:
+Un Banfo ressemble à un ours en peluche fait de marbre immaculé et muni de deux grands yeux noirs à l'éclat cristallin. Cette apparence singulière amène à penser que les Banforo furent une espèce créée artificiellement, mais les indices en mesure de corroborer cette thèse semblent avoir disparu à jamais. Leurs yeux constituent le plus important de leurs organes, non seulement pour la vision, mais également pour la communication, grâce à la perception de différentes fréquences de lumière autour de leurs semblables. En effet, les Banforo peuvent distinguer la couleur et la fréquence de toute lumière, même la plus faible et la plus éloignée. Par contre, leurs yeux supportent très mal les lumières puissantes, ces dernières perturbant également leur communication. Par conséquent, la lumière crépusculaire du soir est la période favorite des Banforo, car une fois le soleil couché, ils se rassemblent en nombre pour un rite de civilisation consistant à contempler les étoiles en parfaite harmonie.
+
+Structure sociale:
+Les Banforo sont très sociables et tissent des liens très forts entre eux. Les ressources sont toujours partagées et la propriété privée n'existe pas pour les biens ayant une valeur matérielle. Le gouvernement s'apparente à une forme de communauté globale et ouverte à chacun.
+
+Raison de l'extinction:
+La raison de leur disparition n'a pas été clairement établie, mais la thèse scientifique opte pour un événement cosmique ayant rendu les conditions environnementales invivables pour les Banforo, sur une période de temps assez longue pour que leur nombre décline et que leur espèce finisse par s'éteindre.
+'''
+
+SP_KILANDOW  # translated
+Kilandow
+SP_KILANDOW_GAMEPLAY_DESC
+'''Expérimentateurs nocifs et patentés, absorbant toutes formes de radiation.
+Préfèrent les Planètes irradiées.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KILANDOW_DESC
+'''Description:
+Les Kilandow disposent de quatre membres dotés chacun à l'extrémité de plusieurs pinces. Se déplaçant redressés sur leurs deux membres les plus courts, les Kilandow mesurent un peu plus de 1m de hauteur. Leur tête, un bec surmonté de trois yeux, est utilisée comme une pioche afin de briser les roches à la recherche de métaux précieux et de terres rares, qu'ils agglomèrent sous forme de pâte. Après avoir appliqué cette dernière sur leurs dos épineux, les Kilandow cherchent un endroit émettant un fort taux de radiation UV et de rayons Gamma, afin d'absorber les molécules ainsi chargées. Telle une statue, un Kilandow peut rester inactif des heures, voire des jours entiers, jusqu'à ce qu'il soit complètement chargé. Se nourrissant de radiation, le corps des Kilandow émet par conséquent des grandes quantités de radiation, rendant ces derniers très faciles à détecter, mais également très dangereux pour toute autre espèce pouvant éventuellement entrer en contact avec eux.
+Les Kilandow sont très patients et sont friands d'expériences chimiques et physiques. Compte tenu de leur très longue durée de vie, ils ne rencontrent  aucun problème à mener des expériences sur plusieurs centaines d'années. L'exploitation minière est leur autre activité favorite, en particulier sur les Astéroïdes, où ils peuvent combiner la recherche, la chasse aux trésors et l'approvisionnement en nourriture.
+
+Structure sociale:
+D'après les documents découverts dans les Ruines Ancestrales, les Kilandow étaient organisés en démocratie et très respecteux des lois, mais s'avéraient davantage préocuppés par leurs expériences plutôt que par le développement de leur société.
+
+Raison de l'extinction:
+La disparition des Kilandow semble résulter de leur nature très paisible ainsi que de leur très faible taux de reproduction.
+'''
+
+SP_MISIORLA  # translated
+Misiorla
+SP_MISIORLA_GAMEPLAY_DESC
+'''Pilotes de grand talent, chaotiques et fougueux.
+Préfèrent les Planètes toxiques.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_MISIORLA_DESC
+'''Description:
+Un Misiorla est un mollusque doté de quatre tentacules flexibles et de deux paires de quatre yeux. Parfaitement adaptés à leur environnement natal, les Misiorla étaient capables de se mouvoir dans des mers de fluides acides et de flotter au sein d'épais nuages de brume. Ils étaient cependant considérés comme une espèce aux capacités très limitées, à peine digne de l'attention que leur portait une civilisation amie, du fait de leur absence totale de talent, que ce soit en terme de recherche ou d'industrie. Cet état de fait changea diamétralement lorsque qu'un Misiorla fut placé pour la première fois aux commandes d'un astronef. La nouvelle se répandit comme une traînée de poudre à travers toutes la galaxie: les Misiorla s'avéraient être les meilleurs pilotes de combat de l'univers. Les premiers mercenaires Misiorla furent recrutés pour piloter des chasseurs, les suivants se virent confier les commandes de croiseurs, mais leur potentiel réel se révéla entièrement lorsqu'un vaisseau amiral à la technologie dépassée, mais dirigé par un Misiorla, anéantit à lui seul toute la flotte d'un empire ennemi à la puissance pourtant bien supérieure.
+
+Structure sociale:
+Les Misiorla vouent leur existence au pilotage d'astronef. Piloter est leur métier, leur sport, leur activité favorite. Leur société devient alors totalement dépendante des autres espèces, car ils sont incapables de s'organiser dès qu'il sagit d'une autre activité. Un Misiorla peut être recruté par quiconque offrant quelque chose à piloter ainsi que le carburant nécessaire.
+
+Raison de l'extinction:
+Dans une période trouble et peu référencée de l'Histoire, les Ultimes, une des civilisations de Précurseurs, décidèrent que les Misiorla pouvaient être une menace pour l'accomplissement du But Ultime.
+'''
+
 SP_EXOBOT  # translated
 Exobot
 SP_EXOBOT_GAMEPLAY_DESC
@@ -5582,7 +5663,25 @@ Ruines Ancestrales
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
-Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques.'''
+Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques. La découverte de corps parfaitement conservés d'une espèce éteinte est également envisageable.'''
+
+EXTINCT_BANFORO_SPECIAL
+Restes Banforo
+
+EXTINCT_BANFORO_SPECIAL_DESC
+'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_BANFORO]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_BANFORO]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+
+EXTINCT_KILANDOW_SPECIAL
+Restes Kilandow
+
+EXTINCT_KILANDOW_SPECIAL_DESC
+'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_KILANDOW]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_KILANDOW]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+
+EXTINCT_MISIORLA_SPECIAL
+Restes Misiorla
+
+EXTINCT_MISIORLA_SPECIAL_DESC
+'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_MISIORLA]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_MISIORLA]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
 
 PANOPTICON_SPECIAL
 Complexe Panoptique
@@ -5602,9 +5701,26 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite Excentrissime
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Réduit de 3 la Population de la planète, mais augmente de 3 sa [[encyclopedia RESEARCH_TITLE]].
+'''Augmente de 3 la [[encyclopedia RESEARCH_TITLE]], mais réduit de 2 l'[[encyclopedia SUPPLY_TITLE]].
 
-L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Cette variation conséquente ralentit la croissance de la population, mais ces répercussions sont un terrain exaltant pour la recherche scientifique.'''
+L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Ces conditions variables ralentissent la gestion de l'approvisionnement sur la planète, mais s'avèrent un terrain exaltant pour la recherche scientifique.'''
+
+TIDAL_LOCK_SPECIAL
+Rotation Synchrone
+
+TIDAL_LOCK_SPECIAL_DESC
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de la planète de 0.2 par Population si le Focus [[encyclopedia INDUSTRY_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Immense -5.
+
+Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la population s'en trouve impactée, mais l'industrie tire profit des conditions stables à la surface de la planète.'''
+
+TEMPORAL_ANOMALY_SPECIAL
+Anomalie Temporelle
+
+TEMPORAL_ANOMALY_SPECIAL_DESC
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 5 par Population si le Focus [[encyclopedia RESEARCH_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -10 ; Moyenne -15 ; Grande -20 ; Immense -25.
+
+L'écoulement du temps sur cette planète est fortement perturbé. Des événements apparemment aléatoires provoquent soit une accélération soit un ralentissement de la vitesse du temps, troublant profondément le rythme biologique de tout être vivant et rendant quasiment impossible toute organisation sociale et productive. Une adaptabilité extrême et de grandes précautions sont requises afin d'établir une colonie sur cette planète.
+Cependant, une anomalie temporelle présente un fort potentiel pour la recherche scientifique, bien au-delà de ce qu'il est possible d'entreprendre sur les planètes conventionnelles.'''
 
 RESONANT_MOON_SPECIAL
 Lune Synchrone
@@ -5612,7 +5728,7 @@ Lune Synchrone
 RESONANT_MOON_SPECIAL_DESC
 '''Augmente de 10 la [[encyclopedia STEALTH_TITLE]] des structures de la planète, ainsi que celle des astronefs de l'empire stationnés dans le même système stellaire.
 
-La planète possède un satellite naturel dont la période de révolution est synchrone avec sa période de rotation, ce qui signifie que le satellite, vu de l'extérieur, a toujours une "face cachée" faisant face à la planète. Cette "face cachée" est le lieu idéal pour les aménagements clandestins, tandis que l'espace entre la planète et sa lune peut servir à dissimuler structures et flottes à la vue des autres empires.'''
+La planète possède un satellite naturel dont la période de révolution est synchrone avec sa période de rotation, ce qui signifie que le satellite, vu de l'extérieur, a toujours une "face cachée" ne se présentant jamais à la planète. Cette "face cachée" est le lieu idéal pour les aménagements clandestins, tandis que l'espace entre la planète et sa lune peut servir à dissimuler structures et flottes à la vue des autres empires.'''
 
 COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
@@ -5724,13 +5840,19 @@ Cette planète existe en partie dans cet univers et en partie dans le Vide, ce q
 DERELICT_SPECIAL
 Épave
 DERELICT_SPECIAL2
-Épave
+Épave d'Éclaireur
 DERELICT_SPECIAL3
-Épave
+Épave de Ravitailleur
 DERELICT_SPECIAL_REMOVE
 Épave
 DERELICT_SPECIAL_DESC
 Une épave ancestrale abandonnée par une espèce inconnue. Qui sait ce qu'elle pourrait révéler...
+
+ACCRETION_DISC_SPECIAL
+Disque d'Accrétion
+
+ACCRETION_DISC_SPECIAL_DESC
+Un disque d'accrétion est une structure astrophysique (la plupart du temps un disque circumstellaire) composée de matière diffuse en orbite autour d'un corps massif central. Toutes les planètes d'un système se situant dans la zone d'influence d'un disque d'accrétion ont un malus d'[[encyclopedia SUPPLY_TITLE]] de -1.
 
 SUPERNOVA_SPECIAL
 Supernova Naissante
@@ -6168,14 +6290,10 @@ Vide
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Courte portée
-PC_MISSILES  # translated
-Missiles
+PC_DIRECT_WEAPON
+Armement
 PC_FIGHTERS
 Chasseurs
-PC_POINT_DEFENSE
-Point de défense
 PC_SHIELD
 Bouclier
 PC_ARMOUR
@@ -7517,7 +7635,7 @@ CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît le plafond de Population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
+'''Accroît le plafond de Population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Augmente également de 10 l'[[encyclopedia INFRASTRUCTURE_TITLE]] de la planète hôte si celle-ci est habitée. 
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -7717,6 +7835,9 @@ Débloque un équipement d'astronef
 
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Débloque un armement d'astronef
+
+SHIP_WEAPON_IMPROVE_SHORT_DESC
+Améliore un armement d'astronef
 
 SHIP_HULL_UNLOCK_SHORT_DESC
 Débloque une coque d'astronef
@@ -7932,7 +8053,7 @@ LRN_STELLAR_TOMOGRAPHY_DESC
 Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour cartographier et reconstituer les différentes activités se produisant dans les profondeurs d'une étoile. Ces conditions expérimentales, habituellement coûteuses à mettre en place, sont ici idéales pour une multitude de projets de recherche, les plus grands bénéfices scientifiques découlant de l'étude des types d'étoiles les plus exotiques.'''
 
 LRN_SPATIAL_DISTORT_GEN
-Générateur de Distortion Spatiale
+Distortion Spatiale
 
 LRN_SPATIAL_DISTORT_GEN_DESC
 En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière. Les astronefs l'empruntant à une faible vitesse seraient alors renvoyés instantanément dans leur système stellaire de départ, tandis que les astronefs les plus rapides seraient considérablement retardés.
@@ -8954,14 +9075,6 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 
 Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais doit se trouver dans un système abritant un Trou Noir.'''
 
-BLD_REPLICATORS
-Réplicateurs
-
-BLD_REPLICATORS_DESC
-'''Une fois activés, la moitié de toute la production industrielle de l'empire est utilisée pour la réplication de nourriture ou de minéraux supplémentaires à un taux de conversion de 2 pour 1. Si la planète sur laquelle est construite la structure est réglée sur le Focus Réplication Nourriture, la nourriture sera produite aux dépens de l'industrie. Lorsque le Focus est réglé sur Réplication Minéraux, des minéraux supplémentaires seront produits aux dépens de l'industrie.
-
-Un seul type de Focus de Réplication peut être activé simultanément à travers tout l'empire.'''
-
 BLD_PLANET_DRIVE
 Navigateur Planétaire
 
@@ -9018,7 +9131,7 @@ Transformeur
 BLD_TRANSFORMER_DESC
 '''Une structure très coûteuse mais d'une polyvalence à toute épreuve permettant d'obtenir les mêmes effets qu'un bon nombre d'autres structures. Le Transformeur s'active en réglant sur le Focus approprié la planète sur laquelle il est construite, et à condition que l'empire ait déjà débloqué la structure que le Transformeur doit imiter.
 
-Cette structure peut reproduire les effets d'un [[buildingtype BLD_PLANET_CLOAK]], d'une [[buildingtype BLD_BIOTERROR_PROJECTOR]], d'un [[buildingtype BLD_STARGATE]], d'un [[buildingtype BLD_PLANET_DRIVE]], ou d'un [[buildingtype BLD_SPATIAL_DISTORT_GEN]], à condition que l'empire ait déjà assimilé la technologie appropriée.'''
+Cette structure peut reproduire les effets d'une [[buildingtype BLD_BIOTERROR_PROJECTOR]], d'un [[buildingtype BLD_STARGATE]], d'un [[buildingtype BLD_PLANET_DRIVE]], ou d'un [[buildingtype BLD_SPATIAL_DISTORT_GEN]], à condition que l'empire ait déjà assimilé la technologie appropriée.'''
 
 BLD_PLANET_CLOAK
 Dispositif de Camouflage Planétaire
@@ -9032,7 +9145,7 @@ BLD_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi tentant d'atteindre le système abritant cette structure sera renvoyé à son point de départ, ou aléatoirement vers une autre étoile proche. Seuls les astronefs assez rapides pour parcourir la Voie spatiale en un seul tour seront insensibles à ces effets de distortion. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
+Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi se dirigeant vers le système abritant cette structure sera repoussé à une distance de 40uu sur la même route qu'il a emprunté, tant que l'astronef en question ne parcourt pas la distance suffisante pour compléter son voyage et ainsi atteindre le système visé. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
 
 BLD_STARGATE  # translated
 Stargate
@@ -9062,6 +9175,12 @@ Générateur Avancé de Voies Spatiales
 
 BLD_STARLANE_NEXUS_DESC
 Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+
+BLD_XENORESURRECTION_LAB
+Laboratoire de Xénorésurrection
+
+BLD_XENORESURRECTION_LAB_DESC
+Le Laboratoire de Xénorésurrection répare et recompose les échantillons organiques d'une espèce éteinte, permettant ainsi la colonisation de planètes reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] par une espèce éteinte découverte au sein de [[special ANCIENT_RUINS_SPECIAL]]. Ne peut être construit que sur les planètes où les fouilles de [[special ANCIENT_RUINS_SPECIAL]] ont révélé les corps parfaitement conservés d'une espèce éteinte.
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
@@ -9093,6 +9212,12 @@ Colonie Abaddoni
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_ABADDONI]]. [[BLD_COL_PART_2]] colonie Abaddoni [[BLD_COL_PART_3]].
+
+BLD_COL_BANFORO
+Colonie Banforo
+
+BLD_COL_BANFORO_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_BANFORO]]. [[BLD_COL_PART_2]] colonie Banforo [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
 Colonie Chato
@@ -9166,6 +9291,12 @@ Colonie Humaine
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HUMAN]]e. [[BLD_COL_PART_2]] colonie Humaine [[BLD_COL_PART_3]].
 
+BLD_COL_KILANDOW
+Colonie Kilandow
+
+BLD_COL_KILANDOW_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_KILANDOW]]. [[BLD_COL_PART_2]] colonie Kilandow [[BLD_COL_PART_3]].
+
 BLD_COL_KOBUNTURA
 Colonie Kobuntura
 
@@ -9177,6 +9308,12 @@ Colonie Laenfa
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_LAENFA]]. [[BLD_COL_PART_2]] colonie Laenfa [[BLD_COL_PART_3]].
+
+BLD_COL_MISIORLA
+Colonie Misiorla
+
+BLD_COL_MISIORLA_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_MISIORLA]]. [[BLD_COL_PART_2]] colonie Misiorla [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
 Colonie Mu Ursh
@@ -9298,24 +9435,9 @@ Capacité: %9% chasseurs'''
 #############################################################
 
 SR_WEAPON_1_1
-Canon Mitrailleur 1
+Canon Mitrailleur
 SR_WEAPON_1_1_DESC
 Le Canon Mitrailleur, une arme de base.
-
-SR_WEAPON_1_2
-Canon Mitrailleur 2
-SR_WEAPON_1_2_DESC
-Canon Mitrailleur, perfectionné au niveau 2.
-
-SR_WEAPON_1_3
-Canon Mitrailleur 3
-SR_WEAPON_1_3_DESC
-Canon Mitrailleur, perfectionné au niveau 3.
-
-SR_WEAPON_1_4
-Canon Mitrailleur 4
-SR_WEAPON_1_4_DESC
-Canon Mitrailleur, perfectionné au niveau 4.
 
 SR_WEAPON_2_1
 Canon Laser 1
@@ -10435,19 +10557,19 @@ ULTIMATE_DETECTION
 +++	Parfait [[encyclopedia DETECTION_RANGE_TITLE]] : +100 bonus
 
 BAD_STEALTH
-−	Mauvais en [[encyclopedia STEALTH_TITLE]] : −15 malus
+−	Mauvais en [[encyclopedia STEALTH_TITLE]] Planétaire : −20 malus
 
 AVERAGE_STEALTH
-'''	Normal en [[encyclopedia STEALTH_TITLE]]'''
+'''	Normal en [[encyclopedia STEALTH_TITLE]] Planétaire'''
 
 GOOD_STEALTH
-+	Bon en [[encyclopedia STEALTH_TITLE]] : +15 bonus
++	Bon en [[encyclopedia STEALTH_TITLE]] Planétaire : +20 bonus
 
 GREAT_STEALTH
-++	Excellent en [[encyclopedia STEALTH_TITLE]] : +40 bonus
+++	Excellent en [[encyclopedia STEALTH_TITLE]] Planétaire : +40 bonus
 
 ULTIMATE_STEALTH
-+++	Parfait en [[encyclopedia STEALTH_TITLE]] : +60 bonus
++++	Parfait en [[encyclopedia STEALTH_TITLE]] Planétaire : +60 bonus
 
 BAD_WEAPONS
 −	Mauvais Pilotes : -25% de dommages.
@@ -10503,6 +10625,14 @@ FAST_COLONIZATION
 SLOW_COLONIZATION
 −	Colonisation lente : +20% de délai pour bâtir une colonie.
 
+BAD_FUEL
+−	Mauvais en [[encyclopedia FUEL_TITLE]] max : - 1
+
+GREAT_ASTEROID_INDUSTRY
++	Bons Mineurs sur Astéroïdes: + 0.2 en [[encyclopedia INDUSTRY_TITLE]] par Population lorsque que le Focus Industrie est activé dans les systèmes abritant une ceinture d'astéroïdes colonisée par l'empire.
+
+LIGHT_SENSITIVE
+−	Sensibilité à la lumière: la Population est réduite dans les systèmes abritant une Étoile Bleue, et dans une moindre mesure, une Étoile Blanche.
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
@@ -10539,6 +10669,9 @@ Bonus Gaia
 
 WORLDTREE_LABEL
 Bonus Arbre Planétaire
+
+TIDAL_LOCK_LABEL
+Rotation Synchrone
 
 HOMEWORLD_LABEL
 Planète Natale
@@ -10710,6 +10843,9 @@ Harcèlement xénophobe: Eaxaw
 
 ORGANIC_GROWTH
 Croissance Organique
+
+ASTEROID_FIELD_STEALTH
+Dissimulation Astéroïdale
 
 AGE_BONUS
 Âge

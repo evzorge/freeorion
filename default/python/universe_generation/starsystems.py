@@ -3,6 +3,7 @@ import random
 import freeorion as fo
 import planets
 import util
+import universe_tables
 
 
 # tuple of available star types
@@ -26,8 +27,8 @@ def pick_star_type(galaxy_age):
         max_roll = 0
         for candidate in star_types:
             roll = random.randint(1, 100) \
-                + fo.universe_age_mod_to_star_type_dist(galaxy_age, candidate) \
-                + fo.base_star_type_dist(candidate)
+                + universe_tables.UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST[galaxy_age][candidate] \
+                + universe_tables.BASE_STAR_TYPE_DIST[candidate]
             if max_roll < roll:
                 max_roll = roll
                 star_type = candidate
@@ -76,16 +77,16 @@ def generate_systems(pos_list, gsd):
     sys_list = []
     for position in pos_list:
         star_type = pick_star_type(gsd.age)
-        system = fo.create_system(star_type, "", position.x, position.y)
+        system = fo.create_system(star_type, "", position[0], position[1])
         if system == fo.invalid_object():
             # create system failed, report an error and try to continue with next position
             util.report_error("Python generate_systems: create system at position (%f, %f) failed"
-                              % (position.x, position.y))
+                              % (position[0], position[1]))
             continue
         sys_list.append(system)
         for orbit in range(fo.sys_get_num_orbits(system)):
             # check for each orbit if a planet shall be created by determining planet size
-            planet_size = planets.calc_planet_size(star_type, orbit, gsd.planetDensity, gsd.shape)
+            planet_size = planets.calc_planet_size(star_type, orbit, gsd.planet_density, gsd.shape)
             if planet_size in planets.planet_sizes:
                 # ok, we want a planet, determine planet type and generate the planet
                 planet_type = planets.calc_planet_type(star_type, orbit, planet_size)

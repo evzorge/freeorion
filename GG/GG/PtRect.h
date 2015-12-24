@@ -72,9 +72,11 @@ struct GG_API Pt
     //@}
 
     /** \name Mutators */ ///@{
-    void  operator+=(const Pt& rhs)      { x += rhs.x; y += rhs.y; } ///< Adds \a rhs to Pt.
-    void  operator-=(const Pt& rhs)      { x -= rhs.x; y -= rhs.y; } ///< Subtracts \a rhs to Pt.
-    Pt    operator-() const              { return Pt(-x, -y); }      ///< Negates Pt.
+    void  operator+=(const Pt& rhs)     { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
+    void  operator-=(const Pt& rhs)     { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
+    Pt    operator-() const             { return Pt(-x, -y); }          ///< Negates Pt.
+    Pt    operator/=(const double rhs)  { return Pt(x / rhs, y / rhs); }///< Devides components of Pt by \a rhs
+    Pt    operator*=(const double rhs)  { return Pt(x * rhs, y * rhs); }///< Devides components of Pt by \a rhs
     //@}
 
     X x; ///< The x component.
@@ -96,14 +98,17 @@ struct GG_API Rect
     //@}
 
     /** \name Accessors */ ///@{
-    X  Left() const         { return ul.x; }        ///< returns the left boundary of the Rect
-    X  Right() const        { return lr.x; }        ///< returns the right boundary of the Rect
-    Y  Top() const          { return ul.y; }        ///< returns the top boundary of the Rect
-    Y  Bottom() const       { return lr.y; }        ///< returns the bottom boundary of the Rect
-    Pt UpperLeft() const    { return ul; }          ///< returns the upper-left corner of the Rect
-    Pt LowerRight() const   { return lr; }          ///< returns the lower-right corner of the Rect
-    X  Width() const        { return lr.x - ul.x; } ///< returns the width of the Rect
-    Y  Height() const       { return lr.y - ul.y; } ///< returns the height of the Rect
+    X   Left() const        { return ul.x; }            ///< returns the left boundary of the Rect
+    X   Right() const       { return lr.x; }            ///< returns the right boundary of the Rect
+    Y   Top() const         { return ul.y; }            ///< returns the top boundary of the Rect
+    Y   Bottom() const      { return lr.y; }            ///< returns the bottom boundary of the Rect
+    Pt  UpperLeft() const   { return ul; }              ///< returns the upper-left corner of the Rect
+    Pt  LowerRight() const  { return lr; }              ///< returns the lower-right corner of the Rect
+    X   Width() const       { return lr.x - ul.x; }     ///< returns the width of the Rect
+    Y   Height() const      { return lr.y - ul.y; }     ///< returns the height of the Rect
+    X   MidX() const        { return (lr.x + ul.x)/2; } ///< returns the horizontal mid-point of the Rect
+    Y   MidY() const        { return (lr.y + ul.y)/2; } ///< returns the vertical mid-point of the Rect
+
 
     bool  Contains(const Pt& pt) const; ///< returns true iff \a pt falls inside the Rect
     //@}
@@ -125,6 +130,8 @@ GG_API inline bool operator<=(const Pt& lhs, const Pt& rhs) { return lhs.x <= rh
 GG_API inline bool operator>=(const Pt& lhs, const Pt& rhs) { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
 GG_API inline Pt   operator+(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x + rhs.x, lhs.y + rhs.y); } ///< returns the vector sum of \a lhs and \a rhs
 GG_API inline Pt   operator-(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x - rhs.x, lhs.y - rhs.y); } ///< returns the vector difference of \a lhs and \a rhs
+GG_API inline Pt   operator*(const Pt& lhs, double rhs)     { return Pt(lhs.x * rhs, lhs.y * rhs); }     ///< returns the vector with components multiplied by \a rhs
+GG_API inline Pt   operator/(const Pt& lhs, double rhs)     { return Pt(lhs.x / rhs, lhs.y / rhs); }     ///< returns the vector with components divided by \a rhs
 
 GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt); ///< Pt stream-output operator for debug output
 

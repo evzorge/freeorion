@@ -1,6 +1,7 @@
 #include "ServerNetworking.h"
 
 #include "../util/Logger.h"
+#include "../util/Version.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -42,9 +43,13 @@ namespace {
     }
 
     struct PlayerID {
-        PlayerID(int id) : m_id(id) {}
+        PlayerID(int id) :
+            m_id(id)
+        {}
+
         bool operator()(const PlayerConnectionPtr& player_connection)
-            { return player_connection->PlayerID() == m_id; }
+        { return player_connection->PlayerID() == m_id; }
+
     private:
         int m_id;
     };
@@ -87,19 +92,17 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-void PlayerConnection::SendMessage(const Message& message) {
-    /*if (TRACE_EXECUTION)
-        DebugLogger() << "ServerNetworking::SendMessage : sending message "
-                               << message;*/
-    WriteMessage(m_socket, message);
-}
+void PlayerConnection::SendMessage(const Message& message)
+{ WriteMessage(m_socket, message); }
 
-void PlayerConnection::EstablishPlayer(int id, const std::string& player_name,
-                                       Networking::ClientType client_type)
+void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
+                                       const std::string& client_version_string)
 {
     if (TRACE_EXECUTION)
         DebugLogger() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
-                               << id << ", " << player_name << ", " << client_type << ")";
+                               << id << ", " << player_name << ", " << client_type << ","
+                               << client_version_string << ")";
+
     // ensure that this connection isn't already established
     if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
         ErrorLogger() << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
@@ -123,6 +126,7 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name,
     m_ID = id;
     m_player_name = player_name;
     m_client_type = client_type;
+    m_client_version_string = client_version_string;
 }
 
 void PlayerConnection::SetClientType(Networking::ClientType client_type) {
@@ -131,56 +135,59 @@ void PlayerConnection::SetClientType(Networking::ClientType client_type) {
         ErrorLogger() << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
 }
 
-PlayerConnectionPtr
-PlayerConnection::NewConnection(boost::asio::io_service& io_service,
-                                MessageAndConnectionFn nonplayer_message_callback,
-                                MessageAndConnectionFn player_message_callback,
-                                ConnectionFn disconnected_callback)
+const std::string& PlayerConnection::ClientVersionString() const
+{ return m_client_version_string; }
+
+bool PlayerConnection::ClientVersionStringMatchesThisServer() const
+{ return !m_client_version_string.empty() && m_client_version_string == FreeOrionVersionString(); }
+
+PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_service& io_service,
+                                                    MessageAndConnectionFn nonplayer_message_callback,
+                                                    MessageAndConnectionFn player_message_callback,
+                                                    ConnectionFn disconnected_callback)
 {
     return PlayerConnectionPtr(
-        new PlayerConnection(io_service,
-                             nonplayer_message_callback,
-                             player_message_callback,
+        new PlayerConnection(io_service, nonplayer_message_callback, player_message_callback,
                              disconnected_callback));
 }
 
 namespace {
     std::string MessageTypeName(Message::MessageType type) {
         switch(type) {
-        case Message::UNDEFINED:            return "Undefined";
-        case Message::DEBUG:                return "Debug";
-        case Message::ERROR_MSG:            return "Error";
-        case Message::HOST_SP_GAME:         return "Host SP Game";
-        case Message::HOST_MP_GAME:         return "Host MP Game";
-        case Message::JOIN_GAME:            return "Join Game";
-        case Message::HOST_ID:              return "Host ID";
-        case Message::LOBBY_UPDATE:         return "Lobby Update";
-        case Message::LOBBY_CHAT:           return "Lobby Chat";
-        case Message::LOBBY_EXIT:           return "Lobby Exit";
-        case Message::START_MP_GAME:        return "Start MP Game";
-        case Message::SAVE_GAME:            return "Save Game";
-        case Message::LOAD_GAME:            return "Load Game";
-        case Message::GAME_START:           return "Game Start";
-        case Message::TURN_UPDATE:          return "Turn Update";
-        case Message::TURN_PARTIAL_UPDATE:  return "Turn Partial Update";
-        case Message::TURN_ORDERS:          return "Turn Orders";
-        case Message::TURN_PROGRESS:        return "Turn Progress";
-        case Message::PLAYER_STATUS:        return "Player Status";
-        case Message::CLIENT_SAVE_DATA:     return "Client Save Data";
-        case Message::PLAYER_CHAT:          return "Player Chat";
-        case Message::DIPLOMACY:            return "Diplomacy";
-        case Message::DIPLOMATIC_STATUS:    return "Diplomatic Status";
+        case Message::UNDEFINED:                return "Undefined";
+        case Message::DEBUG:                    return "Debug";
+        case Message::ERROR_MSG:                return "Error";
+        case Message::HOST_SP_GAME:             return "Host SP Game";
+        case Message::HOST_MP_GAME:             return "Host MP Game";
+        case Message::JOIN_GAME:                return "Join Game";
+        case Message::HOST_ID:                  return "Host ID";
+        case Message::LOBBY_UPDATE:             return "Lobby Update";
+        case Message::LOBBY_CHAT:               return "Lobby Chat";
+        case Message::LOBBY_EXIT:               return "Lobby Exit";
+        case Message::START_MP_GAME:            return "Start MP Game";
+        case Message::SAVE_GAME_INITIATE:       return "Save Game";
+        case Message::SAVE_GAME_DATA_REQUEST:   return "Save Game";
+        case Message::SAVE_GAME_COMPLETE:       return "Save Game";
+        case Message::LOAD_GAME:                return "Load Game";
+        case Message::GAME_START:               return "Game Start";
+        case Message::TURN_UPDATE:              return "Turn Update";
+        case Message::TURN_PARTIAL_UPDATE:      return "Turn Partial Update";
+        case Message::TURN_ORDERS:              return "Turn Orders";
+        case Message::TURN_PROGRESS:            return "Turn Progress";
+        case Message::PLAYER_STATUS:            return "Player Status";
+        case Message::CLIENT_SAVE_DATA:         return "Client Save Data";
+        case Message::PLAYER_CHAT:              return "Player Chat";
+        case Message::DIPLOMACY:                return "Diplomacy";
+        case Message::DIPLOMATIC_STATUS:        return "Diplomatic Status";
         case Message::REQUEST_NEW_OBJECT_ID:    return "Request New Object ID";
         case Message::DISPATCH_NEW_OBJECT_ID:   return "Dispatch New Object ID";
         case Message::REQUEST_NEW_DESIGN_ID:    return "Request New Design ID";
         case Message::DISPATCH_NEW_DESIGN_ID:   return "Dispatch New Design ID";
-        case Message::VICTORY_DEFEAT:       return "Victory/Defeat";
-        case Message::PLAYER_ELIMINATED:    return "Player Elimination";
-        case Message::END_GAME:             return "End Game";
-        case Message::MODERATOR_ACTION:     return "Moderator Action";
-        case Message::SHUT_DOWN_SERVER:     return "Shut Down Server";
-        case Message::REQUEST_SAVE_PREVIEWS:return "Request save previews";
-        default:                            return "Unknown Type";
+        case Message::END_GAME:                 return "End Game";
+        case Message::MODERATOR_ACTION:         return "Moderator Action";
+        case Message::SHUT_DOWN_SERVER:         return "Shut Down Server";
+        case Message::REQUEST_SAVE_PREVIEWS:    return "Request save previews";
+        default:                                return "Unknown Type";
         };
     }
 }

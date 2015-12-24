@@ -245,8 +245,8 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
     return sitrep;
 }
 
-SitRepEntry CreatePlanetStarvedToDeathSitRep(int planet_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_LOST_STARVED_TO_DEATH"), "icons/sitrep/colony_destroyed.png");
+SitRepEntry CreatePlanetDepopulatedSitRep(int planet_id) {
+    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_DEPOPULATED"), "icons/sitrep/colony_destroyed.png");
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     return sitrep;
 }
@@ -351,14 +351,13 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
 
 SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) {
     SitRepEntry sitrep(UserStringNop("SITREP_EMPIRE_ELIMINATED"), "icons/sitrep/empire_eliminated.png");
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, boost::lexical_cast<std::string>(empire_id));
     return sitrep;
 }
 
 SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_VICTORY"), "icons/sitrep/victory.png");
-    sitrep.AddVariable(VarText::TEXT_TAG,          reason_string);
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
+    SitRepEntry sitrep(reason_string, CurrentTurn() + 1, "icons/sitrep/victory.png", UserStringNop("SITREP_VICTORY_LABEL"), true);
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, boost::lexical_cast<std::string>(empire_id));
     return sitrep;
 }
 

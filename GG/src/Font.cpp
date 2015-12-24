@@ -633,10 +633,10 @@ bool Font::RenderState::ColorsEmpty() const
 
 // Must be here for scoped_ptr deleter to work
 Font::RenderCache::RenderCache() :
-    vertices(new GG::GLPtBuffer()),
+    vertices(new GG::GL2DVertexBuffer()),
     coordinates(new GG::GLTexCoordBuffer()),
     colors(new GG::GLRGBAColorBuffer()),
-    underline_vertices(new GG::GLPtBuffer()),
+    underline_vertices(new GG::GL2DVertexBuffer()),
     underline_colors(new GG::GLRGBAColorBuffer())
 {}
 
@@ -684,12 +684,47 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
     width(ul.x - lr.x)
 {}
 
+namespace {
+
+    // Global set of tags requiring action fron Font. Wrapped in a function for deterministic static initialization order.
+    std::set<std::string>& ActionTags()
+    {
+        static std::set<std::string> action_tags;
+        return action_tags;
+    }
+
+    // Global set of known tags. Wrapped in a function for deterministic static initialization order.
+    std::set<std::string>& KnownTags()
+    {
+        static std::set<std::string> known_tags;
+        return known_tags;
+    }
+
+    // Registers the default action and known tags.
+    int RegisterDefaultTags(){
+        ActionTags().insert("i");
+        ActionTags().insert("s");
+        ActionTags().insert("u");
+        ActionTags().insert("rgba");
+        ActionTags().insert(ALIGN_LEFT_TAG);
+        ActionTags().insert(ALIGN_CENTER_TAG);
+        ActionTags().insert(ALIGN_RIGHT_TAG);
+        ActionTags().insert(PRE_TAG);
+
+        // Always know the action tags.
+        KnownTags().insert(ActionTags().begin(), ActionTags().end());
+
+        // Must have return value to call at static initialization time.
+        return 0;
+    }
+
+    // Register the default tags at static initialization time.
+    int register_tags_dummy = RegisterDefaultTags();
+}
 
 ///////////////////////////////////////
 // class GG::Font
 ///////////////////////////////////////
-std::set<std::string> Font::s_action_tags;
-std::set<std::string> Font::s_known_tags;
 
 Font::Font() :
     m_pt_sz(0),
@@ -908,12 +943,8 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
 
 void Font::RenderCachedText(RenderCache& cache) const
 {
-    double orig_color[4];
-    glGetDoublev(GL_CURRENT_COLOR, orig_color);
-
-
-    //RenderStoredGlyph(it->second, running_index, *cache.vertices, *cache.coordinates);
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
@@ -932,7 +963,6 @@ void Font::RenderCachedText(RenderCache& cache) const
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-    glColor4dv(orig_color);
 }
 
 void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
@@ -995,26 +1025,21 @@ Pt Font::TextExtent(const std::string& text, const std::vector<LineData>& line_d
 }
 
 void Font::RegisterKnownTag(const std::string& tag)
-{ s_known_tags.insert(tag); }
+{ KnownTags().insert(tag); }
 
 void Font::RemoveKnownTag(const std::string& tag)
 {
-    if (s_action_tags.find(tag) == s_action_tags.end())
-        s_known_tags.erase(tag);
+    if (KnownTags().find(tag) == KnownTags().end())
+        KnownTags().erase(tag);
 }
 
 void Font::ClearKnownTags()
 {
-    s_action_tags.clear();
-    s_action_tags.insert("i");
-    s_action_tags.insert("s");
-    s_action_tags.insert("u");
-    s_action_tags.insert("rgba");
-    s_action_tags.insert(ALIGN_LEFT_TAG);
-    s_action_tags.insert(ALIGN_CENTER_TAG);
-    s_action_tags.insert(ALIGN_RIGHT_TAG);
-    s_action_tags.insert(PRE_TAG);
-    s_known_tags = s_action_tags;
+    // Clear known tags.
+    KnownTags().clear();
+
+    // Always know the default tags.
+    RegisterDefaultTags();
 }
 
 void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
@@ -1047,7 +1072,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
 
         std::stack<Substring> tag_stack;
         bool ignore_tags = format & FORMAT_IGNORETAGS;
-        MatchesKnownTag matches_known_tag(s_known_tags, ignore_tags);
+        MatchesKnownTag matches_known_tag(KnownTags(), ignore_tags);
         MatchesTopOfStack matches_tag_stack(tag_stack, ignore_tags);
 
         mark_tag tag_name_tag(1);
@@ -1437,9 +1462,6 @@ void Font::CheckFace(FT_Face face, FT_Error error)
 
 void Font::Init(FT_Face& face)
 {
-    if (s_action_tags.empty()) // if this is the first Font to get initialized, it needs to initialize some static members
-        ClearKnownTags();
-
     FT_Fixed scale;
 
     if (!m_pt_sz) {
@@ -1487,8 +1509,9 @@ void Font::Init(FT_Face& face)
     }
 
     //Get maximum texture size
-    GLint TEX_MAX_SIZE;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &TEX_MAX_SIZE);
+    GLint GL_TEX_MAX_SIZE;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
+    const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
 
     std::map<boost::uint32_t, TempGlyphData> temp_glyph_data;
 
@@ -1524,7 +1547,7 @@ void Font::Init(FT_Face& face)
                     // We cannot make the texture any larger. The font does not fit.
                     ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
                 }
-                if (Value(y) + glyph_bitmap.rows > Value(max_y)) {
+                if (y + Y(glyph_bitmap.rows) > max_y) {
                     max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
                 }
 
@@ -1532,11 +1555,11 @@ void Font::Init(FT_Face& face)
                 // Resize buffer to fit new data
                 buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
 
-                for (int row = 0; row < glyph_bitmap.rows; ++row) {
+                for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
                     boost::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
-                    boost::uint16_t* dst = &buffer.get(x, Y(y + row));
+                    boost::uint16_t* dst = &buffer.get(x, y + Y(row));
                     // Rows are always contiguous, so we can copy along a row using simple incrementation
-                    for (int col = 0; col < glyph_bitmap.width; ++col) {
+                    for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__
                         *dst++ = *src++ | (255 << 8); // big-endian uses different byte ordering
 #else

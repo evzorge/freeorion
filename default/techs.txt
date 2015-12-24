@@ -41,7 +41,7 @@ Category
 //CORRESPONDING MAX TROOP, DEFENSE, & SHIELD VALUES ARE SPECIFIED IN SPECIES.TXT
 
 Tech
-    Name = "DEF_ROOT_DEFENSE"
+    name = "DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
@@ -53,8 +53,10 @@ Tech
 
 CANDIDATE_BATTLE_CHECK
 '''Turn low = LocalCandidate.System.LastTurnBattleHere + 1'''
+
+
 Tech
-    Name = "DEF_GARRISON_1"
+    name = "DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
@@ -65,7 +67,7 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name = "DEF_GARRISON_2"
+    name = "DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Refinement
@@ -84,7 +86,7 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name = "DEF_GARRISON_3"
+    name = "DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Refinement
@@ -103,7 +105,7 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name = "DEF_GARRISON_4"
+    name = "DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Refinement
@@ -617,6 +619,7 @@ Tech
     researchcost = 36 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "LRN_TRANSLING_THT"
+    unlock = Item type = building name = "BLD_XENORESURRECTION_LAB"
     graphic = "icons/tech/xenoarchaeology.png"
 
 Tech
@@ -641,7 +644,7 @@ Tech
     researchturns = 5
     prerequisites = "LRN_ARTIF_MINDS"
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    graphic = "icons/ship_parts/defense_grid.png"
+    graphic = "icons/tech/forcefield_harmonics.png"
 
 Tech
     name = "LRN_EVERYTHING"
@@ -767,6 +770,7 @@ Tech
     researchturns = 5
     prerequisites = "LRN_NDIM_SUBSPACE"
     unlock = Item type = Building name = "BLD_SPATIAL_DISTORT_GEN"
+    graphic = "icons/tech/controlled_gravity_wells.png"
 
 Tech
     name = "LRN_QUANT_NET"
@@ -786,6 +790,7 @@ Tech
             ]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
+    graphic = "icons/tech/quantum_networking.png"
 
 Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
@@ -927,6 +932,7 @@ Tech
     researchturns = 8
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
+    graphic = "icons/tech/artificial_black_hole.png"
 
 Tech
     name = "LRN_COLLAPSER"
@@ -938,6 +944,7 @@ Tech
     researchturns = 8
     prerequisites = ["LRN_ART_BLACK_HOLE" "LRN_STELLAR_TOMOGRAPHY" "LRN_SPATIAL_DISTORT_GEN"]
     unlock = Item type = Building name = "BLD_BLACK_HOLE_COLLAPSER"
+    graphic = "icons/tech/black_hole_collapse.png"
 
 Tech
     name = "LRN_UNIF_CONC"
@@ -972,11 +979,7 @@ Tech
         EffectsGroup
             scope = Source
             effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_TECH"
-                    icon = "icons/sitrep/victory.png"
-                    empire = Source.Owner
-                Victory reason = "TECH_VICTORY"
+                Victory reason = "VICTORY_TECH"
             ]
     graphic = "icons/tech/singularity_of_transcendence.png"
 
@@ -1038,6 +1041,7 @@ Tech
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "GRO_SUBTER_HAB"
+    graphic = "icons/tech/advanced_eco_man.png"
 
 Tech
     name = "GRO_XENO_GENETICS"
@@ -1090,6 +1094,7 @@ Tech
     researchturns = 10
     prerequisites = "GRO_NANO_CYBERNET"
     // Effects are located in species.txt
+    graphic = "icons/tech/cyborgs.png"
 
 Tech
     name = "GRO_GENETIC_MED"
@@ -1433,7 +1438,7 @@ Tech
         "PRO_SOL_ORB_GEN"
     ]
     unlock = Item type = Building name = "BLD_BLACK_HOLE_POW_GEN"
-    graphic = "icons/tech/artificial_black_hole.png"
+    graphic = "icons/tech/singularity_generation.png"
 
 Tech
     name = "PRO_ZERO_GEN"
@@ -1569,6 +1574,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxSupply value = Value + 1
+    graphic = "icons/tech/galactic_infrastructure.png"
 
 Tech
     name = "CON_FRC_ENRG_STRC"
@@ -1832,6 +1838,7 @@ Tech
         Item type = Building name = "BLD_PLANET_DRIVE"
         Item type = Building name = "BLD_PLANET_BEACON"
     ]
+    graphic = "icons/tech/planetary_stardrive.png"
 
 Tech
     name = "CON_STARGATE"
@@ -1864,6 +1871,7 @@ Tech
         Item type = Building name = "BLD_ART_FACTORY_PLANET"
         Item type = Building name = "BLD_ART_PARADISE_PLANET"
         ]
+    graphic = "icons/tech/artificial_planet.png"
 
 
 //########################################################
@@ -2396,7 +2404,8 @@ Tech
     graphic = "icons/ship_hulls/ravenous_hull_small.png"
     
         
-Tech    name = "SHP_SENT_HULL"
+Tech
+    name = "SHP_SENT_HULL"
     description = "SHP_SENT_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
@@ -2425,16 +2434,32 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 160 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
-        "LRN_GRAVITONICS"
+        "LRN_FORCE_FIELD"
     ]
     unlock = [
         Item type = ShipHull name = "SH_COMPRESSED_ENERGY"
         Item type = Building name = "BLD_SHIPYARD_ENRG_COMP"
     ]
     graphic = "icons/ship_hulls/compressed_energy_hull_small.png"
+
+Tech
+    name = "SHP_ENRG_FRIGATE"
+    description = "SHP_ENRG_FRIGATE_DESC"
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 120 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
+    prerequisites = [
+        "SHP_FRC_ENRG_COMP"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_ENERGY_FRIGATE"
+    ]
+    graphic = "icons/ship_hulls/energy_frigate_hull_small.png"
 
 Tech
     name = "SHP_QUANT_ENRG_MAG"
@@ -2444,7 +2469,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 420 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-    prerequisites = "SHP_FRC_ENRG_COMP"
+    prerequisites = [
+        "LRN_GRAVITONICS"
+        "SHP_ENRG_FRIGATE"
+    ]
     unlock = Item type = ShipHull name = "SH_QUANTUM_ENERGY"
     graphic = "icons/ship_hulls/quantum_energy_hull_small.png"
 
@@ -2456,7 +2484,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 420 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-    prerequisites = "SHP_FRC_ENRG_COMP"
+    prerequisites = [
+        "LRN_GRAVITONICS"
+        "SHP_ENRG_FRIGATE"
+    ]
     unlock = Item type = ShipHull name = "SH_FRACTAL_ENERGY"
     graphic = "icons/ship_hulls/fractal_energy_hull_small.png"
 
@@ -2499,6 +2530,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxStructure value = Value + 5
+    graphic = "icons/tech/structural_integrity_fields.png"
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -2702,6 +2734,7 @@ Tech
     prerequisites = 
         "GRO_ADV_ECOMAN"
     unlock = Item type = ShipPart name = "SP_DEATH_SPORE"
+    graphic = "icons/ship_parts/death-spore.png"
 
 Tech
     name = "SHP_BIOTERM"
@@ -2716,6 +2749,7 @@ Tech
         "GRO_BIOTERROR"
     ]
     unlock = Item type = ShipPart name = "SP_BIOTERM"
+    graphic = "icons/ship_parts/bioterm.png"
 
 //#
 //#     SHIPS SHIELDS
@@ -2829,7 +2863,7 @@ Tech
 //#
 
 Tech
-    Name ="SHP_ROOT_AGGRESSION"
+    name = "SHP_ROOT_AGGRESSION"
     description = "SHP_ROOT_AGGRESSION_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
@@ -2840,42 +2874,66 @@ Tech
         Item type = ShipPart name = "SR_WEAPON_1_1"
         Item type = ShipPart name = "GT_TROOP_POD"
     ]
-    graphic = ""
+    graphic = "icons/tech/planetary_colonialism.png"
 
 Tech
     name = "SHP_WEAPON_1_2"
     description = "SHP_WEAPON_1_2_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_WEAPON_1_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_2"
+            effects = SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 1
     graphic = "icons/ship_parts/mass-driver-2.png"
     
 Tech
     name = "SHP_WEAPON_1_3"
     description = "SHP_WEAPON_1_3_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 6 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_1_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_1_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999 name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_3_DESC"
+            effects = SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 1
     graphic = "icons/ship_parts/mass-driver-3.png"
 
 Tech
     name = "SHP_WEAPON_1_4"
     description = "SHP_WEAPON_1_4_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_1_3"
-    unlock = Item type = ShipPart name = "SR_WEAPON_1_4"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_4"
+            effects = SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 1
     graphic = "icons/ship_parts/mass-driver-4.png"
 
 Tech
@@ -2893,37 +2951,61 @@ Tech
 Tech
     name = "SHP_WEAPON_2_2"
     description = "SHP_WEAPON_2_2_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_2_1"
-    unlock = Item type = ShipPart name = "SR_WEAPON_2_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+            ]
+            accountinglabel = "SR_WEAPON_2_2"
+            effects = SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + 2
     graphic = "icons/ship_parts/laser-2.png"
 
 Tech
     name = "SHP_WEAPON_2_3"
     description = "SHP_WEAPON_2_3_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_2_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_2_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+            ]
+            accountinglabel = "SR_WEAPON_2_3"
+            effects = SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + 2
     graphic = "icons/ship_parts/laser-3.png"
 
 Tech
     name = "SHP_WEAPON_2_4"
     description = "SHP_WEAPON_2_4_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_2_3"
-    unlock = Item type = ShipPart name = "SR_WEAPON_2_4"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_2_1"
+            ]
+            accountinglabel = "SR_WEAPON_2_4"
+            effects = SetMaxCapacity partname = "SR_WEAPON_2_1" value = Value + 2
     graphic = "icons/ship_parts/laser-4.png"
 
 Tech
@@ -2941,37 +3023,61 @@ Tech
 Tech
     name = "SHP_WEAPON_3_2"
     description = "SHP_WEAPON_3_2_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_3_1"
-    unlock = Item type = ShipPart name = "SR_WEAPON_3_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+            ]
+            accountinglabel = "SR_WEAPON_3_2"
+            effects = SetMaxCapacity partname = "SR_WEAPON_3_1" value = Value + 3
     graphic = "icons/ship_parts/plasma-2.png"
 
 Tech
     name = "SHP_WEAPON_3_3"
     description = "SHP_WEAPON_3_3_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_3_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_3_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+            ]
+            accountinglabel = "SR_WEAPON_3_3"
+            effects = SetMaxCapacity partname = "SR_WEAPON_3_1" value = Value + 3
     graphic = "icons/ship_parts/plasma-3.png"
 
 Tech
     name = "SHP_WEAPON_3_4"
     description = "SHP_WEAPON_3_4_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_3_3"
-    unlock = Item type = ShipPart name = "SR_WEAPON_3_4"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_3_1"
+            ]
+            accountinglabel = "SR_WEAPON_3_4"
+            effects = SetMaxCapacity partname = "SR_WEAPON_3_1" value = Value + 3
     graphic = "icons/ship_parts/plasma-4.png"
 
 Tech
@@ -2989,37 +3095,61 @@ Tech
 Tech
     name = "SHP_WEAPON_4_2"
     description = "SHP_WEAPON_4_2_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_WEAPON_4_1"
-    unlock = Item type = ShipPart name = "SR_WEAPON_4_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+            ]
+            accountinglabel = "SR_WEAPON_4_2"
+            effects = SetMaxCapacity partname = "SR_WEAPON_4_1" value = Value + 5
     graphic = "icons/ship_parts/death-ray-2.png"
 
 Tech
     name = "SHP_WEAPON_4_3"
     description = "SHP_WEAPON_4_3_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_WEAPON_4_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_4_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+            ]
+            accountinglabel = "SR_WEAPON_4_3"
+            effects = SetMaxCapacity partname = "SR_WEAPON_4_1" value = Value + 5
     graphic = "icons/ship_parts/death-ray-3.png"
 
 Tech
     name = "SHP_WEAPON_4_4"
     description = "SHP_WEAPON_4_4_DESC"
-    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     techtype = Refinement
     category = "SHIPS_CATEGORY"
     researchcost = 1250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "SHP_WEAPON_4_3"
-    unlock = Item type = ShipPart name = "SR_WEAPON_4_4"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_4_1"
+            ]
+            accountinglabel = "SR_WEAPON_4_4"
+            effects = SetMaxCapacity partname = "SR_WEAPON_4_1" value = Value + 5
     graphic = "icons/ship_parts/death-ray-4.png"
 
 
@@ -3037,7 +3167,7 @@ Tech
             scope = OR [
                 Building
                 Planet
-                ]
+            ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             accountinglabel = "BASIC_PLANET_STEALTH"
             effects = SetStealth value = Value + 5
@@ -3227,6 +3357,7 @@ Tech
     researchturns = 4
     prerequisites = "LRN_EVERYTHING"
     unlock = Item type = ShipPart name = "SP_DISTORTION_MODULATOR"
+    graphic = "icons/ship_parts/distortion_modulator.png"
     
 Tech
     name = "SPY_LIGHTHOUSE"

@@ -338,15 +338,17 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, &colour[0]);
         glEnable(GL_TEXTURE_2D);
 
-        glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));
-        glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
-        glRotated(axial_tilt, 0.0, 1.0, 0.0);  // axial tilt
+        glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));// relocate to locatin on screen where planet is to be rendered
+        glRotated(95.0, -1.0, 0.0, 0.0);                                    // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
+        glRotated(axial_tilt, 0.0, 1.0, 0.0);                               // axial tilt
+
         float intensity = static_cast<float>(GetRotatingPlanetAmbientIntensity());
         GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0f);
         intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
         RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+
         if (overlay_texture) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -720,10 +722,6 @@ namespace {
         return ClientUI::Pts()*1.5;
     }
 
-    GG::Y SystemNameTextControlHeight() {
-        return GG::Y(SystemNameFontSize()*4/3);
-    }
-
     class SystemRow : public GG::ListBox::Row {
     public:
         SystemRow(int system_id) :
@@ -769,14 +767,6 @@ namespace {
     }
 
     const GG::Y PLANET_PANEL_TOP = GG::Y(140);
-
-    GG::X ButtonWidth() {
-        return GG::X(Value(SystemNameTextControlHeight()));
-    }
-
-    GG::Y ButtonHeight() {
-        return SystemNameTextControlHeight();
-    }
 }
 
 ////////////////////////////////////////////////
@@ -1965,74 +1955,59 @@ void SidePanel::PlanetPanel::Render() {
     GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
 
 
-    const int OFFSET = 15;          // size of corners cut off sticky-out bit of background around planet render
+    static const int OFFSET = 15;   // size of corners cut off sticky-out bit of background around planet render
+
+    GG::GL2DVertexBuffer verts;
+    verts.reserve(12);
+
+    // title box background
+    verts.store(name_lr.x,              name_ul.y);
+    verts.store(name_ul.x,              name_ul.y);
+    verts.store(name_ul.x,              name_lr.y);
+    verts.store(name_lr.x,              name_lr.y);
+
+    // main border / background
+    verts.store(lr.x,                   ul.y);                      // top right corner
+    if (show_planet_box) {
+        verts.store(ul.x + OFFSET,      ul.y);                      // top left, offset right to cut off corner
+        verts.store(ul.x,               ul.y + OFFSET);             // top left, offset down to cut off corner
+        verts.store(ul.x,               planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
+        verts.store(ul.x + OFFSET,      planet_box_lr.y);           // bottom left, offset right to cut off corner
+        verts.store(planet_box_lr.x,    planet_box_lr.y);           // inner corner between planet box and rest of panel
+    } else {
+        verts.store(planet_box_lr.x,    ul.y);                      // top left of main panel, excluding planet box
+    }
+    verts.store(planet_box_lr.x,        lr.y);                      // bottom left of main panel
+    verts.store(lr.x,                   lr.y);                      // bottom right
+
+    verts.activate();
+
     glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
     // standard WndColor background for whole panel
     glColor(background_colour);
-    glBegin(GL_TRIANGLE_FAN);
-        glVertex(lr.x,                  ul.y);                  // top right corner
-        if (show_planet_box) {
-            glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
-            glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
-            glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-            glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
-            glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
-        } else {
-            glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
-        }
-        glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
-        glVertex(lr.x,              lr.y);                      // bottom right
-    glEnd();
+    glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
 
     // title background box
     glColor(title_background_colour);
-    glBegin(GL_QUAD_STRIP);
-        glVertex(name_lr.x,             name_ul.y);
-        glVertex(name_ul.x,             name_ul.y);
-        glVertex(name_lr.x,             name_lr.y);
-        glVertex(name_ul.x,             name_lr.y);
-    glEnd();
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
     // border
     glColor(border_colour);
-    glLineWidth(1.5);
-    glBegin(GL_LINE_LOOP);
-        glVertex(lr.x,                  ul.y);                  // top right corner
-        if (show_planet_box) {
-            glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
-            glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
-            glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-            glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
-            glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
-        } else {
-            glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
-        }
-        glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
-        glVertex(lr.x,              lr.y);                      // bottom right
-    glEnd();
-    glLineWidth(1.0);
+    glLineWidth(1.5f);
+    glDrawArrays(GL_LINE_LOOP, 4, verts.size() - 4);
+    glLineWidth(1.0f);
 
     // disable greyover
-    const GG::Clr HALF_GREY(128, 128, 128, 128);
+    static const GG::Clr HALF_GREY(128, 128, 128, 128);
     if (Disabled()) {
         glColor(HALF_GREY);
-        glBegin(GL_TRIANGLE_FAN);
-            glVertex(lr.x,                  ul.y);                  // top right corner
-            if (show_planet_box) {
-                glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
-                glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
-                glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-                glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
-                glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
-            } else {
-                glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
-            }
-            glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
-            glVertex(lr.x,              lr.y);                      // bottom right
-        glEnd();
+        glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
     }
 
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -2590,9 +2565,7 @@ boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 
 SidePanel::SidePanel(const std::string& config_name) :
-    CUIWnd("SidePanel",
-           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP,
-           config_name),
+    CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name),
     m_system_name(0),
     m_star_type_text(0),
     m_button_prev(0),
@@ -2623,8 +2596,6 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
 
     Sound::TempUISoundDisabler sound_disabler;
-
-    SetName(UserString("SIDE_PANEL"));
 
     m_system_name->DisableDropArrow();
     m_system_name->SetStyle(GG::LIST_CENTER);
@@ -2683,48 +2654,74 @@ bool SidePanel::InWindow(const GG::Pt& pt) const {
 GG::Pt SidePanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
 
-void SidePanel::Render() {
+void SidePanel::Render()
+{ CUIWnd::Render(); }
+
+void SidePanel::InitBuffers() {
+    m_vertex_buffer.clear();
+    m_vertex_buffer.reserve(19);
+    m_buffer_indices.resize(4);
+    std::size_t previous_buffer_size = m_vertex_buffer.size();
+
     GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
     GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
-    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
-                            OUTER_EDGE_ANGLE_OFFSET, 1, false, !m_resizable); // show notched bottom-right corner if not resizable, pointed corner if resizable
 
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
+    // within m_vertex_buffer:
+    // [0] is the start and range for minimized background triangle fan and minimized border line loop (probably not actually used for sidepanel, but to be consistent will leave in)
+    // [1] is ... the background fan / outer border line loop
+    // [2] is ... the inner border line loop
+    // [3] is ... the resize tab line list
 
-    // draw inner border, including extra resize-tab lines
-    if (cl_ul.y < cl_lr.y) {
-        glBegin(GL_LINE_STRIP);
-            glColor(ClientUI::WndInnerBorderColor());
-            glVertex(cl_ul.x, cl_ul.y);
-            glVertex(cl_lr.x, cl_ul.y);
-            if (m_resizable) {
-                glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-                glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-            } else {
-                glVertex(cl_lr.x, cl_lr.y);
-            }
-            glVertex(cl_ul.x, cl_lr.y);
-            glVertex(cl_ul.x, cl_ul.y);
-        glEnd();
+    // minimized background fan and border line loop
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
+    m_vertex_buffer.store(Value(ul.x),  Value(lr.y));
+    m_buffer_indices[0].first = previous_buffer_size;
+    m_buffer_indices[0].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // outer border, with optional corner cutout
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    if (!m_resizable) {
+        m_vertex_buffer.store(Value(lr.x),                            Value(lr.y) - OUTER_EDGE_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(lr.x) - OUTER_EDGE_ANGLE_OFFSET,  Value(lr.y));
+    } else {
+        m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
     }
+    m_vertex_buffer.store(Value(ul.x),      Value(lr.y));
+    m_buffer_indices[1].first = previous_buffer_size;
+    m_buffer_indices[1].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // inner border, with optional corner cutout
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_ul.y));
+    m_vertex_buffer.store(Value(cl_lr.x),       Value(cl_ul.y));
     if (m_resizable) {
-        glBegin(GL_LINES);
-            // draw the extra lines of the resize tab
-            GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
-            glColor(tab_lines_colour);
-
-            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-            glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-
-            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-            glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-        glEnd();
+        m_vertex_buffer.store(Value(cl_lr.x),                             Value(cl_lr.y) - INNER_BORDER_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(cl_lr.x) - INNER_BORDER_ANGLE_OFFSET, Value(cl_lr.y));
+    } else {
+        m_vertex_buffer.store(Value(cl_lr.x),   Value(cl_lr.y));
     }
-    glEnable(GL_TEXTURE_2D);
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_lr.y));
+    m_buffer_indices[2].first = previous_buffer_size;
+    m_buffer_indices[2].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // resize hash marks
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK1_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET, Value(cl_lr.y));
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET, Value(cl_lr.y));
+    m_buffer_indices[3].first = previous_buffer_size;
+    m_buffer_indices[3].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    m_vertex_buffer.createServerBuffer();
 }
 
 void SidePanel::Update() {
@@ -2943,28 +2940,34 @@ void SidePanel::RefreshImpl() {
 }
 
 void SidePanel::DoLayout() {
+    if (m_system_name->CurrentItem() == m_system_name->end()) // no system to render
+        return;
+
+    const GG::Y name_height((*m_system_name->CurrentItem())->Height());
+    const GG::X button_width(Value(name_height));
+
     // left button
-    GG::Pt ul(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, GG::Y(EDGE_PAD));
-    GG::Pt lr(ul + GG::Pt(ButtonWidth(), ButtonHeight()));
+    GG::Pt ul(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, GG::Y0);
+    GG::Pt lr(ul + GG::Pt(button_width, name_height));
     m_button_prev->SizeMove(ul, lr);
 
     // right button
-    ul = GG::Pt(ClientWidth() - ButtonWidth() - 2*EDGE_PAD, GG::Y(EDGE_PAD));
-    lr = ul + GG::Pt(ButtonWidth(), ButtonHeight());
+    ul = GG::Pt(ClientWidth() - button_width - 2*EDGE_PAD, GG::Y0);
+    lr = ul + GG::Pt(button_width, name_height);
     m_button_next->SizeMove(ul, lr);
 
     // system name / droplist
     ul = GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0);
-    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), SystemNameTextControlHeight());
+    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), name_height);
     m_system_name->SizeMove(ul, lr);
 
     // system name droplist rows
-    GG::Pt row_size(ListRowSize());
+    const GG::X row_width(m_system_name->Width() - ClientUI::ScrollWidth() - 5);
     for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it)
-        (*it)->Resize(row_size);
+        (*it)->Resize(GG::Pt(row_width, (*it)->Height()));
 
     // star type text
-    ul = GG::Pt(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, m_system_name->Height() + EDGE_PAD*4);
+    ul = GG::Pt(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, name_height + EDGE_PAD*4);
     lr = GG::Pt(ClientWidth() - 1, ul.y + m_star_type_text->Height());
     m_star_type_text->SizeMove(ul, lr);
 
@@ -2980,9 +2983,6 @@ void SidePanel::DoLayout() {
         m_system_resource_summary->SizeMove(ul, lr);
     }
 }
-
-GG::Pt SidePanel::ListRowSize() const
-{ return GG::Pt(m_system_name->Width() - ClientUI::ScrollWidth() - 5, m_system_name->Height()); }
 
 void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();

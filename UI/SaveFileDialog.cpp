@@ -648,7 +648,7 @@ void SaveFileDialog::Init() {
     GG::Connect(m_file_list->DoubleClickedSignal,               &SaveFileDialog::DoubleClickRow,    this);
     GG::Connect(m_name_edit->EditedSignal,                      &SaveFileDialog::FileNameEdited,    this);
     GG::Connect(m_current_dir_edit->EditedSignal,               &SaveFileDialog::DirectoryEdited,   this);
-    GG::Connect(GG::GUI::GetGUI()->FocusChangedSignal,          &SaveFileDialog::UpdatePreviewList, this );
+    GG::Connect(GG::GUI::GetGUI()->FocusChangedSignal,          boost::bind(&SaveFileDialog::UpdatePreviewList, this));
 
     if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp());
@@ -776,7 +776,7 @@ void SaveFileDialog::AskDelete() {
     }
 }
 
-void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row) {
+void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     m_file_list->SelectRow ( row );
     Confirm();
 }
@@ -817,9 +817,11 @@ void SaveFileDialog::UpdatePreviewList() {
     DebugLogger() << "SaveFileDialog::UpdatePreviewList";
 
     m_file_list->Clear();
+
     // Needed because there is a bug in ListBox, where the headers
     // never resize to less wide
     m_file_list->ResetColHeaders();
+
     // If no browsing, no reloading
     if (!m_server_previews) {
         m_file_list->LoadSaveGamePreviews(GetDirPath(), m_extension);
@@ -834,8 +836,7 @@ void SaveFileDialog::UpdatePreviewList() {
         row->push_back(new CUILabel(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
-        for (std::vector<std::string>::const_iterator
-             it = preview_information.subdirectories.begin();
+        for (std::vector<std::string>::const_iterator it = preview_information.subdirectories.begin();
              it != preview_information.subdirectories.end(); ++it)
         {
             GG::DropDownList::Row* row = new GG::DropDownList::Row();

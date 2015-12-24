@@ -33,7 +33,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("GameSetup.seed",                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                    std::string("0"),   Validator<std::string>());
         db.Add("GameSetup.stars",               UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                   150,                RangedValidator<int>(10, 5000));
-        db.Add("GameSetup.galaxy-shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            ELLIPTICAL,         RangedValidator<Shape>(SPIRAL_2, RANDOM));
+        db.Add("GameSetup.galaxy-shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            DISC,               RangedValidator<Shape>(SPIRAL_2, RANDOM));
         db.Add("GameSetup.galaxy-age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.planet-density",      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.starlane-frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
@@ -205,8 +205,9 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_textures[SPIRAL_4] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
     m_textures[CLUSTER] =     ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
     m_textures[ELLIPTICAL] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
-    m_textures[IRREGULAR1] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
-    m_textures[IRREGULAR2] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[DISC] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
+    m_textures[BOX] =         ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[IRREGULAR] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
     m_textures[RING] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
     m_textures[RANDOM] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
@@ -216,8 +217,9 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_4ARM")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_CLUSTER")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ELLIPTICAL")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR1")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR2")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_DISC")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_BOX")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RING")));
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RANDOM")));
 

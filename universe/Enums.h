@@ -134,8 +134,9 @@ GG_ENUM(Shape,
     SPIRAL_4,       ///< a four-armed spiral galaxy
     CLUSTER,        ///< a cluster galaxy
     ELLIPTICAL,     ///< an elliptical galaxy
-    IRREGULAR1,     ///< an irregular galaxy (type 1)
-    IRREGULAR2,     ///< an irregular galaxy (type 2)
+    DISC,           ///< a disc shaped galaxy
+    BOX,            ///< a rectangular shaped galaxy
+    IRREGULAR,      ///< an irregular galaxy
     RING,           ///< a ring galaxy
     RANDOM,         ///< a random one of the above
     GALAXY_SHAPES   ///< the number of shapes in this enum (leave this last)
@@ -234,10 +235,8 @@ GG_ENUM(ResourceType,
 /** Types "classes" of ship parts */
 GG_ENUM(ShipPartClass,
     INVALID_SHIP_PART_CLASS = -1,
-    PC_SHORT_RANGE,         ///< short range direct weapons, good against ships, bad against fighters
-    PC_MISSILES,            ///< long range indirect weapons, good against ships, bad against fighters
-    PC_FIGHTERS,            ///< self-propelled long-range weapon platforms, good against fighters and/or ships
-    PC_POINT_DEFENSE,       ///< short range direct weapons, good against fighters or incoming missiles, bad against ships
+    PC_DIRECT_WEAPON,       ///< direct-fire weapons
+    PC_FIGHTERS,            ///< self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
     PC_SHIELD,              ///< energy-based defense
     PC_ARMOUR,              ///< defensive material on hull of ship
     PC_TROOPS,              ///< ground troops, used to conquer planets

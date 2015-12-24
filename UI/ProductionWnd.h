@@ -4,6 +4,7 @@
 
 #include "CUIWnd.h"
 #include "../universe/Enums.h"
+#include "../Empire/Empire.h"
 
 #include <GG/ListBox.h>
 
@@ -45,8 +46,9 @@ public:
     void            ShowShipDesignInEncyclopedia(int design_id);
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
-      * and displays info about that item in encyclopedia window. */
-    void            CenterOnBuild(int queue_idx);
+      * and displays info about that item in encyclopedia window.
+      * If \a open is true, the location is set as the selected planet. */
+    void            CenterOnBuild(int queue_idx, bool open = false);
 
     /** Programatically sets this Wnd's selected system.
       * Does not emit a SystemSelectedSignal. */
@@ -82,16 +84,15 @@ private:
     void    UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
     void    UpdateInfoPanel(); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
 
-    void    AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
-    void    AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location);
+    void    AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item, int number, int location, int pos);
 
     void    ChangeBuildQuantitySlot(int queue_idx, int quantity);
     void    ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize);
 
     void    DeleteQueueItem(GG::ListBox::iterator it);
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
-    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
-    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
+    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     ProductionInfoPanel*    m_production_info_panel;
     ProductionQueueWnd*     m_queue_wnd;

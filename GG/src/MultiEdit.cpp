@@ -135,6 +135,11 @@ Pt MultiEdit::MinUsableSize() const
               Y(4 * SCROLL_WIDTH + 2 * BORDER_THICK));
 }
 
+Pt MultiEdit::FullSize() const
+{
+  return Pt(Width(), m_contents_sz.y + Y(PIXEL_MARGIN) * 2);
+}
+
 Pt MultiEdit::ClientLowerRight() const
 { return Edit::ClientLowerRight() - Pt(RightMargin(), BottomMargin()); }
 
@@ -230,13 +235,8 @@ void MultiEdit::Render()
             !(m_style & MULTI_READ_ONLY))
         {
             X caret_x = CharXOffset(m_cursor_begin.first, m_cursor_begin.second) + initial_text_x_pos;
-            glDisable(GL_TEXTURE_2D);
             glColor(text_color_to_use);
-            glBegin(GL_LINES);
-            glVertex(caret_x, row_y_pos);
-            glVertex(caret_x, row_y_pos + GetFont()->Lineskip());
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
+            Line(caret_x, row_y_pos, caret_x, row_y_pos + GetFont()->Lineskip());
         }
     }
 
@@ -508,16 +508,15 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
     if (lines[row].Empty())
         return CPSize(lines[row-1].char_data.back().code_point_index);
 
-    // if at start of line, just go with that
+    // if at start of (non-empty) line, return first character of that line
     if (char_idx == CP0)
-        return CP0;
+        return CPSize(lines[row].char_data.front().code_point_index);
 
     const Font::LineData& line = lines[row];
 
     // if at end of line, just go with that
-    if (char_idx >= line.char_data.size()) {
+    if (char_idx >= line.char_data.size())
         return line.char_data.back().code_point_index;
-    }
 
     // "rewind" the first position to encompass all tag text that is
     // associated with that position
@@ -720,6 +719,8 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     Pt click_pos = ScreenToClient(pt);
     m_cursor_end = CharAt(click_pos);
 
+    //std::cout << "MultiEdit::LDrag at row: " << m_cursor_end.first << ", col: " << m_cursor_end.second << std::endl << std::flush;
+
     if (m_in_double_click_mode) {
         // if drag-selecting after a double click, select full words
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
@@ -753,6 +754,9 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+
+    //std::cout << "MultiEdit::LDrag cursor covers code points: " << begin_cursor_pos << " to " << end_cursor_pos << std::endl << std::flush;
+
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
 
     // if dragging past the currently visible text, adjust
@@ -764,8 +768,10 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
 void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    if (Disabled() || !m_vscroll)
+    if (Disabled() || !m_vscroll) {
+        ForwardEventToParent();
         return;
+    }
     m_vscroll->ScrollLineIncr(-move);
     SignalScroll(*m_vscroll, true);
 }
@@ -1016,7 +1022,7 @@ void MultiEdit::ValidateStyle()
     if (m_style & MULTI_RIGHT) ++dup_ct;
     if (m_style & MULTI_CENTER) ++dup_ct;
     if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use MULTI_LEFT by default
-        m_style &= ~(MULTI_RIGHT | MULTI_LEFT);
+        m_style &= ~(MULTI_RIGHT | MULTI_CENTER);
         m_style |= MULTI_LEFT;
     }
 
@@ -1268,3 +1274,13 @@ void MultiEdit::VScrolled(int upper, int lower, int range_upper, int range_lower
 
 void MultiEdit::HScrolled(int upper, int lower, int range_upper, int range_lower)
 { m_first_col_shown = X(upper); }
+
+void MultiEdit::AcceptPastedText(const std::string& text)
+{
+    // Edit doesn't know about the MultiEdit style, in which read-only is
+    // encoded, so check it here before passing to the default behaviour
+    if (m_style & MULTI_READ_ONLY)
+        return;
+    Edit::AcceptPastedText(text);
+}
+

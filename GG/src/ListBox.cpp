@@ -49,26 +49,27 @@ namespace {
             m_LB(lb),
             m_name(name)
         {}
+
         void operator()()
         { std::cerr << "GG SIGNAL : " << m_name << "()" << std::endl; }
+
         void operator()(const ListBox::SelectionSet& sels)
         {
-            std::cerr << "GG SIGNAL : " << m_name
-                        << "(sels=[ ";
+            std::cerr << "GG SIGNAL : " << m_name << "(sels=[ ";
+
             for (ListBox::SelectionSet::const_iterator it = sels.begin();
-                    it != sels.end();
-                    ++it) {
-                std::cerr << RowIndex(*it) << ' ';
-            }
+                 it != sels.end(); ++it)
+            { std::cerr << RowIndex(*it) << ' '; }
+
             std::cerr << "])" << std::endl;
         }
+
         void operator()(ListBox::const_iterator it)
         { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << ")" << std::endl; }
-        void operator()(ListBox::const_iterator it, const Pt& pt)
-        {
-            std::cerr << "GG SIGNAL : " << m_name
-                        << "(row=" << RowIndex(it) << " pt=" << pt << ")" << std::endl;
-        }
+
+        void operator()(ListBox::const_iterator it, const Pt& pt, const Flags<ModKey>& mod_keys)
+        { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << " pt=" << pt << ")" << std::endl; }
+
         std::size_t RowIndex(ListBox::const_iterator it)
         { return std::distance(m_LB.begin(), it); }
 
@@ -91,9 +92,7 @@ namespace {
         {}
 
         bool operator()(const ListBox::Row* l, const ListBox::Row* r)
-        {
-            return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col);
-        }
+        { return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col); }
 
     private:
         boost::function<bool (const ListBox::Row&, const ListBox::Row&, std::size_t)> m_cmp;
@@ -101,13 +100,24 @@ namespace {
         bool m_invert;
     };
 
-    bool LessThanEqual(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
+    ListBox::Row* SafeDeref(const ListBox::iterator& it, const ListBox::iterator& end)
+    { return it == end ? 0 : *it; }
+
+    bool RowAboveOrIsRow(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
     {
         if (rhs == end)
             return true;
         if (lhs == end)
             return false;
-        return lhs == rhs || ListBox::RowPtrIteratorLess()(lhs, rhs);
+        if (lhs == rhs)
+            return true;
+        const ListBox::Row* lhs_row = SafeDeref(lhs, end);
+        const ListBox::Row* rhs_row = SafeDeref(rhs, end);
+        if (!rhs_row)
+            return true;
+        if (!lhs_row)
+            return false;
+        return lhs_row->Top() < rhs_row->Top();
     }
 
     void ResetIfEqual(ListBox::iterator& val, ListBox::iterator other, ListBox::iterator end)
@@ -115,21 +125,6 @@ namespace {
         if (val == other)
             val = end;
     }
-
-    ListBox::Row* SafeDeref(const ListBox::iterator& it, const ListBox::iterator& end)
-    { return it == end ? 0 : *it; }
-
-    struct ScopedSet
-    {
-        ScopedSet(ListBox::iterator*& var, ListBox::iterator* value) :
-            m_var(var = value)
-        {}
-
-        ~ScopedSet()
-        { m_var = 0; }
-
-        ListBox::iterator*& m_var;
-    };
 
     Alignment AlignmentFromStyle(Flags<ListBoxStyle> style)
     {
@@ -398,9 +393,7 @@ void ListBox::Row::AdjustLayout(bool adjust_for_push_back/* = false*/)
 // GG::ListBox::RowPtrIteratorLess
 ////////////////////////////////////////////////
 bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const ListBox::iterator& rhs) const
-{
-    return (*lhs)->Top() < (*rhs)->Top();
-}
+{ return (*lhs)->Top() < (*rhs)->Top(); }
 
 
 ////////////////////////////////////////////////
@@ -443,6 +436,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_auto_scrolling_right(false),
     m_auto_scroll_timer(250),
     m_normalize_rows_on_insert(true),
+    m_add_padding_at_end(true),
     m_iterator_being_erased(0)
 {
     Control::SetColor(color);
@@ -472,14 +466,16 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
 ListBox::~ListBox()
 { delete m_header_row; }
 
-void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const Pt& pt) const
+void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                              const Pt& pt, Flags<ModKey> mod_keys) const
 {
     for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it) {
         it->second = false;
         const Row* row = dynamic_cast<const Row*>(it->first);
         if (row &&
             (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end())) {
+             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end()))
+        {
             iterator insertion_it = RowUnderPt(pt);
             try {
                 DropAcceptableSignal(insertion_it);
@@ -643,7 +639,7 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     }
 }
 
-void ListBox::AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt)
+void ListBox::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys)
 {
     // TODO: Pull the call to RowUnderPt() out and reuse the value in each loop iteration.
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
@@ -662,7 +658,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
         Row* row = boost::polymorphic_downcast<Row*>(*it);
         iterator row_it = std::find(m_rows.begin(), m_rows.end(), row);
-        //assert(row_it != m_rows.end());   // replaced with following test and continue to avoid crashes
+
         if (row_it == m_rows.end())
             continue;
 
@@ -699,8 +695,9 @@ void ListBox::Render()
     Y bottom = (*m_first_row_shown)->Height();
     for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it) {
         iterator curr_sel = *sel_it;
-        if (LessThanEqual(m_first_row_shown, curr_sel, m_rows.end()) &&
-            LessThanEqual(curr_sel, last_visible_row, m_rows.end())) {
+        if (RowAboveOrIsRow(m_first_row_shown, curr_sel, m_rows.end()) &&
+            RowAboveOrIsRow(curr_sel, last_visible_row, m_rows.end()))
+        {
             // No need to look for the current selection's top, if it is the
             // same as the bottom of the last iteration.
             if (boost::next(prev_sel) == curr_sel) {
@@ -721,9 +718,10 @@ void ListBox::Render()
 
     // draw caret
     if (m_caret != m_rows.end() &&
-        LessThanEqual(m_first_row_shown, m_caret, m_rows.end()) &&
-        LessThanEqual(m_caret, last_visible_row, m_rows.end()) &&
-        MatchesOrContains(this, GUI::GetGUI()->FocusWnd())) {
+        RowAboveOrIsRow(m_first_row_shown, m_caret, m_rows.end()) &&
+        RowAboveOrIsRow(m_caret, last_visible_row, m_rows.end()) &&
+        MatchesOrContains(this, GUI::GetGUI()->FocusWnd()))
+    {
         Pt row_ul = (*m_caret)->UpperLeft();
         Pt row_lr = (*m_caret)->LowerRight();
         row_lr.x = ClientLowerRight().x;
@@ -945,21 +943,27 @@ void ListBox::SetCaret(iterator it)
 
 void ListBox::BringRowIntoView(iterator it)
 {
-    if (it != m_rows.end()) {
-        if (m_first_row_shown == m_rows.end() || RowPtrIteratorLess()(it, m_first_row_shown)) {
-            m_first_row_shown = it;
-        } else if (LessThanEqual(LastVisibleRow(), it, m_rows.end())) {
-            // Find the row that preceeds the target row by about ClientSize().y
-            // pixels, and make it the first row shown.
-            m_first_row_shown = FirstRowShownWhenBottomIs(it, ClientHeight());
-        }
-        if (m_vscroll) {
-            Y acc(0);
-            for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
-                acc += (*it)->Height();
-            m_vscroll->ScrollTo(Value(acc));
-            SignalScroll(*m_vscroll, true);
-        }
+    if (it == m_rows.end())
+        return;
+
+    const Row* it_row = *it;
+    const Row* first_shown_row = SafeDeref(m_first_row_shown, m_rows.end());
+
+    if (m_first_row_shown == m_rows.end() || (first_shown_row && (it_row->Top() < first_shown_row->Top()))) {
+        m_first_row_shown = it;
+
+    } else if (RowAboveOrIsRow(LastVisibleRow(), it, m_rows.end())) {
+        // Find the row that preceeds the target row by about ClientSize().y
+        // pixels, and make it the first row shown.
+        m_first_row_shown = FirstRowShownWhenBottomIs(it, ClientHeight());
+    }
+
+    if (m_vscroll) {
+        Y acc(0);
+        for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
+            acc += (*it)->Height();
+        m_vscroll->ScrollTo(Value(acc));
+        SignalScroll(*m_vscroll, true);
     }
 }
 
@@ -1111,6 +1115,9 @@ void ListBox::SetRowAlignment(iterator it, Alignment align)
 
 void ListBox::NormalizeRowsOnInsert(bool enable)
 { m_normalize_rows_on_insert = enable; }
+
+void ListBox::AddPaddingAtEnd(bool enable)
+{ m_add_padding_at_end = enable; }
 
 void ListBox::AllowDropType(const std::string& str)
 { m_allowed_drop_types.insert(str); }
@@ -1280,38 +1287,41 @@ void ListBox::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
     SignalScroll(*m_vscroll, true);
 }
 
-void ListBox::DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
+void ListBox::DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
     ResetAutoScrollVars();
-    DragDropHere(pt, drag_drop_wnds, mod_keys);
+    DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 }
 
-void ListBox::DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
+void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
-    if (!m_rows.empty() && m_auto_scroll_during_drag_drops && InClient(pt)) {
-        const Pt MARGIN_OFFSET = Pt(X(m_auto_scroll_margin), Y(m_auto_scroll_margin));
-        Rect client_no_scroll_hole(ClientUpperLeft() + MARGIN_OFFSET, ClientLowerRight() - MARGIN_OFFSET);
-        m_auto_scrolling_up = pt.y < client_no_scroll_hole.ul.y;
-        m_auto_scrolling_down = client_no_scroll_hole.lr.y < pt.y;
-        m_auto_scrolling_left = pt.x < client_no_scroll_hole.ul.x;
-        m_auto_scrolling_right = client_no_scroll_hole.lr.x < pt.x;
-        if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
-            bool acceptible_drop = false;
-            for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
-                if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-                    m_allowed_drop_types.find(it->first->DragDropDataType()) != m_allowed_drop_types.end()) {
-                    acceptible_drop = true;
-                    break;
-                }
+    this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+
+    if (m_rows.empty() || !m_auto_scroll_during_drag_drops || !InClient(pt))
+        return;
+
+    const Pt MARGIN_OFFSET = Pt(X(m_auto_scroll_margin), Y(m_auto_scroll_margin));
+    Rect client_no_scroll_hole(ClientUpperLeft() + MARGIN_OFFSET, ClientLowerRight() - MARGIN_OFFSET);
+    m_auto_scrolling_up = pt.y < client_no_scroll_hole.ul.y;
+    m_auto_scrolling_down = client_no_scroll_hole.lr.y < pt.y;
+    m_auto_scrolling_left = pt.x < client_no_scroll_hole.ul.x;
+    m_auto_scrolling_right = client_no_scroll_hole.lr.x < pt.x;
+    if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
+        bool acceptable_drop = false;
+        for (std::map<const Wnd*, bool>::const_iterator it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
+            if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
+                m_allowed_drop_types.find(it->first->DragDropDataType()) != m_allowed_drop_types.end()) {
+                acceptable_drop = true;
+                break;
             }
-            if (acceptible_drop) {
-                if (!m_auto_scroll_timer.Running()) {
-                    m_auto_scroll_timer.Reset(GUI::GetGUI()->Ticks());
-                    m_auto_scroll_timer.Start();
-                }
-            } else {
-                DragDropLeave();
+        }
+        if (acceptable_drop) {
+            if (!m_auto_scroll_timer.Running()) {
+                m_auto_scroll_timer.Reset(GUI::GetGUI()->Ticks());
+                m_auto_scroll_timer.Start();
             }
+        } else {
+            DragDropLeave();
         }
     }
 }
@@ -1361,6 +1371,44 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
     }
 }
 
+namespace {
+    std::string EventTypeName(const GG::WndEvent& event) {
+        switch(event.Type()) {
+        case GG::WndEvent::LButtonDown:     return "(LButtonDown)";
+        case GG::WndEvent::LDrag:           return "(LDrag)";
+        case GG::WndEvent::LButtonUp:       return "(LButtonUp)";
+        case GG::WndEvent::LClick:          return "(LClick)";
+        case GG::WndEvent::LDoubleClick:    return "(LDoubleClick)";
+        case GG::WndEvent::MButtonDown:     return "(MButtonDown)";
+        case GG::WndEvent::MDrag:           return "(MDrag)";
+        case GG::WndEvent::MButtonUp:       return "(MButtonUp)";
+        case GG::WndEvent::MClick:          return "(MClick)";
+        case GG::WndEvent::MDoubleClick:    return "(MDoubleClick)";
+        case GG::WndEvent::RButtonDown:     return "(RButtonDown)";
+        case GG::WndEvent::RDrag:           return "(RDrag)";
+        case GG::WndEvent::RButtonUp:       return "(RButtonUp)";
+        case GG::WndEvent::RClick:          return "(RClick)";
+        case GG::WndEvent::RDoubleClick:    return "(RDoubleClick)";
+        case GG::WndEvent::MouseEnter:      return "(MouseEnter)";
+        case GG::WndEvent::MouseHere:       return "(MouseHere)";
+        case GG::WndEvent::MouseLeave:      return "(MouseLeave)";
+        case GG::WndEvent::MouseWheel:      return "(MouseWheel)";
+        case GG::WndEvent::DragDropEnter:   return "(DragDropEnter)";
+        case GG::WndEvent::DragDropHere:    return "(DragDropHere)";
+        case GG::WndEvent::CheckDrops:      return "(CheckDrops)";
+        case GG::WndEvent::DragDropLeave:   return "(DragDropLeave)";
+        case GG::WndEvent::DragDroppedOn:   return "(DragDroppedOn)";
+        case GG::WndEvent::KeyPress:        return "(KeyPress)";
+        case GG::WndEvent::KeyRelease:      return "(KeyRelease)";
+        case GG::WndEvent::TextInput:       return "(TextInput)";
+        case GG::WndEvent::GainingFocus:    return "(GainingFocus)";
+        case GG::WndEvent::LosingFocus:     return "(LosingFocus)";
+        case GG::WndEvent::TimerFiring:     return "(TimerFiring)";
+        default:                            return "(Unknown Event Type)";
+        }
+    }
+}
+
 bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 {
     assert(w == this || dynamic_cast<Row*>(w));
@@ -1398,7 +1446,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
                 else
                     ClickAtRow(sel_row, mod_keys);
                 m_lclick_row = sel_row;
-                LeftClickedSignal(sel_row, pt);
+                LeftClickedSignal(sel_row, pt, mod_keys);
             }
         }
         break;
@@ -1407,7 +1455,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::LDoubleClick: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
-            DoubleClickedSignal(row);
+            DoubleClickedSignal(row, pt, mod_keys);
             m_old_sel_row = m_rows.end();
         } else {
             LClick(pt, mod_keys);
@@ -1428,7 +1476,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
             m_rclick_row = row;
-            RightClickedSignal(row, pt);
+            RightClickedSignal(row, pt, mod_keys);
         }
         m_old_rdown_row = m_rows.end();
         break;
@@ -1466,9 +1514,12 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
     case WndEvent::DragDropEnter:
     case WndEvent::DragDropHere:
+    case WndEvent::CheckDrops:
     case WndEvent::DragDropLeave:
+    case WndEvent::DragDroppedOn:
         if (w == this)
             return false;
+        //std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
         HandleEvent(event);
         break;
 
@@ -1671,65 +1722,58 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
 
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
 {
-    if (it != m_rows.end()) {
-        if (m_iterator_being_erased) {
-            *m_iterator_being_erased = m_rows.end();
-            return 0;
-        }
+    if (it == m_rows.end())
+        return 0;
 
-        Row* row = *it;
-        Y row_height = row->Height();
-        if (!removing_duplicate) {
-            DetachChild(row);
-            row->RemoveEventFilter(this);
-        }
-
-        for (iterator it2 = boost::next(it); it2 != m_rows.end(); ++it2) {
-            (*it2)->OffsetMove(Pt(X0, -row_height));
-        }
-
-        ResetIfEqual(m_old_sel_row, it, m_rows.end());
-        ResetIfEqual(m_old_rdown_row, it, m_rows.end());
-        ResetIfEqual(m_lclick_row, it, m_rows.end());
-        ResetIfEqual(m_rclick_row, it, m_rows.end());
-        ResetIfEqual(m_last_row_browsed, it, m_rows.end());
-
-        bool check_first_row_and_caret_for_end = false;
-        if (m_first_row_shown == it) {
-            ++m_first_row_shown;
-            check_first_row_and_caret_for_end = true;
-        }
-        if (m_caret == it) {
-            ++m_caret;
-            check_first_row_and_caret_for_end = true;
-        }
-
-        // Tracking this iterator is necessary because the signal may indirectly
-        // cause the iterator to be invalidated.
-        ScopedSet scoped_set(m_iterator_being_erased, &it);
-
-        if (signal && !removing_duplicate)
-            BeforeEraseSignal(it);
-
-        if (it != m_rows.end()) {
-            m_selections.erase(it);
-            m_rows.erase(it);
-        }
-
-        if (check_first_row_and_caret_for_end && m_first_row_shown == m_rows.end() && !m_rows.empty())
-            --m_first_row_shown;
-        if (check_first_row_and_caret_for_end && m_caret == m_rows.end() && !m_rows.empty())
-            --m_caret;
-
-        AdjustScrolls(false);
-
-        if (signal && !removing_duplicate)
-            AfterEraseSignal(it);
-
-        return row;
-    } else {
+    if (m_iterator_being_erased) {
+        *m_iterator_being_erased = m_rows.end();
         return 0;
     }
+
+    iterator next_it = boost::next(it);
+
+    Row* row = *it;
+    Y row_height = row->Height();
+    if (!removing_duplicate) {
+        DetachChild(row);
+        row->RemoveEventFilter(this);
+    }
+
+    ResetIfEqual(m_old_sel_row,     it, m_rows.end());
+    ResetIfEqual(m_old_rdown_row,   it, m_rows.end());
+    ResetIfEqual(m_lclick_row,      it, m_rows.end());
+    ResetIfEqual(m_rclick_row,      it, m_rows.end());
+    ResetIfEqual(m_last_row_browsed,it, m_rows.end());
+
+    bool check_first_row_and_caret_for_end = false;
+    if (m_first_row_shown == it) {
+        ++m_first_row_shown;
+        check_first_row_and_caret_for_end = true;
+    }
+    if (m_caret == it) {
+        ++m_caret;
+        check_first_row_and_caret_for_end = true;
+    }
+
+    // remove row from selections and contained rows.
+    if (it != m_rows.end()) {
+        m_selections.erase(it);
+        m_rows.erase(it);
+    }
+
+    if (check_first_row_and_caret_for_end && m_first_row_shown == m_rows.end() && !m_rows.empty())
+        --m_first_row_shown;
+    if (check_first_row_and_caret_for_end && m_caret == m_rows.end() && !m_rows.empty())
+        --m_caret;
+
+    // reposition rows after erased row, to fill gap it leaves
+    for (iterator it2 = next_it; it2 != m_rows.end(); ++it2) {
+        (*it2)->OffsetMove(Pt(X0, -row_height));
+    }
+
+    AdjustScrolls(false);
+
+    return row;
 }
 
 void ListBox::BringCaretIntoView()
@@ -1863,15 +1907,20 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                           (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
                            cl_sz.y < total_y_extent - SCROLL_WIDTH));
 
-    // This probably looks a little odd.  We only want to show scrolls if they
-    // are needed, that is if the data shown exceed the bounds of the client
-    // area.  However, if we are going to show scrolls, we want to allow them
-    // to range such that the first row/column shown can be any of the N
-    // rows/columns.  Dead space after the last row/column is fine.
-    if (!m_col_widths.empty() && m_col_widths.back() < cl_sz.x)
-        total_x_extent += cl_sz.x - m_col_widths.back();
-    if (!m_rows.empty() && m_rows.back()->Height() < cl_sz.y)
-        total_y_extent += cl_sz.y - m_rows.back()->Height();
+
+    if (m_add_padding_at_end) {
+        // This probably looks a little odd. We only want to show scrolls if they
+        // are needed, that is if the data shown exceed the bounds of the client
+        // area. However, if we are going to show scrolls, we want to allow them
+        // to range such that the first row/column shown can be any of the N
+        // rows/columns. This is necessary since otherwise the bottom row may get
+        // cut off. Dead space after the last row/column is the result, even if it
+        // may look slightly ugly.
+        if (!m_col_widths.empty() && m_col_widths.back() < cl_sz.x)
+            total_x_extent += cl_sz.x - m_col_widths.back();
+        if (!m_rows.empty() && m_rows.back()->Height() < cl_sz.y)
+            total_y_extent += cl_sz.y - m_rows.back()->Height();
+    }
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
@@ -1969,17 +2018,27 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
-    Y accum(0);
     Y position(0);
+
+    // scan through list of rows until the tab position is less than one of the rows' centres
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        // first shown row is at least the current row, and position is at least the top of the current row
+        m_first_row_shown = it;
         Y row_height = (*it)->Height();
-        if (tab_low < accum + row_height / 2) {
-            m_first_row_shown = it;
-            position = -accum;
+
+        // if this is the last row, abort
+        iterator next_it = it;  ++next_it;
+        if (next_it == m_rows.end())
             break;
-        }
-        accum += row_height;
+
+        // current row is too far for the tab position to be moved to its end. current row remains the first one shown.
+        if (tab_low < (-position) + row_height / 2)
+            break;
+
+        // position is at least at the bottom of the current row
+        position = position - row_height;
     }
+
     X initial_x = m_rows.empty() ? X0 : (*m_rows.begin())->RelativeUpperLeft().x;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         (*it)->MoveTo(Pt(initial_x, position));
@@ -2009,10 +2068,8 @@ void ListBox::HScrolled(int tab_low, int tab_high, int low, int high)
 
 void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
 {
-    //assert(it != m_rows.end());   // replaced with following test and return to avoid crashes
     if (it == m_rows.end())
         return;
-    //assert(!m_rows.empty());      // replaced with following test and return to avoid crashes
     if (m_rows.empty())
         return;
 
@@ -2024,12 +2081,14 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
         m_selections.clear();
         m_selections.insert(it);
         m_caret = it;
+
     } else {
         if (mod_keys & MOD_KEY_CTRL) { // control key depressed
             if (mod_keys & MOD_KEY_SHIFT && m_caret != m_rows.end()) {
                 // Both shift and control keys are depressed.
                 iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
                 iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
+
                 bool erase = m_selections.find(m_caret) == m_selections.end();
                 if (high != m_rows.end())
                     ++high;

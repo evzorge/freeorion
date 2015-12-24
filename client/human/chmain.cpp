@@ -74,7 +74,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_MACOSX
     // did the player request help output?
     if (GetOptionsDB().Get<bool>("help")) {
-        GetOptionsDB().GetUsage(std::cerr);
+        GetOptionsDB().GetUsage(std::cout);
         return 0;   // quit without actually starting game
     }
 
@@ -233,7 +233,8 @@ int mainSetupAndRun() {
 #endif
 
         parse::init();
-        HumanClientApp app(width_height.first, width_height.second, true, "FreeOrion " + FreeOrionVersionString(), left, top, fullscreen, fake_mode_change);
+        HumanClientApp app(width_height.first, width_height.second, true, "FreeOrion " + FreeOrionVersionString(),
+                           left, top, fullscreen, fake_mode_change);
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and

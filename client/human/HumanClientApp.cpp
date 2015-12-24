@@ -26,6 +26,7 @@
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
+#include "../../util/Version.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
@@ -179,7 +180,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_single_player_game(true),
     m_game_started(false),
     m_connected(false),
-    m_auto_turns(0)
+    m_auto_turns(0),
+    m_have_window_focus(true)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -198,6 +200,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     } catch (...) {
         ErrorLogger() << "Unable to get GL Version String?";
     }
+
+    LogDependencyVersions();
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
@@ -572,12 +576,8 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 
 void HumanClientApp::SaveGame(const std::string& filename) {
     Message response_msg;
-    m_networking.SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
-    if (response_msg.Type() != Message::SAVE_GAME) {
-        ErrorLogger() << "HumanClientApp::SaveGame sent synchronous HostSaveGameMessage, but received back message of wrong type: " << response_msg.Type();
-        throw std::runtime_error("HumanClientApp::SaveGame synchronous message received invalid response message type");
-    }
-    HandleSaveGameDataRequest();
+    m_networking.SendMessage(HostSaveGameInitiateMessage(PlayerID(), filename));
+    DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
@@ -674,7 +674,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
     m_networking.SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
-    if(response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
+    if (response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
         ExtractMessageData(response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
     }else{
@@ -733,12 +733,13 @@ void HumanClientApp::Reinitialize() {
     GG::X old_width = AppWidth();
     GG::Y old_height = AppHeight();
 
-    SetVideoMode(GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
+    SetVideoMode(GG::X(size.first), GG::Y(size.second), fullscreen, fake_mode_change);
     if (fullscreen_transition) {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
     } else if (fullscreen &&
                (old_width != size.first || old_height != size.second) &&
-               GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+               GetOptionsDB().Get<bool>("UI.auto-reposition-windows"))
+    {
         // Reposition windows if in fullscreen mode... handled here instead of
         // HandleWindowResize() because the prev. fullscreen resolution is only
         // available here.
@@ -800,34 +801,32 @@ void HumanClientApp::HandleMessage(Message& msg) {
         std::cerr << "HumanClientApp::HandleMessage(" << msg.Type() << ")\n";
 
     switch (msg.Type()) {
-    case Message::ERROR_MSG:            m_fsm->process_event(Error(msg));                   break;
-    case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg));              break;
-    case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg));              break;
-    case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg));                break;
-    case Message::HOST_ID:              m_fsm->process_event(HostID(msg));                  break;
-    case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg));             break;
-    case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg));               break;
-    case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg));              break;
-    case Message::GAME_START:           m_fsm->process_event(GameStart(msg));               break;
-    case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg));              break;
-    case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));       break;
-    case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));            break;
-    case Message::PLAYER_STATUS:        m_fsm->process_event(::PlayerStatus(msg));          break;
-    case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));              break;
-    case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));               break;
-    case Message::DIPLOMATIC_STATUS:    m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
-    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg));           break;
-    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));        break;
-    case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));               break;
+    case Message::ERROR_MSG:                m_fsm->process_event(Error(msg));                   break;
+    case Message::HOST_MP_GAME:             m_fsm->process_event(HostMPGame(msg));              break;
+    case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg));              break;
+    case Message::JOIN_GAME:                m_fsm->process_event(JoinGame(msg));                break;
+    case Message::HOST_ID:                  m_fsm->process_event(HostID(msg));                  break;
+    case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg));             break;
+    case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg));               break;
+    case Message::SAVE_GAME_DATA_REQUEST:   m_fsm->process_event(SaveGameDataRequest(msg));     break;
+
+    case Message::GAME_START:               m_fsm->process_event(GameStart(msg));               break;
+    case Message::TURN_UPDATE:              m_fsm->process_event(TurnUpdate(msg));              break;
+    case Message::TURN_PARTIAL_UPDATE:      m_fsm->process_event(TurnPartialUpdate(msg));       break;
+    case Message::TURN_PROGRESS:            m_fsm->process_event(TurnProgress(msg));            break;
+    case Message::PLAYER_STATUS:            m_fsm->process_event(::PlayerStatus(msg));          break;
+    case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg));              break;
+    case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg));               break;
+    case Message::DIPLOMATIC_STATUS:        m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
+    case Message::END_GAME:                 m_fsm->process_event(::EndGame(msg));               break;
     default:
-        ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \""
-                               << msg.Type() << "\".";
+        ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
 }
 
 void HumanClientApp::HandleSaveGameDataRequest() {
     if (INSTRUMENT_MESSAGE_HANDLING)
-        std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << Message::SAVE_GAME << ")\n";
+        std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << Message::SAVE_GAME_DATA_REQUEST << ")\n";
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
     m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
@@ -868,6 +867,8 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
         GetOptionsDB().Set<int>("app-height-windowed", Value(h));
     }
 
+    glViewport(0, 0, Value(w), Value(h));
+
     GetOptionsDB().Commit();
 }
 
@@ -880,10 +881,25 @@ void HumanClientApp::HandleWindowClose() {
     Exit(0);
 }
 
-void HumanClientApp::HandleFocusChange() {
-    DebugLogger() << "HumanClientApp::HandleFocusChange()";
+void HumanClientApp::HandleFocusChange(bool gained_focus) {
+    DebugLogger() << "HumanClientApp::HandleFocusChange("
+                  << (gained_focus ? "Gained Focus" : "Lost Focus")
+                  << ")";
 
-    // TODO: Does SDL need some action here?
+    m_have_window_focus = gained_focus;
+
+    // limit rendering frequency when defocused to limit CPU use
+    if (!m_have_window_focus) {
+        if (GetOptionsDB().Get<bool>("limit-fps-no-focus"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps-no_focus"));
+        else
+            this->SetMaxFPS(0.0);
+    } else {
+        if (GetOptionsDB().Get<bool>("limit-fps"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps"));
+        else
+            this->SetMaxFPS(0.0);
+    }
 
     CancelDragDrop();
     ClearEventState();
@@ -1104,8 +1120,11 @@ void HumanClientApp::DecAutoTurns(int n) {
         m_auto_turns = 0;
 }
 
-int HumanClientApp::AutoTurnsLeft()
+int HumanClientApp::AutoTurnsLeft() const
 { return m_auto_turns; }
+
+bool HumanClientApp::HaveWindowFocus() const
+{ return m_have_window_focus; }
 
 void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {

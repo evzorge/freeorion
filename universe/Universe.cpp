@@ -1,6 +1,5 @@
 #include "Universe.h"
 
-#include "../util/DataTable.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
@@ -470,7 +469,6 @@ void Universe::Clear() {
     m_empire_known_ship_design_ids.clear();
 
     m_marked_destroyed.clear();
-    m_marked_for_victory.clear();
 }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
@@ -1305,11 +1303,12 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     m_effect_discrepancy_map.clear();
     m_effect_accounting_map.clear();
 
-    //DebugLogger() << "Universe::InitMeterEstimatesAndDiscrepancies";
+    DebugLogger() << "IMEAD: updating meter estimates";
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
 
+    DebugLogger() << "IMEAD: determining discrepancies";
     // determine meter max discrepancies
     for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin();
          obj_it != m_effect_accounting_map.end(); ++obj_it)
@@ -1728,7 +1727,7 @@ namespace {
         //DebugLogger() << "Generated new target set!";
         return *target_set; 
     }
-    
+
     void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator ()()
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
@@ -2098,7 +2097,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             ErrorLogger() << "GetEffectsAndTargets couldn't get HullType";
             continue;
         }
-        
+
         ships_by_hull_type[hull_type->Name()].push_back(ship);
 
         const std::vector<std::string>& parts = ship_design->Parts();
@@ -2111,7 +2110,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 ErrorLogger() << "GetEffectsAndTargets couldn't get PartType";
                 continue;
             }
-            
+
             ships_by_part_type[part].push_back(ship);
         }
     }
@@ -2241,7 +2240,6 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
     m_marked_destroyed.clear();
-    m_marked_for_victory.clear();
     std::map< std::string, std::set<int> > executed_nonstacking_effects;
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
@@ -2332,11 +2330,11 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
-                update_effect_accounting ? &m_effect_accounting_map : NULL,
-                only_meter_effects,
-                only_appearance_effects,
-                include_empire_meter_effects,
-                only_generate_sitrep_effects);
+                                   update_effect_accounting ? &m_effect_accounting_map : 0,
+                                   only_meter_effects,
+                                   only_appearance_effects,
+                                   include_empire_meter_effects,
+                                   only_generate_sitrep_effects);
         }
     }
 
@@ -3577,12 +3575,6 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
         return;
     m_marked_destroyed[object_id].insert(source_object_id);
 }
-
-void Universe::EffectVictory(int object_id, const std::string& reason_string)
-{ m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
-
-void Universe::HandleEmpireElimination(int empire_id)
-{}
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;

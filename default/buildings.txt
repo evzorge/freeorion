@@ -65,6 +65,7 @@ BuildingType
             effects = [
                 SetTargetResearch value = Value + 5
                 SetTargetIndustry value = Value + Target.Population / 2
+                //SetDetection value = Value + 10000
             ]
             
         EffectsGroup
@@ -429,7 +430,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-7.png"
+    icon = "icons/building/orbital-incubator.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -451,7 +452,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-8.png"
+    icon = "icons/building/cellular-growth-chamber.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -473,7 +474,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-9.png"
+    icon = "icons/building/xeno-coordination-facility.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_COMP"
@@ -1204,7 +1205,7 @@ BuildingType
                 HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
             effects = [
-                SetPopulation value = min(Value - 3, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-3*100))^0.5))
+                [[NEXT_TURN_POPULATION_REDUCE_BY(3)]]
                 SetIndustry value = Target.TargetIndustry
             ]
         EffectsGroup
@@ -1270,18 +1271,6 @@ BuildingType
     icon = "icons/building/blackhole.png"
 
 BuildingType
-    name = "BLD_REPLICATORS"
-    description = "BLD_REPLICATORS_DESC"
-    buildcost = 125
-    buildtime = 4
-    location = AND [
-        Not Contains Building name = "BLD_REPLICATORS"
-        OwnedBy empire = Source.Owner
-    ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = ""
-
-BuildingType
     name = "BLD_PLANET_DRIVE"
     description = "BLD_PLANET_DRIVE_DESC"
     buildcost = 125
@@ -1293,7 +1282,7 @@ BuildingType
         Not Planet type = Asteroids
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-11.png"
+    icon = "icons/building/planetary_stardrive.png"
 
 BuildingType
     name = "BLD_PLANET_BEACON"
@@ -1429,7 +1418,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    icon = "icons/tech/paradise_planet.png"
+    icon = "icons/building/paradise_planet.png"
 
 BuildingType
     name = "BLD_ART_MOON"
@@ -1700,6 +1689,20 @@ BuildingType
     ]
     icon = "icons/tech/n-dimensional_structures.png"
 
+BuildingType
+    name = "BLD_XENORESURRECTION_LAB"
+    description = "BLD_XENORESURRECTION_LAB_DESC"
+    buildcost = 100
+    buildtime = 4
+    location = And [
+        Planet
+        Or [
+            HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
+            HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+            HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+        ]
+    ]
+    icon = "icons/building/the_caducean_institute.png"
 
 
 /* Experimentor related variables / macros */
@@ -1800,10 +1803,7 @@ BuildingType
                 Species name = "SP_EXPERIMENTOR" 
             ]
             effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_CAPTURE"
-                    icon = "icons/sitrep/victory.png"
-                    empire = Source.Owner
+                Victory reason = "VICTORY_EXPERIMENTOR_CAPTURE"
                 [[EXPERIMENTOR_ADD_STARLANE]]
                 [[EXPERIMENTOR_ADD_STARLANE]]
                 [[EXPERIMENTOR_ADD_STARLANE]]
@@ -2046,10 +2046,8 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
             ]
-            effects = [ //complicated population formula necessary to actually peg pop reduction at -2, not just 2 less growth than it would have been
-                // the fixed amount for pop change per turn is 'k' towards the end of the comment line immediately below, which is 2 in the functional line that follows it
-                //SetPopulation value = min(Value - k, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-k*100))^0.5))
-                SetPopulation value = min(Value - 2, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5))
+            effects = [
+                [[NEXT_TURN_POPULATION_REDUCE_BY(2)]]
                 SetIndustry value = 0
                 SetTargetIndustry value = 0
                 SetResearch value = 0

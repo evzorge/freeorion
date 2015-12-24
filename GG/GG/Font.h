@@ -52,7 +52,7 @@ namespace GG {
 
 class GLRGBAColorBuffer;
 class GLTexCoordBuffer;
-class GLPtBuffer;
+class GL2DVertexBuffer;
 
 /** Returns a string of the form "<rgba r g b a>" from a Clr object with color
     channels r, b, g, a. */
@@ -353,11 +353,11 @@ public:
      */
     struct RenderCache
     {
-        boost::scoped_ptr<GLPtBuffer> vertices;
+        boost::scoped_ptr<GL2DVertexBuffer> vertices;
         boost::scoped_ptr<GLTexCoordBuffer> coordinates;
         boost::scoped_ptr<GLRGBAColorBuffer> colors;
 
-        boost::scoped_ptr<GLPtBuffer> underline_vertices;
+        boost::scoped_ptr<GL2DVertexBuffer> underline_vertices;
         boost::scoped_ptr<GLRGBAColorBuffer> underline_colors;
 
         RenderCache();
@@ -600,9 +600,6 @@ private:
     X                    m_space_width; ///< The width of the glyph for the space character
     GlyphMap             m_glyphs;      ///< The locations of the images of each glyph within the textures
     boost::shared_ptr<Texture> m_texture;    ///< The OpenGL texture object in which the glyphs can be found
-
-    static std::set<std::string>   s_action_tags; ///< Embedded tags that Font must act upon when rendering are stored here
-    static std::set<std::string>   s_known_tags;  ///< Embedded tags that Font knows about but should not act upon are stored here
 };
 
 /** Stream output operator for Font::Substring. */

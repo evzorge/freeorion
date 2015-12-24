@@ -236,6 +236,7 @@ private:
     void            ClearVisibilityRadiiRenderingBuffers();
     void            InitScaleCircleRenderingBuffer();
     void            ClearScaleCircleRenderingBuffer();
+    void            ClearStarfieldRenderingBuffers();
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
@@ -378,11 +379,6 @@ private:
     void            SelectedFleetsChanged();
     void            SelectedShipsChanged();
 
-    void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
-
-    std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
-    std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
-
     std::set<int>               m_selected_fleet_ids;
     std::set<int>               m_selected_ship_ids;
 
@@ -416,7 +412,8 @@ private:
 
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_galaxy_gas_quad_vertices;
+    GG::GL2DVertexBuffer                m_galaxy_gas_quad_vertices;
+    GG::GLTexCoordBuffer                m_galaxy_gas_texture_coords;
     GG::GLTexCoordBuffer                m_star_texture_coords;
     GG::GL2DVertexBuffer                m_star_circle_vertices;
 
@@ -437,6 +434,9 @@ private:
                                         m_radii_radii_vertices_indices_runs;
 
     GG::GL2DVertexBuffer                m_scale_circle_vertices;
+
+    GG::GL3DVertexBuffer                m_starfield_verts;
+    GG::GLRGBAColorBuffer               m_starfield_colours;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 

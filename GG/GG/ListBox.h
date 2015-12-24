@@ -212,15 +212,15 @@ public:
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
-    typedef boost::signals2::signal<void ()>                    ClearedSignalType;
+    typedef boost::signals2::signal<void ()>                                                ClearedSignalType;
     /** emitted when one or more rows are selected or deselected */
-    typedef boost::signals2::signal<void (const SelectionSet&)> SelChangedSignalType;
+    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelChangedSignalType;
     /** the signature of row-change-notification signals */
-    typedef boost::signals2::signal<void (iterator)>            RowSignalType;
+    typedef boost::signals2::signal<void (iterator)>                                        RowSignalType;
     /** the signature of const row-change-notification signals */
-    typedef boost::signals2::signal<void (const_iterator)>      ConstRowSignalType;
+    typedef boost::signals2::signal<void (const_iterator)>                                  ConstRowSignalType;
     /** the signature of row-click-notification signals */
-    typedef boost::signals2::signal<void (iterator, const Pt&)> RowClickSignalType;
+    typedef boost::signals2::signal<void(iterator, const Pt&,const GG::Flags<GG::ModKey>&)> RowClickSignalType;
 
     typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
     typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box
@@ -228,7 +228,7 @@ public:
     typedef ConstRowSignalType DropAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
     typedef RowClickSignalType LeftClickedSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
     typedef RowClickSignalType RightClickedSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
-    typedef RowSignalType      DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
+    typedef RowClickSignalType DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
     typedef RowSignalType      BeforeEraseSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
     typedef RowSignalType      AfterEraseSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
@@ -242,23 +242,19 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual void    DropsAcceptable(DropsAcceptableIter first,
-                                    DropsAcceptableIter last,
-                                    const Pt& pt) const;
-
     virtual Pt      MinUsableSize() const;
     virtual Pt      ClientUpperLeft() const;
     virtual Pt      ClientLowerRight() const;
 
-    bool                    Empty() const;          ///< returns true when the ListBox is empty
-    const_iterator          begin() const;          ///< returns an iterator to the first list row
-    const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
-    const Row&              GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    iterator                Caret() const;          ///< returns the row that has the caret
-    const SelectionSet&     Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
-    bool                    Selected(iterator it) const; ///< returns true if row \a it is selected
-    Clr                     InteriorColor() const;  ///< returns the color painted into the client area of the control
-    Clr                     HiliteColor() const;    ///< returns the color behind selected line items
+    bool                Empty() const;          ///< returns true when the ListBox is empty
+    const_iterator      begin() const;          ///< returns an iterator to the first list row
+    const_iterator      end() const;            ///< returns an iterator to the imaginary row one past the last
+    const Row&          GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
+    iterator            Caret() const;          ///< returns the row that has the caret
+    const SelectionSet& Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
+    bool                Selected(iterator it) const; ///< returns true if row \a it is selected
+    Clr                 InteriorColor() const;  ///< returns the color painted into the client area of the control
+    Clr                 HiliteColor() const;    ///< returns the color behind selected line items
 
     /** Returns the style flags of the listbox \see GG::ListBoxStyle */
     Flags<ListBoxStyle> Style() const;
@@ -318,7 +314,7 @@ public:
 
     /** \name Mutators */ ///@{
     virtual void    StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset);
-    virtual void    AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt);
+    virtual void    AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys);
     virtual void    ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
     virtual void    Render();
 
@@ -408,6 +404,11 @@ public:
       * they are. */
     void            NormalizeRowsOnInsert(bool enable = true);
 
+    /** Sets whether to add padding at the end of the scrolls when the ListBox is
+     *  bigger than the client area, so that any row can be scrolled all the way to
+     *  the top (true), or only use as much space as it needs. */
+    void            AddPaddingAtEnd(bool enable = true);
+
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
@@ -479,8 +480,8 @@ protected:
     /** \name Mutators */ ///@{
     virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
     virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void    DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
-    virtual void    DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
+    virtual void    DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
+    virtual void    DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
     virtual void    DragDropLeave();
     virtual void    TimerFiring(unsigned int ticks, Timer* timer);
 
@@ -497,6 +498,10 @@ protected:
     //@}
 
     void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
+
+protected:
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const Pt& pt, Flags<ModKey> mod_keys) const;
 
 private:
     void            ConnectSignals();
@@ -554,6 +559,8 @@ private:
     Timer           m_auto_scroll_timer;
 
     bool            m_normalize_rows_on_insert;
+
+    bool            m_add_padding_at_end;
 
     iterator*       m_iterator_being_erased;
 

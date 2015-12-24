@@ -143,7 +143,7 @@ namespace {
 }
 
 ////////////////////////////////////////////////////////////
-// MessageEventBase
+// Disconnection
 ////////////////////////////////////////////////////////////
 Disconnection::Disconnection(PlayerConnectionPtr& player_connection) :
     m_player_connection(player_connection)
@@ -195,8 +195,9 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
             m_server.SelectNewHost();
 
     } else if ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) &&
-                m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end())
+               player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
+               // eliminated players can leave safely
+               && !GetEmpire(m_server.PlayerEmpireID(id))->Eliminated())
     {
         // player abnormally disconnected during a regular game
         DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)
@@ -236,7 +237,10 @@ sc::result Idle::react(const HostMPGame& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    std::string host_player_name = message.Text();
+    std::string host_player_name;
+    std::string client_version_string;
+    ExtractMessageData(message, host_player_name, client_version_string);
+
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
         ErrorLogger() << "Idle::react(const HostMPGame& msg) got an empty host player name";
@@ -246,7 +250,7 @@ sc::result Idle::react(const HostMPGame& msg) {
     DebugLogger() << "Idle::react(HostMPGame) about to establish host";
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
 
     DebugLogger() << "Idle::react(HostMPGame) about to send acknowledgement to host";
@@ -266,7 +270,8 @@ sc::result Idle::react(const HostSPGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
-    ExtractMessageData(message, *single_player_setup_data);
+    std::string client_version_string;
+    ExtractMessageData(message, *single_player_setup_data, client_version_string);
 
 
     // get host player's name from setup data or saved file
@@ -286,7 +291,7 @@ sc::result Idle::react(const HostSPGame& msg) {
 
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
@@ -424,14 +429,15 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     std::string player_name;
     Networking::ClientType client_type;
-    ExtractMessageData(message, player_name, client_type);
+    std::string client_version_string;
+    ExtractMessageData(message, player_name, client_type, client_version_string);
     // TODO: check if player name is unique.  If not, modify it slightly to be unique.
 
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
 
     // establish player with requested client type and acknowldge via connection
-    player_connection->EstablishPlayer(player_id, player_name, client_type);
+    player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
     player_connection->SendMessage(JoinAckMessage(player_id));
 
     // inform player of host
@@ -872,7 +878,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
-    ExtractMessageData(message, player_name, client_type);
+    std::string client_version_string;
+    ExtractMessageData(message, player_name, client_type, client_version_string);
 
     int player_id = server.m_networking.NewPlayerID();
 
@@ -886,7 +893,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
             // remove name from expected names list, so as to only allow one connection per AI
@@ -903,7 +910,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
@@ -921,9 +928,12 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
 
     // if all expected players have connected, proceed to start new or load game
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+        DebugLogger() << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have all " << m_num_expected_players << " expected players connected.";
         if (m_single_player_setup_data->m_new_game) {
+            DebugLogger() << "Initializing new SP game...";
             server.NewSPGameInit(*m_single_player_setup_data);
         } else {
+            DebugLogger() << "Loading SP game save file: " << m_single_player_setup_data->m_filename;
             try {
                 LoadGame(m_single_player_setup_data->m_filename,            *m_server_save_game_data,
                          m_player_save_game_data,   GetUniverse(),          Empires(),
@@ -934,8 +944,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
                 return transit<Idle>();
             }
 
-            server.LoadSPGameInit(m_player_save_game_data,
-                                  m_server_save_game_data);
+            server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
         }
         return transit<PlayingGame>();
     }
@@ -997,7 +1006,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
-    ExtractMessageData(message, player_name, client_type);
+    std::string client_version_string;
+    ExtractMessageData(message, player_name, client_type, client_version_string);
 
     int player_id = server.m_networking.NewPlayerID();
 
@@ -1011,7 +1021,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
             // remove name from expected names list, so as to only allow one connection per AI
@@ -1020,15 +1030,14 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() +
-                                        server.m_networking.NumEstablishedPlayers();
+        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             ErrorLogger() << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
@@ -1049,10 +1058,13 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     ServerApp& server = Server();
 
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
-        if (m_player_save_game_data.empty())
+        if (m_player_save_game_data.empty()) {
+            DebugLogger() << "Initializing new MP game...";
             server.NewMPGameInit(*m_lobby_data);
-        else
+        } else {
+            DebugLogger() << "Initializing loaded MP game";
             server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
+        }
         return transit<PlayingGame>();
     }
 
@@ -1104,8 +1116,13 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     int player_id = message.SendingPlayer();
     ServerApp& server = Server();
 
-    // TODO: Check that sender is a moderator
-    //if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    Networking::ClientType client_type = player_connection->GetClientType();
+
+    if (client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+        ErrorLogger() << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignorning";
+        return discard_event();
+    }
 
     Moderator::ModeratorAction* action = 0;
     ExtractMessageData(message, action);
@@ -1117,10 +1134,10 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         action->Execute();
 
         // update player(s) of changed gamestate as result of action
+        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
         server.m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING, player_id));
-        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id,
-                                                                 server.PlayerEmpireID(player_id),
-                                                                 GetUniverse()));
+        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id, server.PlayerEmpireID(player_id),
+                                                                 GetUniverse(), use_binary_serialization));
     }
 
     delete action;
@@ -1295,9 +1312,8 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (!server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
-        return discard_event();
         ErrorLogger() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
-                               << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
+                      << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
         player_connection->SendMessage(ErrorMessage(UserStringNop("NON_HOST_SAVE_REQUEST_IGNORED"), false));
         return discard_event();
     }
@@ -1323,7 +1339,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
         bool host = server.m_networking.PlayerIsHost(player_id);
-        player->SendMessage(ServerSaveGameMessage(player_id, host));
+        player->SendMessage(ServerSaveGameDataRequestMessage(player_id, false));
         m_needed_reponses.insert(player_id);
     }
 }
@@ -1389,7 +1405,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // if all players have responded, proceed with save and continue game
     m_players_responded.insert(message.SendingPlayer());
     if (m_players_responded == m_needed_reponses) {
-        ServerSaveGameData server_data(server.m_current_turn, server.m_victors);
+        ServerSaveGameData server_data(server.m_current_turn);
 
         // retreive requested save name from Base state, which should have been
         // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
@@ -1400,19 +1416,21 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
             SaveGame(save_filename,     server_data,    m_player_save_game_data,
                      GetUniverse(),     Empires(),      GetSpeciesManager(),
                      GetCombatLogManager(),             server.m_galaxy_setup_data,
-                     !server.m_single_player_game
-                    );
+                     !server.m_single_player_game);
 
         } catch (const std::exception&) {
             DebugLogger() << "Catch std::exception&";
             SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
         }
-        
+
+        // inform players that save is complete
+        //SendMessageToAllPlayers // todo: this
+
         DebugLogger() << "Finished ClientSaveData from within if.";
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();
     }
-    
+
     DebugLogger() << "Finished ClientSaveData from outside of if.";
     return discard_event();
 }

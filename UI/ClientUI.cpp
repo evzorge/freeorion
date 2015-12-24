@@ -34,6 +34,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/UnicodeCharsets.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/RichText/ImageBlock.h>
 
 #include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -97,7 +98,7 @@ int         ClientUI::SystemIconSize()                  { return GetOptionsDB().
 int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold"); }
 int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-circle-size")); }
 int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-selection-indicator-size")); }
-int         ClientUI::SystemSelectionIndicatorFPS()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-fps"); }
+int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-rpm"); }
 
 GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
 
@@ -425,10 +426,12 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           24,     RangedStepValidator<int>(8, 16, 32));
+        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           24,      RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              UserStringNop("OPTIONS_DB_SHOW_FPS"),              false);
         db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
-        db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,   RangedStepValidator<double>(1.0, 10.0, 200.0));
+        db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,    RangedStepValidator<double>(1.0, 10.0, 240.0));
+        db.Add("limit-fps-no-focus",    UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"),    true);
+        db.Add("max-fps-no_focus",      UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),      15.0,    RangedStepValidator<double>(1.0, 1.0, 30.0));
 
         // sound and music
         db.Add<std::string>("UI.sound.bg-music",                UserStringNop("OPTIONS_DB_BG_MUSIC"),                          (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
@@ -510,7 +513,7 @@ namespace {
 
     const GG::Y PANEL_HEIGHT(160); // Also formerly "UI.chat-panel-height" default
     const GG::X MESSAGE_PANEL_WIDTH(345); // Formerly "UI.chat-panel-width" default
-    const GG::X PLAYER_LIST_PANEL_WIDTH(424);
+    const GG::X PLAYER_LIST_PANEL_WIDTH(445);
 
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.player-list";
@@ -586,6 +589,9 @@ ClientUI::ClientUI() :
     ConditionalConnectOption("UI.auto-reposition-windows",
                              HumanClientApp::GetApp()->RepositionWindowsSignal,
                              true, std::equal_to<bool>());
+
+    // Set the root path for image tags in rich text.
+    GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
 }
 
 ClientUI::~ClientUI() {
@@ -629,9 +635,12 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    // this just zooms to the appropriate system, until we create a planet window of some kind
-    if (TemporaryPtr<const Planet> planet = GetPlanet(id))
-        return ZoomToSystem(planet->SystemID());
+    if (TemporaryPtr<const Planet> planet = GetPlanet(id)) {
+        m_map_wnd->CenterOnObject(planet->SystemID());
+        m_map_wnd->SelectSystem(planet->SystemID());
+        m_map_wnd->SelectPlanet(id);
+        return true;
+    }        
     return false;
 }
 

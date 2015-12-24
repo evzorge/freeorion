@@ -216,6 +216,18 @@ void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::strin
 const fs::path& FileDlg::WorkingDirectory()
 { return s_working_dir; }
 
+const boost::filesystem::path FileDlg::StringToPath(const std::string& str) {
+#if defined(_WIN32)
+    // convert UTF-8 path string to UTF-16
+    boost::filesystem::path::string_type str_native;
+    utf8::utf8to16(str.begin(), str.end(), std::back_inserter(str_native));
+    return fs::path(str_native);
+#else
+    return fs::path(str);
+#endif
+}
+
+
 void FileDlg::CreateChildren(bool multi)
 {
     if (m_save)
@@ -458,7 +470,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
         m_ok_button->SetText(m_open_str);
 }
 
-void FileDlg::FileDoubleClicked(DropDownList::iterator it)
+void FileDlg::FileDoubleClicked(DropDownList::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     m_files_list->DeselectAll();
     m_files_list->SelectRow(it);

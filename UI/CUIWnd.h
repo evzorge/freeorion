@@ -90,7 +90,7 @@ public:
       * causes the window to save its position and other properties to the
       * OptionsDB under that name, if no other windows are currently using that
       * name. */
-    CUIWnd(const std::string& t,
+    CUIWnd(const std::string& wnd_name,
            GG::X x, GG::Y y, GG::X w, GG::Y h,
            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
            const std::string& config_name = "",
@@ -100,7 +100,7 @@ public:
       * position, either call InitSizeMove() if the window is positioned by
       * something else or override CalculatePosition() then call
       * ResetDefaultPosition() for windows that position themselves. */
-    CUIWnd(const std::string& t,
+    CUIWnd(const std::string& wnd_name,
            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
            const std::string& config_name = "",
            bool visible = true);
@@ -179,6 +179,8 @@ protected:
     void            LoadOptions();                  //!< loads options for this window from the OptionsDB
     void            Init(const std::string& t);     //!< performs initialization common to all CUIWnd constructors
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
+
+    virtual void    SetParent(GG::Wnd* wnd);
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized

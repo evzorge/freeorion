@@ -72,6 +72,9 @@ public:
 
     /** \name Accessors */ ///@{
     virtual Pt MinUsableSize() const;
+
+    /** Returns the size to show the whole text without scrollbars. */
+    Pt FullSize() const;
     virtual Pt ClientLowerRight() const;
 
     /** Returns the style flags for this MultiEdit. */
@@ -108,6 +111,8 @@ public:
     /** Sets how much to scroll when scrolled using the mousewheel. */
     void           SetVScrollWheelIncrement(unsigned int increment);
     void           SetHScrollWheelIncrement(unsigned int increment);
+
+    virtual void   AcceptPastedText(const std::string& text);
     //@}
 
     /** A sentinel value that indicates that there is no limit on the number

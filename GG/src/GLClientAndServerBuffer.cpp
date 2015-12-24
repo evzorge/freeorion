@@ -12,7 +12,7 @@
 namespace GG {
 
 ///////////////////////////////////////////////////////////////////////////
-// implementation for GLBufferBase
+// GLBufferBase
 ///////////////////////////////////////////////////////////////////////////
 GLBufferBase::GLBufferBase() :
     b_name(0)
@@ -40,7 +40,7 @@ void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// implementation for GLClientAndServerBufferBase<vtype> template
+// GLClientAndServerBufferBase<vtype> template
 ///////////////////////////////////////////////////////////////////////////
 template <class vtype>
 GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elementsPerItem) :
@@ -118,7 +118,7 @@ template <class vtype> void GLClientAndServerBufferBase<vtype>::clear()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// implementation for GLRGBAColorBuffer
+// GLRGBAColorBuffer
 ///////////////////////////////////////////////////////////////////////////
 template class GLClientAndServerBufferBase<unsigned char>;
 
@@ -141,13 +141,28 @@ void GLRGBAColorBuffer::activate() const
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// implementation for GL2DVertexBuffer
+// GL2DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
 template class GLClientAndServerBufferBase<float>;
 
 GL2DVertexBuffer::GL2DVertexBuffer() :
     GLClientAndServerBufferBase<float>(2)
 {}
+
+void GL2DVertexBuffer::store(const Pt& pt)
+{ store(pt.x, pt.y); }
+
+void GL2DVertexBuffer::store(X x, Y y)
+{ GLClientAndServerBufferBase::store(Value(x), Value(y)); }
+
+void GL2DVertexBuffer::store(X x, float y)
+{ GLClientAndServerBufferBase::store(Value(x), y); }
+
+void GL2DVertexBuffer::store(float x, Y y)
+{ GLClientAndServerBufferBase::store(x, Value(y)); }
+
+void GL2DVertexBuffer::store(float x, float y)
+{ GLClientAndServerBufferBase::store(x, y); }
 
 void GL2DVertexBuffer::activate() const
 {
@@ -160,34 +175,9 @@ void GL2DVertexBuffer::activate() const
     }
 }
 
-///////////////////////////////////////////////////////////////////////////
-// implementation for GLPtBuffer
-///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<int>;
-
-GLPtBuffer::GLPtBuffer () :
-    GLClientAndServerBufferBase<int>(2)
-{}
-
-void GLPtBuffer::store(const Pt& pt)
-{ store(pt.x, pt.y); }
-
-void GLPtBuffer::store(X x, Y y)
-{ GLClientAndServerBufferBase::store(Value(x), Value(y)); }
-
-void GLPtBuffer::activate() const
-{
-    if (b_name) {
-        glBindBuffer(GL_ARRAY_BUFFER, b_name);
-        glVertexPointer(2, GL_INT, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    } else {
-        glVertexPointer(2, GL_INT, 0, &b_data[0]);
-    }
-}
 
 ///////////////////////////////////////////////////////////////////////////
-// implementation for GLTexCoordBuffer
+// GLTexCoordBuffer
 ///////////////////////////////////////////////////////////////////////////
 GLTexCoordBuffer::GLTexCoordBuffer() :
     GLClientAndServerBufferBase<float>(2)
@@ -201,6 +191,47 @@ void GLTexCoordBuffer::activate() const
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     } else {
         glTexCoordPointer(2, GL_FLOAT, 0, &b_data[0]);
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// GL3DVertexBuffer
+///////////////////////////////////////////////////////////////////////////
+GL3DVertexBuffer::GL3DVertexBuffer() :
+    GLClientAndServerBufferBase<float>(3)
+{}
+
+void GL3DVertexBuffer::store(float x, float y, float z)
+{ GLClientAndServerBufferBase::store(x, y, z); }
+
+void GL3DVertexBuffer::activate() const
+{
+    if (b_name) {
+        glBindBuffer(GL_ARRAY_BUFFER, b_name);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    } else {
+        glVertexPointer(3, GL_FLOAT, 0, &b_data[0]);
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// GLNormalBuffer
+///////////////////////////////////////////////////////////////////////////
+GLNormalBuffer::GLNormalBuffer() :
+    GLClientAndServerBufferBase<float>(3)
+{}
+
+void GLNormalBuffer::activate() const
+{
+    if (b_name) {
+        glBindBuffer(GL_ARRAY_BUFFER, b_name);
+        glNormalPointer(GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    } else {
+        glNormalPointer(GL_FLOAT, 0, &b_data[0]);
     }
 }
 

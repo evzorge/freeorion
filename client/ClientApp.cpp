@@ -18,9 +18,6 @@ ClientApp::ClientApp() :
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
 {
-#ifdef FREEORION_BUILD_HUMAN
-    EmpireEliminatedSignal.connect(boost::bind(&Universe::HandleEmpireElimination, &m_universe, _1));
-#endif
 }
 
 ClientApp::~ClientApp()
@@ -128,7 +125,7 @@ ClientNetworking& ClientApp::Networking()
 
 std::string ClientApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
     if (!object) {
-        ErrorLogger() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
+        ErrorLogger() << "ClientApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
 

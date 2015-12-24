@@ -49,7 +49,6 @@ namespace {
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
-    const double TAB_BRIGHTENING_SCALE_FACTOR = 1.25;
 }
 
 
@@ -166,9 +165,9 @@ void CUIButton::RenderRollover() {
         if (Disabled()) {
             background_clr = DisabledColor(background_clr);
             border_clr     = DisabledColor(border_clr);
-        }
-        else
+        } else {
             AdjustBrightness(border_clr, 100);
+        }
 
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
@@ -339,30 +338,43 @@ void CUIStateButton::Render() {
                 bn_ul += GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
                 bn_lr -= GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
                 const int OFFSET = Value(bn_lr.y - bn_ul.y) / 2;
+
+                GG::GL2DVertexBuffer verts;
+                verts.reserve(16);
+
+                verts.store(bn_lr.x, bn_ul.y);
+                verts.store(bn_ul.x + OFFSET, bn_ul.y);
+                verts.store(bn_ul.x, bn_ul.y + OFFSET);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_lr.x - OFFSET, bn_lr.y);
+                verts.store(bn_lr.x, bn_lr.y - OFFSET);
+
+                verts.store(bn_lr.x, bn_ul.y);
+                verts.store(bn_ul.x + OFFSET, bn_ul.y);
+                verts.store(bn_ul.x, bn_ul.y + OFFSET);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_lr.x - OFFSET, bn_lr.y);
+                verts.store(bn_lr.x, bn_lr.y - OFFSET);
+                verts.store(bn_lr.x, bn_ul.y);
+                verts.store(bn_lr.x, bn_ul.y);
+
+                verts.activate();
+
                 glDisable(GL_TEXTURE_2D);
+                glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+                glEnableClientState(GL_VERTEX_ARRAY);
+
                 glColor(inside_color);
-                glBegin(GL_QUADS);
-                glVertex(bn_lr.x, bn_ul.y);
-                glVertex(bn_ul.x + OFFSET, bn_ul.y);
-                glVertex(bn_ul.x, bn_ul.y + OFFSET);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_lr.x - OFFSET, bn_lr.y);
-                glVertex(bn_lr.x, bn_lr.y - OFFSET);
-                glVertex(bn_lr.x, bn_ul.y);
-                glEnd();
+                glDrawArrays(GL_QUADS, 0, 8);
+
                 glColor(outside_color);
-                glBegin(GL_LINE_STRIP);
-                glVertex(bn_lr.x, bn_ul.y);
-                glVertex(bn_ul.x + OFFSET, bn_ul.y);
-                glVertex(bn_ul.x, bn_ul.y + OFFSET);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_lr.x - OFFSET, bn_lr.y);
-                glVertex(bn_lr.x, bn_lr.y - OFFSET);
-                glVertex(bn_lr.x, bn_ul.y);
-                glEnd();
+                glDrawArrays(GL_LINE_STRIP, 8, 8);
+
+                glPopClientAttrib();
                 glEnable(GL_TEXTURE_2D);
+
             } else {
                 GG::Clr inside_color = border_color_to_use;
                 AdjustBrightness(inside_color, -75);
@@ -372,12 +384,13 @@ void CUIStateButton::Render() {
                 glScaled(-1.0, 1.0, 1.0);
                 glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
                 AngledCornerRectangle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
-                                      GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN), 
+                                      GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
                                       inside_color, outside_color, Value(bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
                 glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
                 glScaled(-1.0, 1.0, 1.0);
                 glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
             }
+
         } else if (static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO) {
             const int MARGIN = 2;
             FlatCircle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
@@ -391,6 +404,7 @@ void CUIStateButton::Render() {
                 FlatCircle(GG::Pt(bn_ul.x + MARGIN + 1, bn_ul.y + MARGIN + 1),
                            GG::Pt(bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1), 
                            inside_color, outside_color, 1);
+
             } else {
                 GG::Clr inside_color = border_color_to_use;
                 AdjustBrightness(inside_color, -75);
@@ -456,17 +470,10 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
 
 
 ///////////////////////////////////////
-// class CUIScroll
-///////////////////////////////////////
-namespace {
-    const int CUISCROLL_ANGLE_OFFSET = 3;
-}
-
-///////////////////////////////////////
 // class CUIScroll::ScrollTab
 ///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
-                                GG::Clr border_color) : 
+                                GG::Clr border_color) :
     Button("", boost::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
     m_orientation(orientation),
@@ -487,59 +494,23 @@ void CUIScroll::ScrollTab::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     if (m_orientation == GG::VERTICAL) {
-        ul.x += 3;
-        lr.x -= 3;
+        ul.x += 1;
+        lr.x -= 2;
     } else {
-        ul.y += 3;
-        lr.y -= 3;
+        ul.y += 1;
+        lr.y -= 2;
     }
 
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+    GG::Clr background_color = Disabled() ? DisabledColor(Color()) : Color();
+    GG::Clr border_color = Disabled() ? DisabledColor(m_border_color) : m_border_color;
     if (!Disabled() && m_mouse_here) {
-        AdjustBrightness(color_to_use, TAB_BRIGHTENING_SCALE_FACTOR);
-        AdjustBrightness(border_color_to_use, TAB_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(background_color, 100);
+        AdjustBrightness(border_color,     100);
     }
 
-    // basic shape, no border
-    AngledCornerRectangle(ul, lr, color_to_use, GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
-    // upper left diagonal stripe
-    GG::Clr light_color = Color();
-    AdjustBrightness(light_color, 35);
-    if (!Disabled() && m_mouse_here)
-        AdjustBrightness(light_color, TAB_BRIGHTENING_SCALE_FACTOR);
-    glColor(light_color);
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_POLYGON);
-    if (m_orientation == GG::VERTICAL) {
-        glVertex(lr.x, ul.y);
-        glVertex(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-        glVertex(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
-        glVertex(ul.x, ul.y + std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)));
-    } else {
-        glVertex(ul.x + std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)), ul.y);
-        glVertex(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-        glVertex(ul.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-        glVertex(ul.x, lr.y);
-    }
-    glEnd();
-    // lower right diagonal stripe
-    glBegin(GL_POLYGON);
-    if (m_orientation == GG::VERTICAL) {
-        glVertex(lr.x, lr.y - std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)));
-        glVertex(ul.x, lr.y);
-        glVertex(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-        glVertex(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-    } else {
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x - std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)), lr.y);
-        glVertex(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-        glVertex(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-    }
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
-    // border
-    AngledCornerRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
+    const int CUISCROLL_ANGLE_OFFSET = 3;
+
+    AngledCornerRectangle(ul, lr, background_color, border_color, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
 void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -807,6 +778,7 @@ void CUIMultiEdit::Render() {
     MultiEdit::Render();
     SetColor(color);
 }
+
 
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit
@@ -1129,7 +1101,7 @@ bool CUIToolBar::InWindow(const GG::Pt& pt) const {
 
 void CUIToolBar::Render() {
     GG::Pt ul(UpperLeft() - GG::Pt(GG::X1, GG::Y1));
-    GG::Pt lr(LowerRight() + GG::Pt(GG::X(1), GG::Y0));
+    GG::Pt lr(LowerRight() + GG::Pt(GG::X1, GG::Y0));
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
@@ -1660,17 +1632,34 @@ void MultiTurnProgressBar::Render() {
     }
     // draw segment separators
     if (segmented) {
-        glColor(GG::DarkColor(m_bar_color));
-        glDisable(GL_TEXTURE_2D);
-        glBegin(GL_LINES);
+        GG::GL2DVertexBuffer verts;
+        GG::GLRGBAColorBuffer colours;
+        verts.reserve(2*m_total_turns);
+        colours.reserve(2*m_total_turns);
+
+        GG::Clr current_colour = GG::DarkColor(m_bar_color);
+
         for (int n = 1; n < m_total_turns; ++n) {
             GG::X separator_x = ul.x + Width() * n / m_total_turns;
             if (separator_x > ul.x + completed_bar_width)
-                glColor(GG::LightColor(m_background));            
-            glVertex(separator_x, ul.y);
-            glVertex(separator_x, lr.y);
+                current_colour = GG::LightColor(m_background);
+            verts.store(separator_x, ul.y);
+            verts.store(separator_x, lr.y);
+            colours.store(current_colour);
+            colours.store(current_colour);
         }
-        glEnd();
+
+        verts.activate();
+        colours.activate();
+
+        glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        glDrawArrays(GL_LINES, 0, verts.size());
+
+        glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
 }
@@ -1700,10 +1689,6 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
-/** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
-  * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
-  * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
-  * associated styles use the style GRAPHIC_NONE. */
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
@@ -1828,4 +1813,85 @@ void MultiTextureStaticGraphic::ValidateStyles() {
             style |= GG::GRAPHIC_SHRINKFIT;
         }
     }
+}
+
+
+////////////////////////////////////////////////
+// RotatingGraphic
+////////////////////////////////////////////////
+RotatingGraphic::RotatingGraphic(const boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style,
+                GG::Flags<GG::WndFlag> flags) :
+    GG::StaticGraphic(texture, style, flags),
+    m_rpm(20.0f),
+    m_phase_offset(0.0f)
+{}
+
+void RotatingGraphic::Render() {
+    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    glColor(color_to_use);
+
+    const GG::Texture* texture = GetTexture().GetTexture();
+    if (!texture)
+        return;
+    glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+
+
+    int ticks = GG::GUI::GetGUI()->Ticks();     // in ms
+    float minutes = ticks / 1000.0f / 60.0f;
+
+    // rotate around centre of rendered area
+    GG::Rect rendered_area = RenderedArea();
+    float angle = 360 * minutes * m_rpm + m_phase_offset;   // in degrees
+
+
+    glPushMatrix();
+
+    glTranslatef(Value(rendered_area.MidX()), Value(rendered_area.MidY()), 0.0f);   // tx back into position
+    glRotatef(angle, 0.0f, 0.0f, 1.0f);                                             // rotate about centre
+    glTranslatef(-Value(rendered_area.MidX()), -Value(rendered_area.MidY()), 0.0f); // tx to be centred on 0, 0
+
+    // set up vertices for translated scaled quad corners
+    GG::GL2DVertexBuffer verts;
+    verts.store(rendered_area.UpperLeft());                     // upper left
+    verts.store(rendered_area.Right(), rendered_area.Top());    // upper right
+    verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
+    verts.store(rendered_area.LowerRight());                    // lower right
+
+    // set up texture coordinates for vertices
+    GLfloat texture_coordinate_data[8];
+    const GLfloat* tex_coords = texture->DefaultTexCoords();
+    texture_coordinate_data[2*0] =      tex_coords[0];
+    texture_coordinate_data[2*0 + 1] =  tex_coords[1];
+    texture_coordinate_data[2*1] =      tex_coords[2];
+    texture_coordinate_data[2*1 + 1] =  tex_coords[1];
+    texture_coordinate_data[2*2] =      tex_coords[0];
+    texture_coordinate_data[2*2 + 1] =  tex_coords[3];
+    texture_coordinate_data[2*3] =      tex_coords[2];
+    texture_coordinate_data[2*3 + 1] =  tex_coords[3];
+
+    //// debug
+    //std::cout << "rendered area: " << rendered_area << "  ul: " << UpperLeft() << "  sz: " << Size() << std::endl;
+    //std::cout << "tex coords: " << tex_coords[0] << ", " << tex_coords[1] << ";  "
+    //                            << tex_coords[2] << ", " << tex_coords[3]
+    //                            << std::endl;
+    //// end debug
+
+    // render textured quad
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    verts.activate();
+    glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_data);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
+
+    //// debug: triangle lines rendering
+    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    //glColor(GG::CLR_WHITE);
+    //glDrawArrays(GL_LINE_LOOP, 0, verts.size());
+    //// end debug
+
+    glPopClientAttrib();
+    glPopMatrix();
 }

@@ -3,6 +3,7 @@
 #define _BuildDesignatorWnd_h_
 
 #include "../universe/Enums.h"
+#include "../Empire/Empire.h"
 
 #include <GG/Wnd.h>
 
@@ -32,8 +33,10 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
-      * and displays info about that item in encyclopedia window. */
-    void            CenterOnBuild(int queue_idx);
+      * and displays info about that item in encyclopedia window
+      * If \a open is true, the sidepanel for that planet is opened and 
+      * it is set as the selected location (so items queued will be built there). */
+    void            CenterOnBuild(int queue_idx, bool open = false);
 
     /** Programatically sets this Wnd's selected system.
       * Does not emit a SystemSelectedSignal. */
@@ -80,12 +83,9 @@ public:
     void            ShowShipDesignInEncyclopedia(int design_id);
     //@}
 
-    /** emitted when the indicated named build is indicated by the user */
-    mutable boost::signals2::signal<void (BuildType, const std::string&, int, int)>
-                                            AddNamedBuildToQueueSignal;
-    /** emitted when the indicated id'd build is indicated by the user */
-    mutable boost::signals2::signal<void (BuildType, int, int, int)>
-                                            AddIDedBuildToQueueSignal;
+    /** emitted when the indicated build is indicated by the user */
+    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, int)>
+                                            AddBuildToQueueSignal;
     /** emitted when the quantity of items in a single build queue item is
       * changed by the user */
     mutable boost::signals2::signal<void (int, int)>  BuildQuantityChangedSignal;
@@ -100,8 +100,7 @@ private:
     class BuildSelector;
     int             BuildLocation() const;
 
-    void            BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build);
-    void            BuildItemRequested(BuildType build_type, int design_id, int num_to_build);
+    void            BuildItemRequested(const ProductionQueue::ProductionItem& item, int num_to_build, int pos);
     void            BuildQuantityChanged(int queue_idx, int quantity);
     void            SetBuild(int queue_idx);
 

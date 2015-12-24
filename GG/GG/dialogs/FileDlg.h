@@ -119,6 +119,9 @@ public:
         the next invocation of FileDlg::Run()) */
     static const boost::filesystem::path& WorkingDirectory();
 
+    /** Converts a string to a path in a cross platform safe manner. */
+    static const boost::filesystem::path StringToPath(const std::string& str);
+
     /** \name Exceptions */ ///@{
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
@@ -142,7 +145,7 @@ private:
     void OkHandler(bool double_click);
     void CancelClicked();
     void FileSetChanged(const ListBox::SelectionSet& files);
-    void FileDoubleClicked(DropDownList::iterator it);
+    void FileDoubleClicked(DropDownList::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void FilesEditChanged(const std::string& str);
     void FilterChanged(DropDownList::iterator it);
     void SetWorkingDirectory(const boost::filesystem::path& p);

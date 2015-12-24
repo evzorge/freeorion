@@ -3,8 +3,9 @@ English
 #This is the English String Table file for FreeOrion
 #Translate this file to other languages.
 
-# Note: to avoid potential conflict with functional keys in other files, do not make
+# Notes: to avoid potential conflict with functional keys in other files, do not make
 # any stringtable keys beginning with "FUNCTIONAL_"
+# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
 
 #################
 #    Common     #
@@ -78,6 +79,12 @@ Moderator
 
 NO_PLAYER
 None
+
+NO_PLAYERS
+No Players
+
+NO_EMPIRE
+No Empire
 
 DROP_PLAYER
 Drop
@@ -217,17 +224,17 @@ SD_AST_SCOUT_DESC
 Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_SCOUT_2
-Scout II
+Radar Scout
 SD_SCOUT_2_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_3
-Scout III
+Scanner Scout
 SD_SCOUT_3_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_4
-Scout IV
+Sensor Scout
 SD_SCOUT_4_DESC
 Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_RANGE_TITLE]] designed for recon and exploration. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
@@ -237,158 +244,203 @@ SD_ENG_SCOUT_DESC
 Small and fast unarmed vessel designed for recon and exploration. Further [[encyclopedia RESEARCH_TITLE]] aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_SMALL_MARK_1
-Corvette I
+Corvette (M)
 SD_SMALL_MARK1_DESC
 Small and cheap mass-driver ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SMALL_MARK_2
-Corvette II
+Corvette (L)
 SD_SMALL_MARK2_DESC
 Small and cheap mass-driver ship. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_1
-Frigate I
+Frigate (M1)
 SD_MARK1_DESC
 Basic mass-driver frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_2
-Frigate II
+Frigate (M2)
 SD_MARK2_DESC
 Improved mass-driver frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_3
-Frigate III
+Frigate (L1)
 SD_MARK3_DESC
 Basic laser frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_MARK_4
-Frigate IV
+Frigate (L2)
 SD_MARK4_DESC
 Improved laser frigate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_1
-Cruiser I
+Destroyer (M1)
 SD_LARGE_MARK1_DESC
 Basic mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_2
-Cruiser II
+Destroyer (M2)
 SD_LARGE_MARK2_DESC
 Improved mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_3
-Cruiser III
+Cruiser (L1)
 SD_LARGE_MARK3_DESC
 Improved fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_LARGE_MARK_4
-Cruiser IV
+Cruiser (L2)
 SD_LARGE_MARK4_DESC
 Improved fighter with heavy lasers and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
+SD_ROBOTIC_OUTPOST
+Robotic Outpost
+SD_ROBOTIC_OUTPOST_DESC
+Can establish outposts on faraway worlds
+
+SD_ROBOTIC_COLONY
+Robotic Colony
+SD_ROBOTIC_COLONY_DESC
+Can establish colonies on faraway worlds
+
+SD_ROBOTIC_CRYOCOL
+Robotic CryoColony
+
+SD_ROBOTIC_CRYOCOL_DESC
+Can establish advanced colonies on faraway worlds
+
+SD_ROBO_FLUX_SCOUT
+Flux Scout
+
+SD_ROBO_FLUX_SCOUT_DESC
+Fast scouting hull
+
+SD_ROBO_FLUX_TROOPS
+Flux Troops
+
+SD_ROBO_FLUX_TROOPS_DESC
+Fast troop carrier
+
+SD_ROBO_FLUX_TROOPS_HVY
+Flux Heavy Troops
+
+SD_ROBO_FLUX_TROOPS_HVY_DESC
+Fast advanced troop carrier
+
 SD_ROBOTIC1
-Robocruiser I
+Robocruiser (M1)
 SD_ROBOTIC1_DESC
 Robotic mass-driver fighter. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC2
-Robocruiser II
+Robocruiser (M2)
 SD_ROBOTIC2_DESC
-Robotic fighter with lasers and heavy armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Robotic fighter heavy armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC3
-Robocruiser III
+Robocruiser (L)
 SD_ROBOTIC3_DESC
-Improved robotic fighter with heavy lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+Improved robotic fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
+
+SD_NANOROBOTIC1
+Nanobot Battlecruiser
+
+SD_NANOROBOTIC1_DESC
+Advanced heavy cruiser capable of self repair
+
+SD_GRAVITATING1
+Gravitic Battleship (P)
+SD_GRAVITATING1_DESC
+Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+
+SD_GRAVITATING2
+Gravitic Battleship (D)
+SD_GRAVITATING2_DESC
+Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+
+SD_ROBO_TITAN1
+Dreadnaught
+SD_ROBO_TITAN1_DESC
+Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 SD_ORGANIC1
-Organic I
+Organic Frigate (M1)
 SD_ORGANIC1_DESC
 Organic fighter with preliminary weaponry and defence technology. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC2
-Organic II
+Organic Frigate (M2)
 SD_ORGANIC2_DESC
-Organic fighter with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Organic fighter with improved armour. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ORGANIC3
-Organic III
+Organic Frigate (L)
 SD_ORGANIC3_DESC
 Organic fighter with heavy lasers and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_1
-Shield Bug I
+Organic Heavy Frigate (M)
 SD_SHIELD_BUG_1_DESC
 Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_SHIELD_BUG_2
-Shield Bug II
+Organic Heavy Frigate (L)
 SD_SHIELD_BUG_2_DESC
 Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
-SD_SHIELD_BUG_3
-Shield Bug III
-SD_SHIELD_BUG_3_DESC
-Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
-
 SD_AST_1
-Rock I
+Rock Destroyer (L)
 SD_AST_1_DESC
 A hollowed-out asteroid armed with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_2
-Rock II
+Rock Destroyer (P1)
 SD_AST_2_DESC
 A hollowed-out asteroid armed with plasma cannons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_3
-Rock III
+Rock Destroyer (P2)
 SD_AST_3_DESC
 A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
 
 SD_HEAVY_AST_1
-Big Rock I
+Rock Battleship (L)
 SD_HEAVY_AST_1_DESC
-A large hollowed-out asteroid armed with plasma cannons. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
+A large hollowed-out asteroid armed with lasers. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_2
-Big Rock II
+Rock Battleship (P)
 SD_HEAVY_AST_2_DESC
 A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
 
 SD_CRYSTAL
-Crystal
+Crystal Destroyer (P)
 SD_CRYSTAL_DESC
 A crystallized asteroid armed with heavy plasma cannons and crystal rock armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] in a system with an [[buildingtype BLD_SHIPYARD_AST]]. An [[buildingtype BLD_SHIPYARD_AST_REF]] is also required in any system owned by the empire.
 
 SD_ENDO_1
-Endomorphic I
+Endomorphic Cruiser (L)
 SD_ENDO_1_DESC
 Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_2
-Endomorphic II
+Endomorphic Cruiser (P1)
 SD_ENDO_2_DESC
 Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_ENDO_3
-Endomorphic III
+Endomorphic Cruiser (P2)
 SD_ENDO_3_DESC
-Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
-
-SD_ENDO_4
-Endomorphic IV
-SD_ENDO_4_DESC
-Advanced endomorphic fighter with heavy weaponry and armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
-
-SD_GRAVITATING1
-Gravitating I
-SD_GRAVITATING1_DESC
-Massive state-of-art battleship armed and protected with the latest technology. Priced accordingly. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+Advanced endomorphic fighter with heavy weaponry and diamond armor. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 SD_FRACTAL_1
-Fractal I
+Fractal Battleship (P)
 SD_FRACTAL_1_DESC
+An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+
+SD_FRACTAL_2
+Fractal Battleship (D)
+SD_FRACTAL_2_DESC
 An exotic warship made of fractal energy. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_COLONY_SHIP
@@ -441,38 +493,48 @@ Outpost Base
 SD_OUTPOST_BASE_DESC
 Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
 
+SD_BASE_DECOY
+Comsat
+SD_BASE_DECOY_DESC
+Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a shipyard.
+
 SD_TROOP_DROP
 Troop Drop
 SD_TROOP_DROP_DESC
-Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
+Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
+
+SD_TROOP_DROP_HVY
+Heavy Troop Drop
+SD_TROOP_DROP_HVY_DESC
+Carries a brigade of ground advanced [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
 
 SD_SMALL_TROOP_SHIP
 Small Troop Ship
 SD_SMALL_TROOP_SHIP_DESC
-Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_SHIP
 Troop Ship
 SD_TROOP_SHIP_DESC
-Carries six units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
+Carries 3 brigades of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_TROOP_SHIP
 Organic Troop Ship
 SD_ORG_TROOP_SHIP_DESC
-Carries eight units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Carries 4 brigades of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
 Energy Troop Ship
 SD_ENG_TROOP_SHIP_DESC
-Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
+Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_ENG1
-Energy 1
+Energy Corvette (L)
 SD_ENG1_DESC
 Small fast combat vessel. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
 SD_ENG2
-Energy 2
+Energy Corvette (P)
 SD_ENG2_DESC
 Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]], in systems with blue, white or black hole star types.
 
@@ -720,6 +782,12 @@ Scissor Rift
 FLD_SUBSPACE_RIFT_DESC
 Violent and destructive tear in spacetime which rapidly collapses. Pulls in and devours ships, systems, and planets that are caught within its area, although ships may be able to escape if moving quick enough.
 
+FLD_ACCRETION_DISC
+Accretion Disc
+
+FLD_ACCRETION_DISC_DESC
+An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[encyclopedia SUPPLY_TITLE]] penalty of -1.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -764,17 +832,8 @@ The server has sent an end-game message. Buh-bye.
 PLAYER_DISCONNECTED
 Player %1% no longer has a connection to the server.
 
-PLAYER_DEFEATED
-You are defeated.
-
-EMPIRE_DEFEATED
-The %1% empire is no more.
-
 UNKNOWN_EMPIRE
 Unknown Empire
-
-LAST_OPPONENT_DEFEATED_VICTORY
-Your last opponent has been defeated and you are victorious!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 The server received invalid client save data. Some may be ignored.
@@ -975,7 +1034,13 @@ OPTIONS_DB_LIMIT_FPS
 Toggles FPS limiting on or off. Limit is set with Max FPS option.
 
 OPTIONS_DB_MAX_FPS
-Toggles FPS limit, if enabled. Limiting is toggled with Limit FPS.
+Sets FPS limit, if enabled. Limiting is toggled with Limit FPS.
+
+OPTIONS_DB_LIMIT_FPS_NO_FOCUS
+Toggles FPS limiting on or off when the game window does not have focus.
+
+OPTIONS_DB_MAX_FPS_NO_FOCUS
+Sets FPS limit when the game window does not have focus, if enabled.
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Toggles UI sound effects on or off.
@@ -1158,7 +1223,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator, relative to system icon size.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Sets the frame rate of animation of system selection indicator.
+Sets the rotation rate (in revolutions per minute) of animation of system selection indicator.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Sets size of system icons below which the fixed-size tiny icons will be shown.
@@ -1348,7 +1413,7 @@ OPTIONS_DB_AUTO_QUIT
 Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
 
 OPTIONS_DB_BINARY_SERIALIZATION
-Use Binary serialization for savegames and client-server communications (which is compact/fast but may have cross-platform compatibility issues); if unchecked text xml serialization is used. Restart after changing is recommended.
+Use Binary serialization for saving games. Binary serialization is faster to save and load, but may not be possible to load on a different operating system.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
@@ -1540,10 +1605,10 @@ Player name
 #Button names####
 
 HOST_GAME_BN
-Host a new game
+Host a new game (use XML serialisation in Options/Other)
 
 JOIN_GAME_BN
-Join a game
+Join a game (use XML serialisation in Options/Other)
 
 REFRESH_LIST_BN
 Refresh list
@@ -1653,9 +1718,11 @@ GSETUP_CLUSTER
 Cluster
 GSETUP_ELLIPTICAL
 Elliptical
-GSETUP_IRREGULAR1
+GSETUP_DISC
+Disc
+GSETUP_BOX
 Box
-GSETUP_IRREGULAR2
+GSETUP_IRREGULAR
 Irregular
 GSETUP_RING
 Ring
@@ -1899,16 +1966,16 @@ OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
 
 OPTIONS_KEYPRESS_REPEAT_DELAY
-Held key repeat delay
+Held key repeat delay (ms)
 
 OPTIONS_KEYPRESS_REPEAT_INTERVAL
-Held key repeat interval
+Held key repeat interval (ms)
 
 OPTIONS_MOUSE_REPEAT_DELAY
-Held mouse button repeat delay
+Held mouse button repeat delay (ms)
 
 OPTIONS_MOUSE_REPEAT_INTERVAL
-Held mouse button repeat interval
+Held mouse button repeat interval (ms)
 
 OPTIONS_SWAP_MOUSE_LR
 Swap Mouse Buttons Left-Right
@@ -1958,6 +2025,12 @@ Limit FPS
 OPTIONS_MAX_FPS
 Max FPS
 
+OPTIONS_LIMIT_FPS_NO_FOCUS
+Limit FPS (Non Focused)
+
+OPTIONS_MAX_FPS_NO_FOCUS
+Max FPS (Non Focused)
+
 OPTIONS_APPLY
 Apply
 
@@ -2004,7 +2077,7 @@ OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 System selection indicator relative size
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
-System selection indicator animation frame rate
+System selection indicator animation rate (rpm)
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Tiny system icon size threshold
@@ -2298,7 +2371,7 @@ OPTIONS_ADD_SAVED_DESIGNS
 Add All Saved Ship Designs at Game Start
 
 OPTIONS_USE_BINARY_SERIALIZATION
-Use Binary serialization
+Create Binary Save Files
 
 #################
 # Main Map      #
@@ -2997,6 +3070,9 @@ Quantity
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Add to Queue
 
+PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE
+Add to Top of Queue
+
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Center on Build
 
@@ -3223,6 +3299,11 @@ ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 '''%1% is not suitable for colonization by these species. Attempts to colonize will either fail or eventually die off.
 
+'''
+
+ENC_SUITABILITY_REPORT_WHEEL_INTRO
+'''
+Suitability is determined by distance from the preferred type in this wheel:
 '''
 
 # types of things that can be shown in encyclopedia
@@ -4039,6 +4120,10 @@ Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]] and the recen
 AI_ERROR_MSG
 AI_Error: AI script error
 
+SERVER_MESSAGE_NOT_UNDERSTOOD
+The server sent a message that could not be understood.
+
+
 ####################
 # Combat Messages  #
 ####################
@@ -4356,19 +4441,19 @@ FILTERS
 Filters
 
 SITREP_SNOOZE_5_TURNS
-'''  5 turn dismissal for this SitRep'''
+'''  Hide this Sitrep for 5 turns'''
 
 SITREP_SNOOZE_10_TURNS
-'''  10 turn dismissal for this SitRep'''
+'''  Hide this Sitrep for 10 turns'''
 
 SITREP_SNOOZE_INDEFINITE
 '''  Indefinite dismissal for this SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Clear all indefinite SitRep dismissals'''
+'''  Show all SitReps indefinitely dismissed'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Clear all SitRep dismissals'''
+'''  Show all hidden or dismissed SitReps'''
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -4521,9 +4606,9 @@ SITREP_PLANET_CAPTURED
 SITREP_PLANET_CAPTURED_LABEL
 Planet Captured
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
-The %planet% colony was destroyed!
-SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
+SITREP_PLANET_DEPOPULATED
+The population of %planet% has died out entirely!
+SITREP_PLANET_DEPOPULATED_LABEL
 Planet Destroyed
 
 SITREP_PLANET_COLONIZED
@@ -4576,36 +4661,6 @@ At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
-SITREP_EMPIRE_ELIMINATED
-%empire% has been eliminated!
-SITREP_EMPIRE_ELIMINATED_LABEL
-Empire Eliminated
-
-SITREP_VICTORY
-%empire% %text%
-SITREP_VICTORY_LABEL
-Victory
-
-SITREP_VICTORY_DESTRUCTION
-At last, the mysterious violent threat plaguing the galaxy has been eliminated. The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
-SITREP_VICTORY_DESTRUCTION_LABEL
-Victory Destruction
-
-SITREP_VICTORY_CAPTURE
-VICTORY! You have captured the powerful Experimentors and ended the fearsome threat plaguing the galaxy. You may continue playing if you wish.
-SITREP_VICTORY_CAPTURE_LABEL
-Victory Capture
-
-SITREP_VICTORY_TECH
-Your Empire has discovered the Singularity of Transcendence. You win!
-SITREP_VICTORY_TECH_LABEL
-Victory Technology
-
-SITREP_VICTORY_BIO
-The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty war fleet.
-SITREP_VICTORY_BIO_LABEL
-Victory Biological
-
 SITREP_POP_THRESHOLD
 On %planet%: The colony has reached sufficient size and [[encyclopedia HAPPINESS_TITLE]] to be a settler source for colonizing other planets.
 SITREP_POP_THRESHOLD_LABEL
@@ -4646,6 +4701,16 @@ Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology ex
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
 
+EFFECT_ANCIENT_EXTINCT_SPECIES
+On %planet%: Well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
+Ancient Ruins Extinct Species
+
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
+Rumors spread through the galaxy that well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
+Ancient Ruins Extinct Species Rumors
+
 EFFECT_ANCIENT_RUINS_EMPTY
 On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
@@ -4673,6 +4738,8 @@ Gaia Terraform
 
 EFFECT_GAIA
 On %planet%: The citizens rejoice as their world is now a [[encyclopedia GAIA_SPECIAL]] paradise.
+EFFECT_GAIA_LABEL
+Gaia Paradise
 
 EFFECT_TERRAFORM
 %planet% has been terraformed.
@@ -4740,17 +4807,17 @@ EFFECT_DERELICT_MINERALS_LABEL
 Derelict Minerals
 
 EFFECT_DERELICT_MAP
-At %system%: information on the area was obtained from an abandoned derelict.
+At %system%: information on the area was obtained from an abandoned %special%.
 EFFECT_DERELICT_MAP_LABEL
 Derelict Map
 
 EFFECT_DERELICT_FUEL
-At %system%: ships were refueled from the residual supply found in an abandoned derelict.
+At %system%: ships were refueled from the residual supply found in an abandoned %special%.
 EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
 EFFECT_BIOWEAPON
-%system% has lost population due to a biological attack.
+%planet% has lost %rawtext% population due to a %shippart% attack.
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 
@@ -4826,11 +4893,22 @@ Custom_4
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-%1% has achieved a technological victory.
+VICTORY_TECH
+The %empire% has achieved a technological victory!
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-has achieved a sole-survivor victory.
+VICTORY_ALL_ENEMIES_ELIMINATED
+The %empire% has achieved a sole-survivor victory!
+
+VICTORY_EXPERIMENTOR_CAPTURE
+The %empire% has achieved victory by capturing the powerful Experimentors and ending the fearsome threat plaguing the galaxy!
+
+SITREP_VICTORY_LABEL
+Victory
+
+SITREP_EMPIRE_ELIMINATED
+The %empire% has been defeated!
+SITREP_EMPIRE_ELIMINATED_LABEL
+Empire Eliminated
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -5504,6 +5582,64 @@ Reason for Staying:
 The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
 '''
 
+SP_BANFORO
+Banforo
+SP_BANFORO_GAMEPLAY_DESC
+'''Cute, sedulous star gazers.
+Prefer Barren planets.
+[[encyclopedia LITHIC_SPECIES_TITLE]]
+'''
+
+SP_BANFORO_DESC
+'''Description:
+A Banfo looks like a teddy bear made of white stone with two large black crystal eyes. It's likely that the Banforo species was artificially created, but information that could show proof was lost in history. The eyes are their most important organs, not only do they serve for perception, but also for communication by showing light patterns around their frames. Banforo can distinguish colors and patterns of even very dim light, as well as focus on light sources far away. Very bright light on the other hand is very hard on their eyes and disturbs their communication. Thus the evening is the favorite time for the Banforo and a defining ritual of their civilization is collectively gazing at the stars once the sun has set.
+
+Social Structure:
+The Banforo are very social towards each other and share strong bonds. Resources are always shared and private ownership doesn't exist for goods with material value. The form of government can be called communistic.
+
+Reason for Extinction:
+It hasn't been sufficiently clarified, but scientists suspect that a cosmic event made the environment unbearable for the Banforo for a time so long that their numbers were dwindling to ultimately zero.
+'''
+
+SP_KILANDOW
+Kilandow
+SP_KILANDOW_GAMEPLAY_DESC
+'''Radiation-absorbing, prickly, unhurried experimenters.
+Prefer Radiated planets.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KILANDOW_DESC
+'''Description:
+The Kilandow have four limbs ending in several claws. Walking upright on the two short ones, they measure a little more than 1 m in height. Their head, a three eyed beak, is used like a pickaxe to pick rocks in the hope of finding rare metals and noble earths, which they knead into a paste. After applying the paste to their spiny backs, the Kilandow search for a spot with high radiation of UV and gamma-rays to absorb the charged molecules. Statuelike a Kilandow can cower in one spot for hours or even days after which it is fully charged. Because they feed on radiation their bodies also emit abnormally large amounts of radiation, which makes them easy to detect, but also dangerous for other species to come into contact with.
+Kilandow are very patient and love to conduct chemical and physical experiments. Because of their long lifespan they have no problem with some of their experiments to take hundreds of years to finish. Another important activity for them is mining, especially on Asteroids, because for them it's researching, treasure hunting and finding food at the same time.
+
+Social Structure:
+Based on documents found in Ancient Ruins the Kilandow were democratic and law-abiding, but cared much more for experiments than their society.
+
+Reason for Extinction:
+The reasons are believed to be their peaceful nature and their low reproduction rate.
+'''
+
+SP_MISIORLA
+Misiorla
+SP_MISIORLA_GAMEPLAY_DESC
+'''Chaotic, liberal, born pilots.
+Prefer Toxic planets.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_MISIORLA_DESC
+'''Description:
+A Misiorla is a mollusc with four flexible tentacles and two pairs of four eyes each. Perfectly adapted to their homeworld they were able to swim through seas of acid fluids and float through clouds of thick heavy mists. They were considered to be a fairly mediocre species, barely worth the uplift they were given by a friendly civilization, neither smart nor productive and not talented in any way. That quickly changed when the first Misiorla were given control of a space ship. Word spread like a wildfire through the galaxy about the best combat pilots in the universe. The first Misiorla mercenaries were hired to pilote fighters, the next were given command of cruisers, but their full potential was realized when an outdated battleship manned with only Misiorla single-handily wiped out the whole space fleet of a far superior empire.
+
+Social Structure:
+The whole life of Misiorlas is wrapped around piloting space vessels. Piloting is their job, it's their sport, it's their love. The society is totaly dependend on other species because they become lethargic and unorganized when doing anything else. Misiorla can be hired by almost anyone who offers something interesting to fly and the fuel to do so.
+
+Reason for Extinction:
+At one point in history the Final Ones, one of the Precursor civilizations, decided that the Misiorla could be a threat to their ultimate goal.
+'''
+
 SP_EXOBOT
 Exobot
 SP_EXOBOT_GAMEPLAY_DESC
@@ -5582,7 +5718,25 @@ Ancient Ruins
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
 
-This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
+This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship. There's also a good chance that well preserved bodies of an extinct species will be found.'''
+
+EXTINCT_BANFORO_SPECIAL
+Banforo Remains
+
+EXTINCT_BANFORO_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on supply connected planets.'''
+
+EXTINCT_KILANDOW_SPECIAL
+Kilandow Remains
+
+EXTINCT_KILANDOW_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on supply connected planets.'''
+
+EXTINCT_MISIORLA_SPECIAL
+Misiorla Remains
+
+EXTINCT_MISIORLA_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on supply connected planets.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
@@ -5602,9 +5756,26 @@ ECCENTRIC_ORBIT_SPECIAL
 Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Population on the planet is decreased by 3, but [[encyclopedia RESEARCH_TITLE]] is increased by 3.
+'''Increases [[encyclopedia RESEARCH_TITLE]] by 3, but [[encyclopedia SUPPLY_TITLE]] is decreased by 2.
 
-This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit population growth, but provide a beneficial platform for research.'''
+This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit the supply the planet can provide, but are a beneficial platform for research.'''
+
+TIDAL_LOCK_SPECIAL
+Tidally Locked Rotation
+
+TIDAL_LOCK_SPECIAL_DESC
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on this planet by 0.2 per Population when Focus is set to [[encyclopedia INDUSTRY_TITLE]], but population is decreased: Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+
+This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
+
+TEMPORAL_ANOMALY_SPECIAL
+Temporal Anomaly
+
+TEMPORAL_ANOMALY_SPECIAL_DESC
+'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 5 per Population when Focus is set to [[encyclopedia RESEARCH_TITLE]], but population is decreased: Tiny: -5, Small: -10, Medium: -15, Large: -20, Huge: -25.
+
+The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
+On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
 
 RESONANT_MOON_SPECIAL
 Resonant Moon
@@ -5724,13 +5895,19 @@ This planet exists partially in this universe and partially in the void, increas
 DERELICT_SPECIAL
 Derelict
 DERELICT_SPECIAL2
-Derelict
+Derelict Scout
 DERELICT_SPECIAL3
-Derelict
+Derelict Tanker
 DERELICT_SPECIAL_REMOVE
 Derelict
 DERELICT_SPECIAL_DESC
 An ancient, derelict ship from an unknown species. Who knows what it could reveal...
+
+ACCRETION_DISC_SPECIAL
+Accretion Disc
+
+ACCRETION_DISC_SPECIAL_DESC
+An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[encyclopedia SUPPLY_TITLE]] penalty of -1.
 
 SUPERNOVA_SPECIAL
 New Supernova
@@ -6168,14 +6345,10 @@ Empty
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Short Range
-PC_MISSILES
-Missiles
+PC_DIRECT_WEAPON
+Direct Weapon
 PC_FIGHTERS
 Fighters
-PC_POINT_DEFENSE
-Point Defense
 PC_SHIELD
 Shields
 PC_ARMOUR
@@ -7419,7 +7592,7 @@ Singularity Generation
 PRO_SINGULAR_GEN_DESC
 '''Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains. By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
 
-As matter is drawn towards a singularity by the intense space-time curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated. High energy radiation emitted from the disk may be captured and harnessed for power generation. The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity. This method of power generation is significantly more delicate and unstable than the accretion disk method, but can produce an even greater output.'''
+As matter is drawn towards a singularity by the intense space-time curvature, or gravitational field, the matter forms a greatly compressed and heated accretion disc. High energy radiation emitted from the disc may be captured and harnessed for power generation. The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity. This method of power generation is significantly more delicate and unstable than the accretion disc method, but can produce an even greater output.'''
 
 PRO_ZERO_GEN
 Zero-Point Generation
@@ -7517,7 +7690,7 @@ CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
+'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Also increases target [[encyclopedia INFRASTRUCTURE_TITLE]] by 10 on populated.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -7671,6 +7844,12 @@ Force-Energy Compression
 SHP_FRC_ENRG_COMP_DESC
 Typically, the manipulation of energy requires it to be in the form of matter so that potential energy can be stored as desired and released on demand. Matter converted to pure energy stored in the fabric of space-time itself would be more versatile than any material substance, but impossible to contain without advanced force-field technology.
 
+SHP_ENRG_FRIGATE
+Military Energy Compression
+
+SHP_ENRG_FRIGATE_DESC
+Advanced forcefields allow energy and matter to be combined to make warships, but immense energy is needed to build them at scale.
+
 SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
 
@@ -7717,6 +7896,9 @@ Unlocks Ship Part
 
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Unlocks Ship Weapon
+
+SHIP_WEAPON_IMPROVE_SHORT_DESC
+Improves Ships Weapon
 
 SHIP_HULL_UNLOCK_SHORT_DESC
 Unlocks Ship Hull
@@ -8154,77 +8336,77 @@ Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 SHP_WEAPON_1_2
 Mass Driver 2
 SHP_WEAPON_1_2_DESC
-Refines Mass Driver to level 2.
+Improves Mass Driver by one level, increasing strength by 1.
 
 SHP_WEAPON_1_3
 Mass Driver 3
 SHP_WEAPON_1_3_DESC
-Refines Mass Driver to level 3.
+Improves Mass Driver by two levels, increasing strength by 2.
 
 SHP_WEAPON_1_4
 Mass Driver 4
 SHP_WEAPON_1_4_DESC
-Refines Mass Driver to level 4.
+Improves Mass Driver by three levels, increasing strength by 3.
 
 SHP_WEAPON_2_1
-Laser 1
+Laser Weapons
 SHP_WEAPON_2_1_DESC
 Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.
 
 SHP_WEAPON_2_2
 Laser 2
 SHP_WEAPON_2_2_DESC
-Refines Laser to level 2.
+Improves Laser weapons by one level, increasing strength by 2.
 
 SHP_WEAPON_2_3
 Laser 3
 SHP_WEAPON_2_3_DESC
-Refines Laser to level 3.
+Improves Laser weapons by two levels, increasing strength by 4.
 
 SHP_WEAPON_2_4
 Laser 4
 SHP_WEAPON_2_4_DESC
-Refines Laser to level 4.
+Improves Laser weapons by three levels, increasing strength by 6.
 
 SHP_WEAPON_3_1
-Plasma Cannon 1
+Plasma Cannons
 SHP_WEAPON_3_1_DESC
 Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.
 
 SHP_WEAPON_3_2
 Plasma Cannon 2
 SHP_WEAPON_3_2_DESC
-Refines Plasma Cannon to level 2.
+Improves Plasma Cannon by one level, increasing strength by 3.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 SHP_WEAPON_3_3_DESC
-Refines Plasma Cannon to level 3.
+Improves Plasma Cannon two levels increasing strength by 6.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 SHP_WEAPON_3_4_DESC
-Refines Plasma Cannon to level 4.
+Improves Plasma Cannon three levels increasing base strength by 9.
 
 SHP_WEAPON_4_1
-Death Ray 1
+Death Rays
 SHP_WEAPON_4_1_DESC
 Unlocks the Death Ray, the ultimate ship's weapon.
 
 SHP_WEAPON_4_2
 Death Ray 2
 SHP_WEAPON_4_2_DESC
-Refines Death Ray to level 2.
+Improves Death Ray by one level, increasing strength by 5.
 
 SHP_WEAPON_4_3
 Death Ray 3
 SHP_WEAPON_4_3_DESC
-Refines Death Ray to level 3.
+Improves Death Ray by two levels, increasing strength by 10.
 
 SHP_WEAPON_4_4
 Death Ray 4
 SHP_WEAPON_4_4_DESC
-Refines Death Ray to level 4. The ultimate refinement of the ultimate weapon.
+Improves Death Ray by three levels increasing strength by 15. The ultimate refinement of the ultimate weapon.
 
 SHP_ION_CANNON
 Ion Cannon
@@ -8339,13 +8521,13 @@ SPY_DETECT_5_DESC
 The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 200.
 
 SPY_STEALTH_1
-Electromagnetic Damper
+Planetary Cloud Cover
 
 SPY_STEALTH_1_DESC
 Unlocks the [[shippart ST_CLOAK_1]] ship part and gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20.
 
 SPY_STEALTH_2
-Absorption Field
+Planetary Ash Clouds
 
 SPY_STEALTH_2_DESC
 '''Unlocks the [[shippart ST_CLOAK_2]] ship part and gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. 
@@ -8353,13 +8535,13 @@ SPY_STEALTH_2_DESC
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
 
 SPY_STEALTH_3
-Dimensional Cloak
+Planetary Dimensional Cloak
 
 SPY_STEALTH_3_DESC
 Unlocks the [[shippart ST_CLOAK_3]] ship part and gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60.
 
 SPY_STEALTH_4
-Phasing Cloak
+Planetary Phasing Cloak
 
 SPY_STEALTH_4_DESC
 '''Unlocks the [[shippart ST_CLOAK_4]] ship part and gives all planets and outposts in the empire the [[special VOID_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. 
@@ -8954,14 +9136,6 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 
 This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a black hole system.'''
 
-BLD_REPLICATORS
-Replicators
-
-BLD_REPLICATORS_DESC
-'''When activated, half of all industrial production in the empire goes towards replicating extra food or minerals at a 2:1 ratio. If the planet on which it is built has focus set to Food Replication, food will be produced at the expense of industry. When the focus is set to Mineral Replication, minerals will be produced at the expense of industry.
-
-Only one replication focus can take effect in the empire at one time.'''
-
 BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
@@ -9018,7 +9192,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a [[buildingtype BLD_PLANET_CLOAK]], a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+This building can be given the effects of a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
@@ -9032,7 +9206,7 @@ BLD_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipulates the dimensional properties of adjacent starlanes. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the starlane in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
+Manipulates the dimensional properties of adjacent starlanes. Enemy ships moving towards the system containing this building will be pushed back 40uu the way they came after they have moved as long as they have not completed their journey and arrived in system. This is activated with the Spatial Distortion focus.
 
 BLD_STARGATE
 Stargate
@@ -9062,6 +9236,12 @@ Starlane Nexus
 
 BLD_STARLANE_NEXUS_DESC
 Generates new starlanes to other star systems that can be connected without crossing existing starlanes or passing too close to another system.
+
+BLD_XENORESURRECTION_LAB
+Xenoresurrection Lab
+
+BLD_XENORESURRECTION_LAB_DESC
+The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of supply connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
 
 BLD_COLONY_BASE
 Colony Base
@@ -9093,6 +9273,12 @@ Abaddoni Colony
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] [[species SP_ABADDONI]] colony. [[BLD_COL_PART_2]] Abaddoni colony [[BLD_COL_PART_3]].
+
+BLD_COL_BANFORO
+Banforo Colony
+
+BLD_COL_BANFORO_DESC
+[[BLD_COL_PART_1]] [[species SP_BANFORO]] colony. [[BLD_COL_PART_2]] Banforo colony [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
 Chato Colony
@@ -9166,6 +9352,12 @@ Human Colony
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] [[species SP_HUMAN]] colony. [[BLD_COL_PART_2]] Human colony [[BLD_COL_PART_3]].
 
+BLD_COL_KILANDOW
+Kilandow Colony
+
+BLD_COL_KILANDOW_DESC
+[[BLD_COL_PART_1]] [[species SP_KILANDOW]] colony. [[BLD_COL_PART_2]] Kilandow colony [[BLD_COL_PART_3]].
+
 BLD_COL_KOBUNTURA
 Kobuntura Colony
 
@@ -9177,6 +9369,12 @@ Laenfa Colony
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] [[species SP_LAENFA]] colony. [[BLD_COL_PART_2]] Laenfa colony [[BLD_COL_PART_3]].
+
+BLD_COL_MISIORLA
+Misiorla Colony
+
+BLD_COL_MISIORLA_DESC
+[[BLD_COL_PART_1]] [[species SP_MISIORLA]] colony. [[BLD_COL_PART_2]] Misiorla colony [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
 Mu Ursh Colony
@@ -9298,84 +9496,24 @@ Capacity: %9% fighters'''
 #############################################################
 
 SR_WEAPON_1_1
-Mass Driver 1
+Mass Driver
 SR_WEAPON_1_1_DESC
 The Mass Driver, a basic weapon.
 
-SR_WEAPON_1_2
-Mass Driver 2
-SR_WEAPON_1_2_DESC
-Mass Driver, refined to level 2.
-
-SR_WEAPON_1_3
-Mass Driver 3
-SR_WEAPON_1_3_DESC
-Mass Driver, refined to level 3.
-
-SR_WEAPON_1_4
-Mass Driver 4
-SR_WEAPON_1_4_DESC
-Mass Driver, refined to level 4.
-
 SR_WEAPON_2_1
-Laser 1
+Laser Weapon
 SR_WEAPON_2_1_DESC
 The Laser, a more powerful ship's weapon than the Mass Driver.
 
-SR_WEAPON_2_2
-Laser 2
-SR_WEAPON_2_2_DESC
-Laser, refined to level 2.
-
-SR_WEAPON_2_3
-Laser 3
-SR_WEAPON_2_3_DESC
-Laser, refined to level 3.
-
-SR_WEAPON_2_4
-Laser 4
-SR_WEAPON_2_4_DESC
-Laser, refined to level 4.
-
 SR_WEAPON_3_1
-Plasma Cannon 1
+Plasma Cannons
 SR_WEAPON_3_1_DESC
 The Plasma Cannon, a more powerful ship's weapon than the Laser.
 
-SR_WEAPON_3_2
-Plasma Cannon 2
-SR_WEAPON_3_2_DESC
-Plasma Cannon, refined to level 2.
-
-SR_WEAPON_3_3
-Plasma Cannon 3
-SR_WEAPON_3_3_DESC
-Plasma Cannon, refined to level 3.
-
-SR_WEAPON_3_4
-Plasma Cannon 4
-SR_WEAPON_3_4_DESC
-Plasma Cannon, refined to level 4.
-
 SR_WEAPON_4_1
-Death Ray 1
+Death Ray
 SR_WEAPON_4_1_DESC
 The Death Ray, the ultimate ship's weapon.
-
-SR_WEAPON_4_2
-Death Ray 2
-SR_WEAPON_4_2_DESC
-Death Ray, refined to level 2.
-
-SR_WEAPON_4_3
-Death Ray 3
-SR_WEAPON_4_3_DESC
-Death Ray, refined to level 3.
-
-SR_WEAPON_4_4
-Death Ray 4
-SR_WEAPON_4_4_DESC
-Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
@@ -9383,29 +9521,11 @@ Spinal Antimatter Cannon
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
 
-SR_WEAPON_2
-Laser
-
-SR_WEAPON_2_DESC
-Lower power and mass
-
 SR_ION_CANNON
 Ion Cannon
 
 SR_ION_CANNON_DESC
 Moderate power and mass
-
-SR_WEAPON_1
-Mass Driver
-
-SR_WEAPON_1_DESC
-A projectile weapon capable of launching objects of tremendous mass at relativistic speeds.
-
-SR_WEAPON_4
-Death Ray
-
-SR_WEAPON_4_DESC
-Ultimate short range weapon
 
 PD_PULSE_LASER
 Pulse Laser
@@ -10104,6 +10224,15 @@ Structure is low, [[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTI
 
 This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
+SH_ENERGY_FRIGATE
+Energy Frigate
+SH_ENERGY_FRIGATE_DESC
+'''This fast hull combines compressed energy and warship technology to create a fast but fragile attack ship. 
+
+Structure and [[encyclopedia STEALTH_TITLE]] are low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. 
+
+This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+
 SH_FRACTAL_ENERGY
 Fractal Energy Hull
 
@@ -10169,7 +10298,7 @@ SH_XENTRONIUM
 Xentronium Hull
 
 SH_XENTRONIUM_DESC
-A hull constructed primarily with xentronium. Though small, it has extremely high max [[encyclopedia STRUCTURE_TITLE]]. It has four external slots and one internal slot.
+A hull constructed primarily with xentronium. Though small, it has extremely high max [[encyclopedia STRUCTURE_TITLE]]. It has four external slots and one core slot.
 
 SH_COLONY_BASE
 Colony Base Hull
@@ -10435,31 +10564,31 @@ ULTIMATE_DETECTION
 +++	Ultimate [[encyclopedia DETECTION_RANGE_TITLE]]: +100 bonus.
 
 BAD_STEALTH
-−	Bad [[encyclopedia STEALTH_TITLE]]: −15 malus.
+−	Bad Planetary [[encyclopedia STEALTH_TITLE]]: −20 malus.
 
 AVERAGE_STEALTH
-'''	Average [[encyclopedia STEALTH_TITLE]].'''
+'''	Average Planetary [[encyclopedia STEALTH_TITLE]].'''
 
 GOOD_STEALTH
-+	Good [[encyclopedia STEALTH_TITLE]]: +15 bonus.
++	Good Planetary [[encyclopedia STEALTH_TITLE]]: +20 bonus.
 
 GREAT_STEALTH
-++	Great [[encyclopedia STEALTH_TITLE]]: +40 bonus.
+++	Great Planetary [[encyclopedia STEALTH_TITLE]]: +40 bonus.
 
 ULTIMATE_STEALTH
-+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.
++++	Ultimate Planetary [[encyclopedia STEALTH_TITLE]]: +60 bonus.
 
 BAD_WEAPONS
-−	Bad Pilots: 25% less damage.
+−	Bad Pilots: Base damage per ship weapon reduced by one level.
 
 GOOD_WEAPONS
-+	Good Pilots: 25% more damage.
++	Good Pilots: Base damage per ship weapon increased by one level.
 
 GREAT_WEAPONS
-++	Great Pilots: 50% more damage.
+++	Great Pilots: Base damage per ship weapon increased by two levels.
 
 ULTIMATE_WEAPONS
-+++	Ultimate Pilots: double damage.
++++	Ultimate Pilots: Base damage per ship level increased by three levels.
 
 BAD_POPULATION
 −	Bad Population 75%
@@ -10503,6 +10632,14 @@ FAST_COLONIZATION
 SLOW_COLONIZATION
 −	Slow Colonization: +20% time to build colonies
 
+BAD_FUEL
+−	Bad maximum [[encyclopedia FUEL_TITLE]]: - 1
+
+GREAT_ASTEROID_INDUSTRY
++	Good Asteroid Miners: + 0.2 [[encyclopedia INDUSTRY_TITLE]] per population when Industry Focused in systems with owned asteroid belts.
+
+LIGHT_SENSITIVE
+−	Light Sensitive: Population is reduced in systems with blue and to a lesser extend white stars.
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
@@ -10539,6 +10676,9 @@ Gaia Bonus
 
 WORLDTREE_LABEL
 World Tree Bonus
+
+TIDAL_LOCK_LABEL
+Tidally Locked Rotation
 
 HOMEWORLD_LABEL
 Homeworld
@@ -10711,6 +10851,9 @@ Xenophobic Harassment: Eaxaw
 ORGANIC_GROWTH
 Organic Growth
 
+ASTEROID_FIELD_STEALTH
+Asteroid Concealment
+
 AGE_BONUS
 Age
 
@@ -10852,7 +10995,7 @@ AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD
 Outposter
 
 AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
-'''Decoy
+'''ComSat
 Starbase'''
 
 AI_SHIPDESIGN_NAME_SCOUT

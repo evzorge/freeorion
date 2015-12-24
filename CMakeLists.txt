@@ -112,13 +112,15 @@ set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
 ########################################
 # Dependencies                         #
 ########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex serialization signals system thread log REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem iostreams regex serialization signals system thread log REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(Freetype REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
+    ${FREETYPE_INCLUDE_DIRS}
     GG
 )
 
@@ -171,7 +173,6 @@ set (freeorioncommon_HEADER
     universe/ValueRefFwd.h
     util/AppInterface.h
     util/blocking_combiner.h
-    util/DataTable.h
     util/Directories.h
     util/EnumText.h
     util/i18n.h
@@ -231,7 +232,7 @@ set (freeorioncommon_SOURCE
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/AppInterface.cpp
-    util/DataTable.cpp
+    util/DependencyVersions.cpp
     util/Directories.cpp
     util/EnumText.cpp
     util/i18n.cpp

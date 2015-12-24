@@ -191,17 +191,8 @@ El servidor envío un mensaje de fin del juego. Hasta Luego.
 PLAYER_DISCONNECTED
 El jugador %1% se ha desconectado del servidor.
 
-PLAYER_DEFEATED
-Has sido derrotado.
-
-EMPIRE_DEFEATED
-El imperio %1% ya no existe.
-
 UNKNOWN_EMPIRE
 Imperio Desconocido
-
-LAST_OPPONENT_DEFEATED_VICTORY
-Tu último oponente ha sido derrotado. ¡Te alzaste con la victoria!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 El servidor recibió datos inválidos del cliente.  Algunos serán ignorados.
@@ -1851,7 +1842,7 @@ Una batalla tuvo lugar en %system%.
 SITREP_PLANET_CAPTURED
 %planet% fue capturado por %empire%.
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 La población entera en %planet% se muere de hambre. ¡El planeta esta perdido!
 
 SITREP_PLANET_COLONIZED
@@ -1860,18 +1851,18 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% ha llegado al sistema %system% y espera ordenes.
 
-SITREP_EMPIRE_ELIMINATED
-El imperio %empire% ha sido eliminado
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-ha alcanzado una victoria tecnológica.
+VICTORY_TECH
+El imperio %empire% ha alcanzado una victoria tecnológica.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-ha alcanzado una victoria como único superviviente.
+VICTORY_ALL_ENEMIES_ELIMINATED
+El imperio %empire% ha alcanzado una victoria como único superviviente.
+
+SITREP_EMPIRE_ELIMINATED
+El imperio %empire% ha sido eliminado.
 
 #############################################################
 ####                    S P E C I E S                    ####
@@ -3759,14 +3750,6 @@ Generador de Energía de Agujero Negro
 
 BLD_BLACK_HOLE_POW_GEN_DESC
 Este edificio proporciona una bonificación a la indústria máxima del doble de la población del planeta para todos los planetas en el imperio con enfoque en Indústria.  Este edificio puede ser construido en un puesto de avanzada.
-
-BLD_REPLICATORS
-Replicadores
-
-BLD_REPLICATORS_DESC
-'''Cuando se activan, la mitad de la producción industrial en el imperio se gasta en replicar alimento y minerales extra a un ratio de 2:1.  Si el planeta en el que se construye tiene enfoque en Replicación de Alimento, el alimento producido a expensas de la indústria.  Cuando el enfoque se establezca en Replicación de Mineral, los minerales serán producidos a costa de la indústria.
-
-Solo un enfoque de replicación puede tener efecto en el imperio a la vez.'''
 
 BLD_PLANET_DRIVE
 Motor Planetario de Línea Estelar

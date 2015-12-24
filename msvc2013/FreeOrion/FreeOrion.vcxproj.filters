@@ -279,9 +279,6 @@
     <ClInclude Include="..\..\util\binreloc.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\DataTable.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\Directories.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -395,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="..\..\UI\CombatReport\GraphicalSummary.h">
       <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUILinkTextBlock.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -594,6 +594,9 @@
     </ClCompile>
     <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp">
       <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUILinkTextBlock.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

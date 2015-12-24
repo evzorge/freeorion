@@ -349,9 +349,8 @@ namespace {
 
         // This sets up the world coordinate space with the origin in the
         // upper-left corner and +x and +y directions right and down,
-        // respectively.  Note that this call leaves the depth of the viewing
-        // volume is only 1 (from 0.0 to 1.0), which is fine for GG's purposes.
-        glOrtho(0.0, width, height, 0.0, 0.0, width);
+        // respectively.
+        glOrtho(0.0, width, height, 0.0, -100.0, 100.0);
 
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
@@ -544,6 +543,7 @@ void SDLGUI::SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_cha
     m_app_width = width;
     m_app_height = height;
     SDL_SetWindowFullscreen(m_window, 0);
+    glViewport(0, 0, Value(width), Value(height));
     if (fullscreen) {
         if (!m_fake_mode_change) {
             Pt resulting_size = SetSDLFullscreenSize(m_window, m_display_id, Value(width), Value(height));
@@ -659,7 +659,7 @@ void SDLGUI::SDLInit()
 
 void SDLGUI::GLInit()
 {
-    double ratio = Value(m_app_width * 1.0) / Value(m_app_height);
+    double ratio = Value(m_app_width) * 1.0 / Value(m_app_height);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -751,22 +751,27 @@ void SDLGUI::HandleSystemEvents()
                     }
                     // If faking resolution change, we need to listen to this event
                     // to size the buffer correctly for the screen.
-                    if(m_fullscreen && m_fake_mode_change){
+                    if (m_fullscreen && m_fake_mode_change) {
                         ResetFramebuffer();
                     }
                 case SDL_WINDOWEVENT_RESIZED:
                     // Alt-tabbing and other things give dubious resize events while in fullscreen mode.
                     // ignore them
                     if (!m_fullscreen) {
-                        WindowResizedSignal (X (event.window.data1), Y (event.window.data2));
+                        WindowResizedSignal(X(event.window.data1), Y(event.window.data2));
                     }
                     break;
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    FocusChangedSignal(true);
+                    break;
                 case SDL_WINDOWEVENT_FOCUS_LOST:
-                    FocusChangedSignal();
+                    FocusChangedSignal(false);
                     break;
                 case SDL_WINDOWEVENT_MOVED:
-                    WindowMovedSignal ( X(event.window.data1), Y(event.window.data2) );
+                    WindowMovedSignal(X(event.window.data1), Y(event.window.data2));
+                    break;
+                case SDL_WINDOWEVENT_CLOSE:
+
                     break;
             }
             break;
@@ -790,15 +795,16 @@ void SDLGUI::HandleNonGGEvent(const SDL_Event& event)
 
 void SDLGUI::RenderBegin()
 {
-    if(m_fake_mode_change && m_fullscreen) {
+    if (m_fake_mode_change && m_fullscreen) {
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_framebuffer->OpenGLId());
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, Value(m_app_width), Value(m_app_height));
 }
 
 void SDLGUI::RenderEnd()
 {
-    if(m_fake_mode_change && m_fullscreen) {
+    if (m_fake_mode_change && m_fullscreen) {
         // Return to rendering on the real screen
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         // Clear the real screen

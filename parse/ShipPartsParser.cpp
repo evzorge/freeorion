@@ -62,6 +62,7 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
+            qi::_g_type _g;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
@@ -72,16 +73,16 @@ namespace {
             using phoenix::push_back;
 
             part_type_prefix
-                =    tok.Part_
-                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
-                >    parse::label(Class_token)       > parse::enum_parser<ShipPartClass>() [ _r3 = _1 ]
+                =   tok.Part_
+                >   parse::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >   parse::label(Description_token) > tok.string [ _r2 = _1 ]
+                >   parse::label(Class_token)       > parse::enum_parser<ShipPartClass>() [ _r3 = _1 ]
                 ;
 
             producible
-                =    tok.Unproducible_ [ _val = false ]
-                |    tok.Producible_ [ _val = true ]
-                |    eps [ _val = true ]
+                =   tok.Unproducible_ [ _val = false ]
+                |   tok.Producible_ [ _val = true ]
+                |   eps [ _val = true ]
                 ;
 
             slots
@@ -95,8 +96,8 @@ namespace {
                 ;
 
             location
-                =    parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
-                |    eps [ _r1 = new_<Condition::All>() ]
+                =   parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
+                |   eps [ _r1 = new_<Condition::All>() ]
                 ;
 
             common_params
@@ -105,22 +106,23 @@ namespace {
                 >   producible                                           [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
-                >   -(
-                        parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ]
-                     )
-                >    parse::label(Icon_token)        > tok.string
+                > -(parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ])
+                >   parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
             ;
 
             part_type
-                =    part_type_prefix(_a, _b, _c)
-                >    (  ( parse::label(Capacity_token)  >> parse::double_ [ _d = _1 ])
-                      | ( parse::label(Damage_token)    >> parse::double_ [ _d = _1 ])
-                      |   eps [ _d = 0.0 ]
-                     )
-                >    slots(_f)
-                >    common_params [ _e = _1 ]
-                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f)) ]
+                =   part_type_prefix(_a, _b, _c)
+                > (  (parse::label(Capacity_token)  >> parse::double_ [ _d = _1 ])
+                   | (parse::label(Damage_token)    >> parse::double_ [ _d = _1 ])
+                   |  eps [ _d = 0.0 ]
+                  )
+                > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
+                   |  eps [ _g = true ]
+                  )
+                >   slots(_f)
+                >   common_params [ _e = _1 ]
+                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f, _g)) ]
                 ;
 
             start
@@ -193,7 +195,8 @@ namespace {
                 ShipPartClass,
                 double,
                 PartHullCommonParams,
-                std::vector<ShipSlotType>
+                std::vector<ShipSlotType>,
+                bool
             >,
             parse::skipper_type
         > part_type_rule;

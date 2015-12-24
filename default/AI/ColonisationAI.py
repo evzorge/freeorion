@@ -61,6 +61,35 @@ PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, f
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
 
 
+def get_medium_pilot_rating():
+    return curMidPilotRating
+
+
+def get_best_pilot_rating():
+    return cur_best_pilot_rating
+
+
+def have_computronium():
+    return got_computronium
+
+
+def have_asteroids():
+    return got_ast
+
+
+def have_gas_giant():
+    return got_gg
+
+
+def have_ruins():
+    return gotRuins
+
+
+def have_nest():
+    return got_nest
+
+
+
 # mods per environ uninhab hostile poor adequate good
 POP_SIZE_MOD_MAP = {
     "environment_bonus": [0, -4, -2, 0, 3],
@@ -177,8 +206,7 @@ def check_supply():
     print "    fleet_suppliable_planet_ids: %s" % fleet_suppliable_planet_ids
     print
 
-    print "-------\nEmpire Obstructed Starlanes:"
-    print list(empire.obstructedStarlanes())
+    print "-------\nEmpire Obstructed Starlanes: %s" % list(empire.obstructedStarlanes())
     colonization_timer.start('Determining Annexable Systems')
 
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
@@ -270,7 +298,7 @@ def survey_universe():
     un_ex_sys_ids = list(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     un_ex_systems = map(universe.getSystem, un_ex_sys_ids)
     print "Unexplored Systems: %s " % un_ex_systems
-    print "Explored SystemIDs: " + str(list(explored_system_ids))
+    print "Explored SystemIDs: %s" % list(explored_system_ids)
 
     explored_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
     print "Explored PlanetIDs: %s" % explored_planet_ids
@@ -850,7 +878,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
         pilot_val = pilot_rating = rate_piloting_tag(species.tags)
-        if pilot_val > cur_best_pilot_rating:
+        if pilot_val > get_best_pilot_rating():
             pilot_val *= 2
         if pilot_val > 2:
             retval += discount_multiplier * 5 * pilot_val
@@ -916,7 +944,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                          for psize in [-1, planet.size] for bld_type in bld_types)
     planet_supply += sum(AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
                          for psize in [-1, planet.size] for _special in
-                         set(planet.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
+                         set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
 
     common_grades = {'NO': 0.0, 'BAD': 0.5, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 4.0}
     ind_tag_mod = common_grades.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
@@ -980,7 +1008,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "PHOTOTROPHIC" in tag_list:
             star_pop_mod = PHOTO_MAP.get(system.starType, 0)
             detail.append("PHOTOTROPHIC popMod %.1f" % star_pop_mod)
-        elif pilot_rating >= cur_best_pilot_rating:
+        elif pilot_rating >= get_best_pilot_rating():
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
                 star_bonus += 40 * discount_multiplier # can be used for artif'l black hole and solar hull
                 detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
@@ -1276,12 +1304,17 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         detail.append(
             "baseMaxPop %d + size*psm %d * %d * %.2f = %d" % (pop_const_mod, planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
 
-        if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
-            max_pop_size -= 4
-            detail.append("DIM_RIFT_MASTER_SPECIAL(maxPop-4)")
-        if "ECCENTRIC_ORBIT_SPECIAL" in planet.specials:
-            max_pop_size -= 3
-            detail.append("ECCENTRIC_ORBIT_SPECIAL(maxPop-3)")
+        for _special in set(planet.specials).intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
+            this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
+                           for psize in [-1, planet.size])
+            detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+            max_pop_size += this_mod
+
+        for _special in set(planet.specials).intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
+            this_mod = planet.size * sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
+                                         for psize in [-1, planet.size])
+            detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+            max_pop_size += this_mod
 
         detail.append("maxPop %.1f" % max_pop_size)
 
@@ -1310,6 +1343,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
             fixed_ind += discount_multiplier * 5
         if AIFocusType.FOCUS_INDUSTRY in species.foci:
+            if 'TIDAL_LOCK_SPECIAL' in planet.specials:
+                ind_mult += 1
             max_ind_factor += base_pop_ind * mining_bonus
             max_ind_factor += base_pop_ind * ind_mult
         cur_pop = 1.0  # assume an initial colonization value
@@ -1336,11 +1371,14 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             if "ANCIENT_RUINS_SPECIAL" in planet.specials or "ANCIENT_RUINS_DEPLETED_SPECIAL" in planet.specials:
                 research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 5
                 detail.append("Ruins Research")
+            if "TEMPORAL_ANOMALY_SPECIAL" in planet.specials:
+                research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 25
+                detail.append("Temporal Anomaly Research")
             if "COMPUTRONIUM_SPECIAL" in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
                               AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
                               discount_multiplier)
-                if got_computronium:
+                if have_computronium():
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
                 detail.append("COMPUTRONIUM_SPECIAL")

@@ -184,7 +184,7 @@ namespace {
         std::vector<int> results;
         for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); part_it++){
             const PartType* part = GetPartType(*part_it);
-            if (part && part->Class() == PC_SHORT_RANGE) { // TODO: handle other weapon classes when they are implemented
+            if (part && part->Class() == PC_DIRECT_WEAPON) { // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
             }
         }
@@ -657,16 +657,16 @@ namespace FreeOrionPython {
     }
 
     void WrapGalaxySetupData() {
-        class_<GalaxySetupData>("galaxySetupData")
-            .def_readonly ("seed",              &GalaxySetupData::m_seed)
-            .def_readwrite("size",              &GalaxySetupData::m_size)
-            .def_readwrite("shape",             &GalaxySetupData::m_shape)
-            .def_readonly ("age",               &GalaxySetupData::m_age)
-            .def_readonly ("starlaneFrequency", &GalaxySetupData::m_starlane_freq)
-            .def_readonly ("planetDensity",     &GalaxySetupData::m_planet_density)
-            .def_readonly ("specialsFrequency", &GalaxySetupData::m_specials_freq)
-            .def_readonly ("monsterFrequency",  &GalaxySetupData::m_monster_freq)
-            .def_readonly ("nativeFrequency",   &GalaxySetupData::m_native_freq)
-            .def_readonly ("maxAIAggression",   &GalaxySetupData::m_ai_aggr);
+        class_<GalaxySetupData>("GalaxySetupData")
+            .def_readonly("seed",               &GalaxySetupData::m_seed)
+            .def_readonly("size",               &GalaxySetupData::m_size)
+            .def_readonly("shape",              &GalaxySetupData::m_shape)
+            .def_readonly("age",                &GalaxySetupData::m_age)
+            .def_readonly("starlaneFrequency",  &GalaxySetupData::m_starlane_freq)
+            .def_readonly("planetDensity",      &GalaxySetupData::m_planet_density)
+            .def_readonly("specialsFrequency",  &GalaxySetupData::m_specials_freq)
+            .def_readonly("monsterFrequency",   &GalaxySetupData::m_monster_freq)
+            .def_readonly("nativeFrequency",    &GalaxySetupData::m_native_freq)
+            .def_readonly("maxAIAggression",    &GalaxySetupData::m_ai_aggr);
     }
 }
